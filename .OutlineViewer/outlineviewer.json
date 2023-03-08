@@ -1,0 +1,14 @@
+{
+  "NetworkTables Settings": {
+    "mode": "Client (NT3)",
+    "serverTeam": "10.21.94.2"
+  },
+  "transitory": {
+    "limelight-fifteen": {
+      "open": true
+    },
+    "limelight-sixteen": {
+      "open": true
+    }
+  }
+}

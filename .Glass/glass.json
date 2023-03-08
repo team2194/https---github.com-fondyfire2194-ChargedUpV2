@@ -1,0 +1,109 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "Preferences": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "Arms": {
+          "ExtLayout": {
+            "open": true
+          },
+          "WristLayout": {
+            "WRPfPID": {
+              "open": true
+            },
+            "open": true
+          },
+          "open": true
+        },
+        "Vision": {
+          "A": {
+            "open": true
+          },
+          "B": {
+            "open": true
+          },
+          "C": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "Scheduler": {
+          "open": true
+        },
+        "open": true
+      },
+      "limelight": {
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Arms/ExtLayout/PositionExtArm": "Command",
+      "/Shuffleboard/Arms/IntakeLayout/RunIntake": "Command",
+      "/Shuffleboard/Arms/IntakeLayout/StopIntake": "Command",
+      "/Shuffleboard/Arms/LiftLayout/PositionLiftArm": "Command",
+      "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Arms/WristLayout/PositionWrist": "Command",
+      "/Shuffleboard/Competition/AutoChooser": "String Chooser",
+      "/Shuffleboard/Competition/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/GameInfo/B/TagTrajChooser": "String Chooser",
+      "/Shuffleboard/GameInfo/B/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Tune/RotatePID": "PIDController",
+      "/Shuffleboard/Tune/ThetaPID": "PIDController",
+      "/Shuffleboard/Tune/XPID": "PIDController",
+      "/Shuffleboard/Tune/YPID": "PIDController",
+      "/SmartDashboard/Auto Selector": "String Chooser",
+      "/SmartDashboard/Drive": "Subsystem",
+      "/SmartDashboard/EXTLock": "PIDController",
+      "/SmartDashboard/Elevator": "Mechanism2d",
+      "/SmartDashboard/Ext Arm": "Subsystem",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Field2d": "Field2d",
+      "/SmartDashboard/Intake": "Subsystem",
+      "/SmartDashboard/LiftArm": "Subsystem",
+      "/SmartDashboard/LiftLock": "PIDController",
+      "/SmartDashboard/ResetOdometry": "Command",
+      "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/SetSwerveCoastMode": "Command",
+      "/SmartDashboard/SwerveDrive": "Subsystem",
+      "/SmartDashboard/TagTrajChoice": "String Chooser",
+      "/SmartDashboard/TrajChoice": "String Chooser",
+      "/SmartDashboard/TrajectoryChooser": "String Chooser",
+      "/SmartDashboard/Wrist": "Subsystem",
+      "/SmartDashboard/WristLock": "PIDController"
+    },
+    "windows": {
+      "/Shuffleboard/Arms/WristLayout/PositionWrist": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field2d": {
+        "Swerve Modules": {
+          "length": 0.20000000298023224,
+          "width": 0.20000000298023224
+        },
+        "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\Field2d_2023.png",
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Connections": {
+      "open": true
+    }
+  },
+  "NetworkTables Settings": {
+    "dsClient": false,
+    "mode": "Client (NT3)",
+    "serverTeam": "10.21.94.2",
+    "visible": false
+  }
+}

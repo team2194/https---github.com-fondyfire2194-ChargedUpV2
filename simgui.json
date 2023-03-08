@@ -1,0 +1,243 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "SPARK MAX [4]": {
+        "header": {
+          "open": true
+        }
+      },
+      "navX-Sensor[0]": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": false
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DriveSubsystem": "Subsystem",
+      "/LiveWindow/ExtendArmSubsystem": "Subsystem",
+      "/LiveWindow/LimelightVision": "Subsystem",
+      "/LiveWindow/SwerveModuleSM": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[14]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[15]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[16]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[17]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[18]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[19]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[20]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[21]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[22]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[23]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[24]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[25]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[26]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[27]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/Shuffleboard/Arms/ExtLayout/PositionExtArm": "Command",
+      "/Shuffleboard/Arms/IntakeLayout/RunIntake": "Command",
+      "/Shuffleboard/Arms/IntakeLayout/StopIntake": "Command",
+      "/Shuffleboard/Arms/IntakeLayout/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Arms/LiftAngleChooser": "String Chooser",
+      "/Shuffleboard/Arms/LiftLayout/PositionLiftArm": "Command",
+      "/Shuffleboard/Arms/PositionTurnArm": "Command",
+      "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Arms/TurnAngleChooser": "String Chooser",
+      "/Shuffleboard/Arms/WristLayout/PositionWrist": "Command",
+      "/Shuffleboard/Arms/extLayout/PositionExtArm": "Command",
+      "/Shuffleboard/Arms/liftLayout/PositionLiftArm": "Command",
+      "/Shuffleboard/Arms/turnLayout/PositionTurnArm": "Command",
+      "/Shuffleboard/Arms/turnLayout/TurnAngleChooser": "String Chooser",
+      "/Shuffleboard/Competition/AutoChooser": "String Chooser",
+      "/Shuffleboard/Competition/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/GameInfo/B/TrajectoryChooser": "String Chooser",
+      "/Shuffleboard/Intake/IntakeLayout/RunIntake": "Command",
+      "/Shuffleboard/SelTRain/ModuleSelect": "String Chooser",
+      "/Shuffleboard/Tune/KPChooser": "String Chooser",
+      "/Shuffleboard/Tune/PIDController[12]": "PIDController",
+      "/Shuffleboard/Tune/RotatePID": "PIDController",
+      "/Shuffleboard/Tune/ThetaPID": "PIDController",
+      "/Shuffleboard/Tune/XPID": "PIDController",
+      "/Shuffleboard/Tune/XPosPID": "PIDController",
+      "/Shuffleboard/Tune/YPID": "PIDController",
+      "/SmartDashboard/Auto Selector": "String Chooser",
+      "/SmartDashboard/Drive": "Subsystem",
+      "/SmartDashboard/Ext Arm": "Subsystem",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Field2d": "Field2d",
+      "/SmartDashboard/Intake": "Subsystem",
+      "/SmartDashboard/LiftArm": "Subsystem",
+      "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/TrajectoryChooser": "String Chooser",
+      "/SmartDashboard/TurnArm": "Subsystem",
+      "/SmartDashboard/Wrist": "Subsystem"
+    },
+    "windows": {
+      "/SmartDashboard/Arm Sim": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/ExtSim": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field2d": {
+        "Robot": {
+          "length": 0.699999988079071
+        },
+        "Swerve Modules": {
+          "length": 0.4000000059604645,
+          "width": 0.30000001192092896
+        },
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        },
+        "DriveSubsystem": {
+          "open": true
+        },
+        "ExtendArmSubsystem": {
+          "open": true
+        },
+        "LiftArmSubsystem": {
+          "open": true
+        },
+        "open": true
+      },
+      "Preferences": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "Arms": {
+          "extLayout": {
+            "open": true
+          },
+          "open": true
+        },
+        "CanCoders": {
+          "RR  CanCoder": {
+            "open": true
+          }
+        },
+        "Competition": {
+          "open": true
+        },
+        "Drivetrain": {
+          "open": true
+        },
+        "GameInfo": {
+          "open": true
+        },
+        "Vision": {
+          "open": true
+        }
+      },
+      "SmartDashboard": {
+        "Scheduler": {
+          "open": true
+        },
+        "open": true
+      },
+      "swerve": {
+        "drive": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "AdvantageScope@2": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      }
+    },
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      }
+    },
+    "shuffleboard@1": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    },
+    "visible": true
+  },
+  "Plot": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "height": 332
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": 552,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/DRANG"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    }
+  }
+}
