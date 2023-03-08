@@ -307,9 +307,13 @@ public final class Constants {
 
     public static final double MAX_DEGREES_PER_SEC = DEGREES_PER_ENCODER_REV * 11000 / 60;// 60
 
+    public static final double MAX_RADS_PER_SEC = Units.degreesToRadians( MAX_DEGREES_PER_SEC);
+
+    
+
     public static final double MIN_ANGLE = -55;
 
-    public static final double MAX_ANGLE = 130;
+    public static final double MAX_ANGLE = 120;
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
@@ -321,7 +325,7 @@ public final class Constants {
 
     public static double ksVolts = .06;
 
-    public static double kgVolts = .16;
+    public static double kgVolts = 0;// .16;
 
     public static double kvWristVoltSecondsPerRadian = Math.PI * 4;
 
@@ -329,13 +333,13 @@ public final class Constants {
 
     // public static double kvVoltsper = .05;// max .2
 
-    public static double kVVoltSecondPerRad;
+    // public static double kVVoltSecondPerRad;
 
-    public static double kAVoltSecondSquaredPerRad;
+    // public static double kAVoltSecondSquaredPerRad;
 
-    public static double kMaxVelocityRadPerSecond;
+    // public static double kMaxVelocityRadPerSecond;
 
-    public static double kMaxAccelerationRadPerSecSquared;
+    // public static double kMaxAccelerationRadPerSecSquared;
   }
 
   public static final class CurrentLimitConstants {

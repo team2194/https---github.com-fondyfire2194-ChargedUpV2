@@ -4,9 +4,9 @@
 
 package frc.robot.commands.TeleopRoutines;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ExtendArmConstants;
-import frc.robot.commands.ExtendArm.RunExtArmProfile;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -28,7 +28,7 @@ public class DeliverGamepieceToGridDrop extends SequentialCommandGroup {
 
         new HomeExtPositionLiftWrist(turn, ext, wrist),
 
-        new RunExtArmProfile(ext, ExtendArmConstants.deliverConstraints, ext.deliverDistance),
+        Commands.runOnce(() -> ext.setController(ExtendArmConstants.deliverConstraints, ext.deliverDistance, false)),
 
         new IntakeDeliverPiece(intake)
 

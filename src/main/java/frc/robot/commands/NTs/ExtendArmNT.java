@@ -86,7 +86,7 @@ public class ExtendArmNT extends CommandBase {
     isstopped.set(m_ext.isStopped());
 
     position.set(m_ext.positionInches);
-    targetangle.set(m_ext.endpointInches);
+    targetangle.set(m_ext.goalInches);
     velocity.set(m_ext.inchespersec);
     amps.set(m_ext.amps);
     out.set(m_ext.appliedOutput);

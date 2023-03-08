@@ -34,7 +34,6 @@ public class LiftArmNT extends CommandBase {
   public DoublePublisher ff;
   public DoublePublisher kv;
   public DoublePublisher ks;
-  public DoublePublisher commandIPS;
   public IntegerPublisher faults;
 
   public StringPublisher firmware;
@@ -63,7 +62,7 @@ public class LiftArmNT extends CommandBase {
     ff = liftarm.getDoubleTopic("Feedforward").publish();
     kv = liftarm.getDoubleTopic("KV").publish();
     ks = liftarm.getDoubleTopic("KS").publish();
-    commandIPS = liftarm.getDoubleTopic("CommaandIPS").publish();
+    
    
     faults = liftarm.getIntegerTopic("FAULTS").publish();
 
@@ -86,14 +85,13 @@ public class LiftArmNT extends CommandBase {
 
     position.set(m_lift.getCanCoderRadians());
     cancoderposition.set(m_lift.cancoderPosition);
-    targetangle.set(m_lift.endpointInches);
+    targetangle.set(m_lift.goalAngleRadians);
     velocity.set(m_lift.getCanCoderRateRadsPerSec());
     amps.set(m_lift.amps);
     out.set(m_lift.appliedOutput);
     ff.set(m_lift.ff);
     kv.set(LiftArmConstants.kVVoltSecondPerInch);
     ks.set(LiftArmConstants.kSVolts);
-    commandIPS.set(m_lift.commandIPS);
 
     faults.set(m_lift.getFaults());
     firmware.set(m_lift.getFirmware());
@@ -131,7 +129,6 @@ public class LiftArmNT extends CommandBase {
     
     ks.close();
 
-    commandIPS.close();
   }
 
   // Returns true when the command should end.

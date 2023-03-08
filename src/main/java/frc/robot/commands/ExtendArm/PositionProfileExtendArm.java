@@ -9,14 +9,16 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.LiftArmSubsystem;
 
 public class PositionProfileExtendArm extends CommandBase {
   /** Creates a new PositionArm. */
   private ExtendArmSubsystem m_ext;
+
+  private LiftArmSubsystem m_lift;
 
   private TrapezoidProfile.Constraints m_constraints;
 
@@ -39,18 +41,33 @@ public class PositionProfileExtendArm extends CommandBase {
   public DoublePublisher pidval;
   public DoublePublisher lastspeed;;
   public DoublePublisher accel;
+  public DoublePublisher profpos;
+  public DoublePublisher disterr;
 
   private boolean inIZone;
 
-  public PositionProfileExtendArm(ExtendArmSubsystem ext, TrapezoidProfile.Constraints constraints, double goalInches) {
+  private boolean setController;
+
+  public PositionProfileExtendArm(ExtendArmSubsystem ext,LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ext = ext;
+
+    m_lift=lift;
 
     m_constraints = constraints;
 
     m_goalInches = goalInches;
 
+    setController = true;
+
     addRequirements(m_ext);
+  }
+
+  public PositionProfileExtendArm(ExtendArmSubsystem ext,LiftArmSubsystem lift) {
+    m_ext = ext;
+    m_lift=lift;
+    addRequirements(m_ext);
+    setController = false;
   }
 
   // Called when the command is initially scheduled.
@@ -64,21 +81,27 @@ public class PositionProfileExtendArm extends CommandBase {
     pidval = extprof.getDoubleTopic("PIDVAL").publish();
     lastspeed = extprof.getDoubleTopic("LASTSPEED").publish();
     accel = extprof.getDoubleTopic("ACCEL").publish();
+    profpos = extprof.getDoubleTopic("PROFILEPOSN").publish();
+    disterr = extprof.getDoubleTopic("DISTERR").publish();
+  
+    
 
     loopctr = 0;
 
-    m_ext.setControllerConstraints(m_constraints);
+    if (setController) {
 
-    m_ext.m_extController.setI(0);
+      m_ext.setControllerConstraints(m_constraints);
 
-    // m_ext.m_extController.setIntegratorRange(0, 0);
+      m_ext.m_extController.setI(0);
 
-    m_ext.goalInches = m_goalInches;
+      // m_ext.m_extController.setIntegratorRange(0, 0);
 
-    m_goal = new TrapezoidProfile.State(m_ext.goalInches, 0);
+      m_ext.goalInches = m_goalInches;
 
-    m_ext.m_extController.reset(new TrapezoidProfile.State(m_ext.getPositionInches(), 0));
+      m_goal = new TrapezoidProfile.State(m_ext.goalInches, 0);
 
+      m_ext.m_extController.reset(new TrapezoidProfile.State(m_ext.getPositionInches(), 0));
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -96,12 +119,10 @@ public class PositionProfileExtendArm extends CommandBase {
     double lastTime = Timer.getFPGATimestamp();
 
     double pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
-        m_goalInches);
+        m_ext.goalInches);
 
     double acceleration = (m_ext.m_extController.getSetpoint().velocity -
-        lastSpeed)
-
-        / (Timer.getFPGATimestamp() - lastTime);
+        lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
     m_ext.ff = m_ext.m_feedforward.calculate(m_ext.m_extController.getSetpoint().velocity,
         acceleration);
@@ -135,7 +156,8 @@ public class PositionProfileExtendArm extends CommandBase {
     pidval.set(pidVal);
     accel.set(acceleration);
     lastspeed.set(lastSpeed);
-
+    profpos.set(m_ext.m_extController.getSetpoint().position);
+    disterr.set(m_goalInches - m_ext.getPositionInches());
   }
 
   // Called once the command ends or is interrupted.
@@ -148,14 +170,6 @@ public class PositionProfileExtendArm extends CommandBase {
   @Override
   public boolean isFinished() {
     return m_ext.endComm;
-  }
-
-  private void setGoal(double inches) {
-
-    m_goal = new TrapezoidProfile.State(inches, 0);
-
-    m_ext.m_extController.reset(new TrapezoidProfile.State(m_ext.getPositionInches(), 0));
-
   }
 
   private boolean checkIzone(double izonelimit) {

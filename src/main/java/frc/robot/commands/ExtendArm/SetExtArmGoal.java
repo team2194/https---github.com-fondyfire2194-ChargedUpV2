@@ -4,25 +4,30 @@
 
 package frc.robot.commands.ExtendArm;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class EndExtCommand extends InstantCommand {
-  private ExtendArmSubsystem m_extend;
+public class SetExtArmGoal extends InstantCommand {
+  private ExtendArmSubsystem m_ext;
+  private TrapezoidProfile.Constraints m_constraints;
+  private double m_goalDist;
 
-  public EndExtCommand(ExtendArmSubsystem extend) {
+  public SetExtArmGoal(ExtendArmSubsystem ext, TrapezoidProfile.Constraints constraints, double goalDist) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_extend = extend;
-    m_extend.endComm = true;
-    addRequirements(m_extend);
 
+    m_ext = ext;
+    m_constraints = constraints;
+    m_goalDist = goalDist;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_ext.setController(m_constraints, m_goalDist, false);
   }
 }

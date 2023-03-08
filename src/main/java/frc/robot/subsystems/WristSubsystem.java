@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.Map;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.FaultID;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -9,20 +7,14 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.WristConstants;
 
@@ -39,7 +31,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public enum presetWristAngles {
 
-        START_ANGLE(120),
+        HOME(120),
 
         SAFE_TRAVEL(120),
 
@@ -66,15 +58,15 @@ public class WristSubsystem extends SubsystemBase {
             this.angle = angle;
         }
 
-        public double getAngle() {
+        public double getAngleRads() {
             return Units.degreesToRadians(this.angle);
         }
 
     }
 
     public final CANSparkMax m_motor;
+
     private final RelativeEncoder mEncoder;
-    public final SparkMaxPIDController mPosController;
 
     public ArmFeedforward m_armfeedforward;
 
@@ -84,20 +76,18 @@ public class WristSubsystem extends SubsystemBase {
 
     public int faultSeen;
 
-    public double endpointDegrees;
-
     private double m_positionSim;
 
     private double maxdegpersec = 50;
 
-    public double degreespersecpervolt = maxdegpersec / 12;
+    public double radspersecpervolt = maxdegpersec / 12;
 
     private double positionChangeper20ms;
 
     public ProfiledPIDController m_wristController = new ProfiledPIDController(.05, 0, 0,
             WristConstants.wristConstraints);
 
-    public double deliverAngle;
+    public double deliverAngleRads;
 
     public double appliedOutput;
 
@@ -105,7 +95,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public double positionDegrees;
 
-    public double degreespersec;
+    public double radspersec;
 
     private int loopctr;
 
@@ -115,7 +105,7 @@ public class WristSubsystem extends SubsystemBase {
     public double ff;
 
     public boolean resetFF;
-    public double commandDPS;
+    public double commandRadPerSec;
     public double goalAngleRadians;
 
     public WristSubsystem() {
@@ -123,11 +113,10 @@ public class WristSubsystem extends SubsystemBase {
         useSoftwareLimit = false;
         m_motor = new CANSparkMax(CanConstants.WRIST_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
-        mPosController = m_motor.getPIDController();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(1);
-        m_motor.setClosedLoopRampRate(1);
+        m_motor.setClosedLoopRampRate(.5);
 
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
@@ -139,13 +128,9 @@ public class WristSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 
-        mPosController.setOutputRange(-.5, .5);
+        mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
 
-        mPosController.setP(.001);
-
-        mEncoder.setPosition(presetWristAngles.START_ANGLE.getAngle());
-
-        setGoal(mEncoder.getPosition());
+        setController(WristConstants.wristConstraints, presetWristAngles.HOME.getAngleRads(), false);
 
         m_motor.setSmartCurrentLimit(20);
 
@@ -157,13 +142,8 @@ public class WristSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        if (RobotBase.isSimulation()) {
-
-            m_positionSim = WristConstants.MIN_ANGLE;
-
-            mPosController.setP(5);
-        }
-
+        m_armfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
+                WristConstants.kvWristVoltSecondsPerRadian);
 
     }
 
@@ -172,11 +152,6 @@ public class WristSubsystem extends SubsystemBase {
         // This method will be called once per scheduler run
 
         loopctr++;
-        if (RobotBase.isReal() && DriverStation.isDisabled()
-
-                && endpointDegrees != getAngleDegrees())
-
-            endpointDegrees = getAngleDegrees();
 
         if (faultSeen != 0)
             faultSeen = getFaults();
@@ -191,17 +166,18 @@ public class WristSubsystem extends SubsystemBase {
 
         if (loopctr == 6) {
 
-            degreespersec = getDegreesPerSec();
+            radspersec = getRadsPerSec();
             wristMotorConnected = checkCANOK();
             loopctr = 0;
 
         }
+
     }
 
     @Override
     public void simulationPeriodic() {
 
-        positionChangeper20ms = getAppliedOutput() * degreespersecpervolt / 50;
+        positionChangeper20ms = getAppliedOutput() * radspersecpervolt / 50;
 
         m_positionSim += positionChangeper20ms;
 
@@ -219,9 +195,24 @@ public class WristSubsystem extends SubsystemBase {
         m_wristController.setConstraints(constraints);
     }
 
-    public void setGoal(double angleRadians) {
+    public void setControllerGoal(double angleRadians) {
 
         goalAngleRadians = angleRadians;
+    }
+
+    public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
+        SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
+        if (isStopped()) {
+            setControllerConstraints(constraints);
+            setControllerGoal(angleRads);
+            goalAngleRadians=angleRads;
+
+            if (initial)
+                m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
+            else
+                m_wristController.reset(new TrapezoidProfile.State(getAngleRadians(), 0));
+
+        }
     }
 
     // public double getEndpointDegrees() {
@@ -232,13 +223,6 @@ public class WristSubsystem extends SubsystemBase {
     public void resetAngle() {
 
         mEncoder.setPosition(0);
-
-        endpointDegrees = 0;
-
-    }
-
-    public void startPosition() {
-        setGoal(Pref.getPref("WRISTDEG"));
 
     }
 
@@ -273,14 +257,14 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean isStopped() {
-        return Math.abs(mEncoder.getVelocity()) < .05;
+        return Math.abs(getRadsPerSec()) < .05;
     }
 
     public double getAmps() {
         return m_motor.getOutputCurrent();
     }
 
-    public double getDegreesPerSec() {
+    public double getRadsPerSec() {
         return mEncoder.getVelocity();
     }
 

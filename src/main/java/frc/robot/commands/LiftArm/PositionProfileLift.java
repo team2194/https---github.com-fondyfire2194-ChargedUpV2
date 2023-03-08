@@ -44,6 +44,8 @@ public class PositionProfileLift extends CommandBase {
 
   private boolean inIZone;
 
+  private boolean setController;
+
   public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
@@ -54,10 +56,21 @@ public class PositionProfileLift extends CommandBase {
     addRequirements(m_lift);
   }
 
+  public PositionProfileLift(LiftArmSubsystem lift) {
+    m_lift = lift;
+    addRequirements(m_lift);
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
+    goalAngle = liftprof.getDoubleTopic("GOALANGLERADS").publish();
+    velocity = liftprof.getDoubleTopic("ACTVEL").publish();
+    feedforward = liftprof.getDoubleTopic("FFWD").publish();
+    pidval = liftprof.getDoubleTopic("PIDVAL").publish();
+    lastspeed = liftprof.getDoubleTopic("LASTSPEED").publish();
+    accel = liftprof.getDoubleTopic("ACCEL").publish();
     directionIsDown = m_goalAngleRadians < m_lift.getCanCoderRadians();
 
     loopctr = 0;
@@ -66,20 +79,17 @@ public class PositionProfileLift extends CommandBase {
 
     // m_lift.m_liftController.setIntegratorRange(0, 0);
 
-    m_lift.goalAngleRadians = m_goalAngleRadians;
+    if (setController) {
 
-    m_lift.setControllerConstraints(m_constraints);
+      m_lift.goalAngleRadians = m_goalAngleRadians;
 
-    m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
+      m_lift.setController(m_constraints, m_goalAngleRadians, false);
 
-    m_lift.m_liftController.reset(new TrapezoidProfile.State(m_lift.getCanCoderRadians(), 0));// start from present
+      m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
 
-    goalAngle = liftprof.getDoubleTopic("GOALANGLERADS").publish();
-    velocity = liftprof.getDoubleTopic("ACTVEL").publish();
-    feedforward = liftprof.getDoubleTopic("FFWD").publish();
-    pidval = liftprof.getDoubleTopic("PIDVAL").publish();
-    lastspeed = liftprof.getDoubleTopic("LASTSPEED").publish();
-    accel = liftprof.getDoubleTopic("ACCEL").publish();
+      m_lift.m_liftController.reset(new TrapezoidProfile.State(m_lift.getCanCoderRadians(), 0));// start from present
+
+    }
 
   }
 
@@ -102,11 +112,8 @@ public class PositionProfileLift extends CommandBase {
     m_lift.positionRadians = m_lift.getCanCoderRadians();
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
+    
         m_lift.m_liftController.getSetpoint().velocity);
-
-    if (directionIsDown)
-
-      m_lift.ff *= .5;
 
     m_lift.m_motor.setVoltage(pidVal + m_lift.ff);
 

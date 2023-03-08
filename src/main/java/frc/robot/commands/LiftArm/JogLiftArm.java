@@ -54,8 +54,6 @@ public class JogLiftArm extends CommandBase {
 
     throttle_sl *= LiftArmConstants.MAX_RATE_INCHES_PER_SEC;
 
-    m_lift.commandIPS = throttle_sl;
-
     double positionRadians = 0;
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(positionRadians, throttle_sl);
@@ -70,7 +68,7 @@ public class JogLiftArm extends CommandBase {
       m_lift.m_motor.setVoltage(0);
     }
 
-    m_lift.setGoal(m_lift.getPositionInches());
+    m_lift.setControllerGoal(m_lift.getPositionInches());
 
   }
 
@@ -78,7 +76,7 @@ public class JogLiftArm extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_lift.m_motor.setVoltage(0);
-    m_lift.setGoal(m_lift.getPositionInches());
+    m_lift.setController(LiftArmConstants.liftArmConstraints, m_lift.getCanCoderRadians(), false);
   }
 
   // Returns true when the command should end.

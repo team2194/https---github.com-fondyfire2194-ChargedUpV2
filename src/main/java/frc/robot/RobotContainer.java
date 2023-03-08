@@ -5,10 +5,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -18,29 +17,30 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
+import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLift;
-import frc.robot.commands.NTs.ExtendArmNT;
+import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.TeleopRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.HomeExtPositionLiftWrist;
 import frc.robot.commands.TeleopRoutines.IntakeDeliverPiece;
-import frc.robot.commands.TeleopRoutines.PickupGamepiece;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveLoad;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveTape;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
+import frc.robot.commands.Wrist.PositionProfileWrist;
+import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.swerve.SetSwerveDrive;
 import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
-import frc.robot.oi.ShuffleboardCompetition;
 import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
-import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
@@ -91,8 +91,7 @@ public class RobotContainer {
 
         public CommandXboxController m_armController = new CommandXboxController(OIConstants.kArmControllerPort);
 
-        public XboxController rumtest = new XboxController(4);
-        // public PoseTelemetry m_pt = new PoseTelemetry();
+        public CommandXboxController testArms = new CommandXboxController(4);
 
         final PowerDistribution m_pdp = new PowerDistribution();
 
@@ -181,24 +180,25 @@ public class RobotContainer {
 
                 configArmControllerButtons();
 
+                configTestArmsButtons();
+
         }
 
         private void setDefaultCommands() {
 
                 m_drive.setDefaultCommand(getDriveCommand());
 
-                // m_extendArm.setDefaultCommand(
-                // new PositionProfileExtendArm(m_extendArm,
-                // ExtendArmConstants.extendArmConstraints,
-                // presetExtArmDistances.HOME.getDistance()));
+                m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm, m_liftArm));
+                // m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+                // presetExtArmDistances.HOME.getDistance(), true);
 
-                // m_liftArm.setDefaultCommand(
-                // new PositionProfileLift(m_liftArm, LiftArmConstants.liftArmConstraints, 34));
+                m_liftArm.setDefaultCommand(
+                                new PositionProfileLift(m_liftArm));
+                // m_liftArm.setController(LiftArmConstants.liftArmConstraints,
+                // presetLiftAngles.SAFE_HOME.getAngleRads(), true);
 
-                // m_wrist.setDefaultCommand(new PositionProfileWrist(m_wrist,
-                // WristConstants.wristConstraints, 120));
-
-                // m_intake.setDefaultCommand(new StopIntake(m_intake));
+                m_wrist.setDefaultCommand(
+                                new PositionProfileWrist(m_wrist, m_liftArm));
 
         }
 
@@ -221,11 +221,9 @@ public class RobotContainer {
                 // m_intake)
                 // .withName("Place Gamepiece In Grid"));
 
-                m_driverController.x().onTrue(new PickupGamepiece(m_intake, true)
-                                .withName("Pickup Cube"));
+                // m_driverController.x().onTrue(
 
-                m_driverController.y().onTrue(new PickupGamepiece(m_intake, false)
-                                .withName("Pickup Cone"));
+                // m_driverController.y().onTrue(
 
                 m_driverController.a().onTrue(new IntakeDeliverPiece(m_intake)
                                 .withName("Deliver Sensed"));
@@ -299,8 +297,8 @@ public class RobotContainer {
 
                 m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController.back().getAsBoolean()));
 
-                // m_armController.rightBumper()
-                // .whileTrue(getJogWristCommand(true, m_armController.back().getAsBoolean()));
+                m_armController.rightBumper()
+                                .whileTrue(getJogWristCommand(m_armController.back().getAsBoolean()));
 
                 // m_armController.rightTrigger().whileTrue(getJogIntakeCommand());
 
@@ -327,6 +325,41 @@ public class RobotContainer {
 
         }
 
+        public void configTestArmsButtons() {
+
+                testArms.a().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+
+                testArms.b().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+
+                testArms.x().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+
+                testArms.y().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+
+                testArms.povUp().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
+                                Units.degreesToRadians(35)));
+
+                testArms.povDown().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
+                                Units.degreesToRadians(90)));
+
+                testArms.povLeft().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
+                                Units.degreesToRadians(60)));
+
+                testArms.povRight().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
+                                Units.degreesToRadians(85)));
+
+                testArms.leftBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
+                                Units.degreesToRadians(120)));
+
+                testArms.leftTrigger().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
+                                Units.degreesToRadians(90)));
+
+                testArms.rightBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
+                                Units.degreesToRadians(45)));
+
+                testArms.rightTrigger().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
+                                Units.degreesToRadians(-25)));
+        }
+
         public Command getDriveCommand() {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),
@@ -340,7 +373,7 @@ public class RobotContainer {
                 return new JogLiftArm(m_liftArm, () -> -m_armController.getRawAxis(1));
         }
 
-        public Command getJogWristCommand(boolean ff, boolean allByp) {
+        public Command getJogWristCommand(boolean allByp) {
 
                 return new JogWrist(m_wrist, () -> -m_armController.getRawAxis(5), allByp);
         }
@@ -350,19 +383,12 @@ public class RobotContainer {
         }
 
         public Command getJogExtendArmCommand(boolean allByp) {
-                return new JogExtendArm(m_extendArm, () -> -m_armController.getRawAxis(0), allByp)
-                                .andThen(new PositionProfileExtendArm(m_extendArm,
-                                                ExtendArmConstants.extendArmConstraints,
-                                                m_extendArm.getPositionInches()));
+                return new JogExtendArm(m_extendArm, () -> -m_armController.getRawAxis(0), allByp);
+
         }
 
         public Command getJogIntakeCommand() {
                 return new JogIntake(m_intake, () -> m_armController.getRawAxis(4));
-        }
-
-
-        public Command runWristPos() {
-                return new InstantCommand(() -> m_wrist.startPosition());
         }
 
         public void simulationPeriodic() {

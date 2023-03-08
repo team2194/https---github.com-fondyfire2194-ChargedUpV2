@@ -19,8 +19,7 @@ public class WristNT extends CommandBase {
   private WristSubsystem m_wrist;
 
   public BooleanPublisher canok;
-  public BooleanPublisher plusswlim;
-  public BooleanPublisher minusswlim;
+  
   public BooleanPublisher plushwlim;
   public BooleanPublisher minushwlim;
   public BooleanPublisher inposition;
@@ -35,7 +34,7 @@ public class WristNT extends CommandBase {
   public DoublePublisher ff;
   public DoublePublisher kv;
   public DoublePublisher ks;
-  public DoublePublisher commandDPS;
+  public DoublePublisher commandRPS;
 
   public IntegerPublisher faults;
 
@@ -51,8 +50,7 @@ public class WristNT extends CommandBase {
 
     // publish to the topic in "datatable" called "Out"
     canok = wrist.getBooleanTopic("CANOK").publish();
-    plusswlim = wrist.getBooleanTopic("SWLIM+").publish();
-    minusswlim = wrist.getBooleanTopic("SWLIM-").publish();
+   
     inposition = wrist.getBooleanTopic("INPOSITION").publish();
     isstopped = wrist.getBooleanTopic("STOPPED").publish();
 
@@ -64,7 +62,7 @@ public class WristNT extends CommandBase {
     ff = wrist.getDoubleTopic("Feedforward").publish();
     kv = wrist.getDoubleTopic("KV").publish();
     ks = wrist.getDoubleTopic("KS").publish();
-    commandDPS = wrist.getDoubleTopic("CommandDPS").publish();
+    commandRPS = wrist.getDoubleTopic("commandRPS").publish();
 
     faults = wrist.getIntegerTopic("FAULTS").publish();
 
@@ -81,21 +79,19 @@ public class WristNT extends CommandBase {
   @Override
   public void execute() {
     canok.set(m_wrist.checkCANOK());
-    plusswlim.set(m_wrist.onPlusSoftwareLimit());
-    minusswlim.set(m_wrist.onMinusSoftwareLimit());
-
+    
     inposition.set(m_wrist.atTargetAngle());
     isstopped.set(m_wrist.isStopped());
 
-    position.set(m_wrist.positionDegrees);
-    targetangle.set(m_wrist.endpointDegrees);
-    velocity.set(m_wrist.degreespersec);
+    position.set(m_wrist.getAngleRadians());
+    targetangle.set(m_wrist.goalAngleRadians);
+    velocity.set(m_wrist.radspersec);
     amps.set(m_wrist.amps);
     out.set(m_wrist.appliedOutput);
     ff.set(m_wrist.ff);
-    kv.set(WristConstants.kVVoltSecondPerRad);
+    kv.set(WristConstants.kvWristVoltSecondsPerRadian);
     ks.set(WristConstants.ksVolts);
-    commandDPS.set(m_wrist.commandDPS);
+    commandRPS.set(m_wrist.commandRadPerSec);
 
     faults.set(m_wrist.getFaults());
 
@@ -107,10 +103,6 @@ public class WristNT extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     canok.close();
-
-    plusswlim.close();
-
-    minusswlim.close();
 
     inposition.close();
 
@@ -134,7 +126,7 @@ public class WristNT extends CommandBase {
 
     ks.close();
 
-    commandDPS.close();
+    commandRPS.close();
 
   }
 

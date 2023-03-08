@@ -10,11 +10,14 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
 public class PositionProfileWrist extends CommandBase {
   /** Creates a new PositionArm. */
   private WristSubsystem m_wrist;
+
+  private LiftArmSubsystem m_lift;
 
   private TrapezoidProfile.Constraints m_constraints;
 
@@ -37,32 +40,30 @@ public class PositionProfileWrist extends CommandBase {
   public DoublePublisher accel;
 
   private boolean inIZone;
+  private boolean setController;
 
-  public PositionProfileWrist(WristSubsystem wrist, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
+  public PositionProfileWrist(WristSubsystem wrist, LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
+      double goalAngleRadians) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_wrist = wrist;
+    m_lift = lift;
     m_constraints = constraints;
     m_goalAngleRadians = goalAngleRadians;
+    setController = true;
 
+    addRequirements(m_wrist);
+  }
+
+  public PositionProfileWrist(WristSubsystem wrist, LiftArmSubsystem lift) {
+    m_wrist = wrist;
+    m_lift = lift;
+    setController = false;
     addRequirements(m_wrist);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    loopctr = 0;
-
-    setGoal(m_goalAngleRadians);
-    m_wrist.m_wristController.setI(0);
-   // m_wrist.m_wristController.setIntegratorRange(-.1, .1);
-
-    m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
-
-    m_wrist.setControllerConstraints(m_constraints);
-
-    m_wrist.m_wristController.reset(new TrapezoidProfile.State(m_wrist.getAngleRadians(), 0));
-
     goalangle = wristprof.getDoubleTopic("GOALANGLE").publish();
     velocity = wristprof.getDoubleTopic("ACTVEL").publish();
     distance = wristprof.getDoubleTopic("ACTDIST").publish();
@@ -71,19 +72,25 @@ public class PositionProfileWrist extends CommandBase {
     lastspeed = wristprof.getDoubleTopic("LASTSPEED").publish();
     accel = wristprof.getDoubleTopic("ACCEL").publish();
 
+    loopctr = 0;
+
+    m_wrist.m_wristController.setI(0);
+
+    m_wrist.m_wristController.setI(0);
+
+    // m_wrist.m_wristController.setIntegratorRange(-.1, .1);
+
+    if (setController) {
+      m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
+
+      m_wrist.m_wristController.reset(new TrapezoidProfile.State(m_wrist.getAngleRadians(), 0));
+    }
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    if (m_wrist.isStopped() && m_wrist.goalAngleRadians != m_goalAngleRadians) {
-
-      setGoal(m_wrist.goalAngleRadians);
-
-      m_goalAngleRadians = m_wrist.goalAngleRadians;
-
-    }
 
     loopctr++;
 
@@ -91,11 +98,14 @@ public class PositionProfileWrist extends CommandBase {
 
     double lastTime = Timer.getFPGATimestamp();
 
-    double pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_goalAngleRadians);
+    double pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_wrist.goalAngleRadians);
 
     double acceleration = (m_wrist.m_wristController.getSetpoint().velocity - lastSpeed)
 
         / (Timer.getFPGATimestamp() - lastTime);
+
+    m_wrist.ff = m_wrist.m_armfeedforward.calculate(m_wrist.m_wristController.getSetpoint().position - (Math.PI / 2),
+        m_wrist.m_wristController.getSetpoint().velocity);
 
     m_wrist.m_motor.setVoltage(pidVal + m_wrist.ff);
 
@@ -103,20 +113,18 @@ public class PositionProfileWrist extends CommandBase {
 
     lastTime = Timer.getFPGATimestamp();
 
-
     // inIZone = checkIzone(.05);
 
     // if (!inIZone)
 
-    //   m_wrist.m_wristController.setI(0);
+    // m_wrist.m_wristController.setI(0);
 
     // else
 
     // m_wrist.m_wristController.setI(0.01);
 
-
     goalangle.set(m_goalAngleRadians);
-    velocity.set(m_wrist.getDegreesPerSec());
+    velocity.set(m_wrist.getRadsPerSec());
     distance.set(m_wrist.getAngleDegrees());
     feedforward.set(m_wrist.ff);
     pidval.set(pidVal);
@@ -127,7 +135,6 @@ public class PositionProfileWrist extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_wrist.endpointDegrees = m_wrist.getAngleDegrees();
     goalangle.close();
     velocity.close();
     distance.close();
@@ -141,14 +148,6 @@ public class PositionProfileWrist extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
-  }
-
-  public void setGoal(double dist) {
-
-    m_goal = new TrapezoidProfile.State(dist, 0);
-
-    m_wrist.m_wristController.reset(new TrapezoidProfile.State(m_wrist.getAngleDegrees(), 0));
-
   }
 
   private boolean checkIzone(double izonelimit) {

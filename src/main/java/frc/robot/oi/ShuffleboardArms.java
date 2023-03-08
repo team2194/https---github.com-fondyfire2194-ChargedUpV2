@@ -48,10 +48,14 @@ public class ShuffleboardArms {
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
                 liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionInches));
-                liftLayout.addNumber("SliderInches", () -> round2dp(m_lift.targetInchesFromSlider));
-                liftLayout.addNumber("LiftVel IPS", () -> round2dp(m_lift.inchespersec));
                 liftLayout.addNumber("CanCoderPosn", () -> round2dp(m_lift.cancoderPosition));
-                liftLayout.addNumber("CommandIPS", () -> round2dp(m_lift.commandIPS));
+                liftLayout.addNumber("GoalAngleRada", () -> round2dp(m_lift.goalAngleRadians));
+
+                liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
+                                .withWidget(BuiltInWidgets.kTextView);
+                
+                liftLayout.addBoolean("AtGoal", () -> m_lift.atTargetPosition())
+                                .withWidget(BuiltInWidgets.kTextView);
 
                 liftLayout.addBoolean("LiftCANOK", () -> m_lift.checkCANOK())
                                 .withWidget(BuiltInWidgets.kTextView);
@@ -63,9 +67,15 @@ public class ShuffleboardArms {
                                 .withPosition(2, 0)
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
-                // extLayout.addNumber("ExtPositionInch", () -> round2dp(m_ext.positionInches));
-                // extLayout.addNumber("ECommandIPS", () -> round2dp(m_ext.commandIPS));
-                // extLayout.addNumber("ExtAmps", () -> round2dp(m_ext.amps));
+                extLayout.addNumber("ExtPositionInch", () -> round2dp(m_ext.positionInches));
+                extLayout.addNumber("ExtAmps", () -> round2dp(m_ext.amps));
+                extLayout.addNumber("GoalInches", () -> round2dp(m_ext.goalInches));
+                extLayout.addNumber("MotorOut", () -> round2dp(m_ext.getAppliedOutput()));
+                extLayout.addBoolean("Stopped", () -> m_ext.isStopped())
+                                .withWidget(BuiltInWidgets.kTextView);
+                extLayout.addBoolean("AtGoal", () -> m_ext.atTargetPosition())
+                                .withWidget(BuiltInWidgets.kTextView);
+
                 extLayout.addBoolean("EXTCANOK", () -> m_ext.extendMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
 
@@ -77,12 +87,17 @@ public class ShuffleboardArms {
                                 .withSize(2, 4)
                                 .withProperties(Map.of("Label position", "LEFT"));
 
-                wristLayout.addNumber("WristPosition", () -> round2dp(m_wrist.positionDegrees));
-                wristLayout.addNumber("CommandDPS", () -> round2dp(m_wrist.commandDPS));
-                // wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));
+                wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.getAngleRadians()));
+                wristLayout.addNumber("CommandRadPerSec", () -> round2dp(m_wrist.commandRadPerSec));
+                wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));
+                wristLayout.addNumber("WristVelRadPS", () -> round2dp(m_wrist.getRadsPerSec()));
+                 
                 wristLayout.addBoolean("WristCANOK", () -> m_wrist.wristMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
-
+                wristLayout.addBoolean("Stopped", () -> m_wrist.isStopped())
+                                .withWidget(BuiltInWidgets.kTextView);
+                wristLayout.addBoolean("AtGoal", () -> m_wrist.atTargetAngle())
+                                .withWidget(BuiltInWidgets.kTextView);
                 wristLayout.add("WRPfPID", m_wrist.m_wristController).withWidget("Profiled PID Controller");
 
                 ShuffleboardLayout intakeLayout = Shuffleboard.getTab("Arms")
@@ -91,11 +106,10 @@ public class ShuffleboardArms {
                                 .withSize(2, 2)
                                 .withProperties(Map.of("Label position", "LEFT"));
 
-                intakeLayout.add("RunIntake", new InstantCommand(() -> intake.runIntake()));
-
                 intakeLayout.add("StopIntake", new StopIntake(intake));
 
                 intakeLayout.addNumber("Actual RPM", () -> round2dp(intake.getRPM()));
+
                 intakeLayout.addNumber("Intake Amps", () -> round2dp(intake.getAmps()));
 
                 intakeLayout.addBoolean("IntakeCANOK", () -> intake.checkCANOK())

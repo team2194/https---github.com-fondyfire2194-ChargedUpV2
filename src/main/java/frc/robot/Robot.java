@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.ExtendArmConstants;
+import frc.robot.Constants.LiftArmConstants;
+import frc.robot.Constants.WristConstants;
 import frc.robot.commands.NTs.ExtendArmNT;
 import frc.robot.commands.NTs.IntakeNT;
 import frc.robot.commands.NTs.LiftArmNT;
@@ -132,7 +135,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-  //  CommandScheduler.getInstance().run();
+    // CommandScheduler.getInstance().run();
     if (m_disableStartTime == 0 && !driveIsBraked)
       m_disableStartTime = Timer.getFPGATimestamp();
 
@@ -185,8 +188,18 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.setIdleMode(true);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+      
     }
     runNTCommands();
+
+    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+        m_robotContainer.m_extendArm.getPositionInches(), false);
+
+    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmConstraints,
+        m_robotContainer.m_liftArm.getCanCoderRadians(), false);
+
+    m_robotContainer.m_wrist.setController(WristConstants.wristConstraints,
+        m_robotContainer.m_wrist.getAngleRadians(), false);
 
   }
 
@@ -223,7 +236,7 @@ public class Robot extends TimedRobot {
     Pose2d startPoseBlue = m_robotContainer.m_ghs.blueRightHybridNode.plus(new Transform2d(
         new Translation2d(SimConstants.robotLengthMeters / 2, SimConstants.robotWidthMeters),
         new Rotation2d()));
-    //SmartDashboard.putString(("BlueStart"), startPoseBlue.toString());
+    // SmartDashboard.putString(("BlueStart"), startPoseBlue.toString());
     if (DriverStation.getAlliance() == Alliance.Blue) {
       new SetSwerveOdometry(m_robotContainer.m_drive,
           m_robotContainer.m_fieldSim, startPoseBlue)
@@ -243,10 +256,10 @@ public class Robot extends TimedRobot {
 
   private void runNTCommands() {
 
-    new LiftArmNT(m_robotContainer.m_liftArm).schedule();
-    //new ExtendArmNT(m_robotContainer.m_extendArm).schedule();
-    //new WristNT(m_robotContainer.m_wrist).schedule();
-   // new IntakeNT(m_robotContainer.m_intake).schedule();
+    // new LiftArmNT(m_robotContainer.m_liftArm).schedule();
+    // new ExtendArmNT(m_robotContainer.m_extendArm).schedule();
+    new WristNT(m_robotContainer.m_wrist).schedule();
+    // new IntakeNT(m_robotContainer.m_intake).schedule();
     // new DriveNT(m_robotContainer.m_drive).schedule();
     // new SwerveModuleFLNT(m_robotContainer.m_drive.m_frontLeft).schedule();
     // new SwerveModulesFRNT(m_robotContainer.m_drive.m_frontRight).schedule();

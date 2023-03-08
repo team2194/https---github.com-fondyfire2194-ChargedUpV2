@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -65,15 +64,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public int coneSensedDistance;
 
-  public int cubeSenseThreshold;
+  public int cubeSenseThreshold=100;
 
-  public int coneSenseThreshold;
+  public int coneSenseThreshold=100;
 
   public boolean cubePresent;
 
   public boolean conePresent;
-
-  private GenericEntry intakeTargetRPM;
 
   public boolean coneSensorOK;
 
@@ -117,13 +114,6 @@ public class IntakeSubsystem extends SubsystemBase {
     mEncoder.setPositionConversionFactor(1);
 
     mEncoder.setVelocityConversionFactor(1);
-
-    intakeTargetRPM = Shuffleboard.getTab("Arms")
-        .add("TargetRPM", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withPosition(6, 2).withSize(2, 1)
-        .withProperties(Map.of("min", -1000, "max", 1000))
-        .getEntry();
 
     if (RobotBase.isReal()) {
       // Configure time of flight sensor for short ranging mode and sample
@@ -302,10 +292,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public String faultAsBitString() {
     return Integer.toBinaryString(getIntakeFaults());
-  }
-
-  public void runIntake() {
-    new RunIntake(this, intakeTargetRPM.getDouble(0)).schedule();
   }
 
   public void stopIntake() {

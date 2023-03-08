@@ -4,36 +4,42 @@
 
 package frc.robot.commands.TeleopRoutines;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.ExtendArm.RunExtArmProfile;
-import frc.robot.commands.LiftArm.RunLiftArmProfile;
-import frc.robot.commands.Wrist.RunWristProfile;
+import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.LiftArmSubsystem;
+import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class HomeExtPositionLiftWrist extends SequentialCommandGroup {
-  /** Creates a new ArmsHomeSequence. */
-  public HomeExtPositionLiftWrist(LiftArmSubsystem lift, ExtendArmSubsystem ext,
+    /** Creates a new ArmsHomeSequence. */
+    public HomeExtPositionLiftWrist(LiftArmSubsystem lift, ExtendArmSubsystem ext,
 
-      WristSubsystem wrist) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
+            WristSubsystem wrist) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
 
-        new ParallelCommandGroup(
+                new ParallelCommandGroup(
 
-            new RunExtArmProfile(ext, ExtendArmConstants.extendArmConstraints, 0),
-            new RunLiftArmProfile(lift,LiftArmConstants.liftArmConstraints, 0),
-            new RunWristProfile(wrist,WristConstants.wristConstraints, 120))
+                        new SetExtArmGoal(ext, ExtendArmConstants.extendArmConstraints,
+                                presetExtArmDistances.HOME.getDistance()),
 
-    );
-  }
+                        new SetWristGoal(wrist, WristConstants.wristConstraints,
+                                presetWristAngles.HOME.getAngleRads()),
+
+                        new SetWristGoal(wrist, LiftArmConstants.liftArmConstraints,
+                                presetLiftAngles.SAFE_HOME.getAngleRads())));
+    }
 }

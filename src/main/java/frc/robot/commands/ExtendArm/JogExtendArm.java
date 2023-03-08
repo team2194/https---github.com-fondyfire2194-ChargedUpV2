@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 
@@ -77,9 +78,8 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.m_motor.setVoltage(0);
 
-    new PositionProfileExtendArm(m_ext, ExtendArmConstants.extendArmConstraints, m_ext.getPositionInches()).schedule();
+    m_ext.setController(ExtendArmConstants.extendArmConstraints, m_ext.getPositionInches(), false);
 
-    // m_ext.setGoal(m_ext.getPositionInches());
   }
 
   // Returns true when the command should end.

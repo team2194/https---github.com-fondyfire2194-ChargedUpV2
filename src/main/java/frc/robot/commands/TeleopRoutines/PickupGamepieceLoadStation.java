@@ -4,15 +4,16 @@
 
 package frc.robot.commands.TeleopRoutines;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.ExtendArm.RunExtArmProfile;
+import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.Wrist.RunWristProfile;
+import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -51,39 +52,33 @@ public class PickupGamepieceLoadStation extends SequentialCommandGroup {
 
                                                 new ConditionalCommand(
 
-                                                                new RunExtArmProfile(ext,
+                                                                new SetExtArmGoal(ext,
                                                                                 ExtendArmConstants.intakeConstraints,
                                                                                 presetExtArmDistances.PICKUP_CONE_LOAD_STATION
-                                                                                                .getDistance())
+                                                                                                .getDistance()),
 
-                                                                                .until(() -> intake
-                                                                                                .gamepieceInIntake() == true)
-                                                                                .withTimeout(5),
-
-                                                                new RunExtArmProfile(ext,
+                                                                new SetExtArmGoal(ext,
                                                                                 ExtendArmConstants.intakeConstraints,
                                                                                 presetExtArmDistances.PICKUP_CUBE_LOAD_STATION
-                                                                                                .getDistance())
-
-                                                                                .until(() -> intake
-                                                                                                .gamepieceInIntake() == true)
-                                                                                .withTimeout(5),
+                                                                                                .getDistance()),
 
                                                                 () -> type == gamePiece.CONE)),
 
-                                new WaitCommand(1),
+                                new GetPieceAtIntake(intake, type),
 
                                 new ConditionalCommand(
 
-                                                new RunWristProfile(wrist, WristConstants.wristConstraints,
-                                                                presetWristAngles.PICKUP_CONE_LOAD_STATION.getAngle()),
+                                                new SetWristGoal(wrist, WristConstants.wristConstraints,
+                                                                presetWristAngles.PICKUP_CONE_LOAD_STATION
+                                                                                .getAngleRads()),
 
-                                                new RunWristProfile(wrist, WristConstants.wristConstraints,
-                                                                presetWristAngles.PICKUP_CUBE_LOAD_STATION.getAngle()),
+                                                new SetWristGoal(wrist, WristConstants.wristConstraints,
+                                                                presetWristAngles.PICKUP_CUBE_LOAD_STATION
+                                                                                .getAngleRads()),
 
                                                 () -> type == gamePiece.CONE),
 
-                                new RunExtArmProfile(ext, ExtendArmConstants.extendArmConstraints,
+                                new SetExtArmGoal(ext, ExtendArmConstants.extendArmConstraints,
                                                 presetExtArmDistances.HOME.getDistance()),
 
                                 new HomeExtPositionLiftWrist(lift, ext, wrist)

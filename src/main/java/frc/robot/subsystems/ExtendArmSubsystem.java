@@ -7,22 +7,16 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+//import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.ExtendArmConstants;
-import frc.robot.commands.ExtendArm.EndExtCommand;
-import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
-import frc.robot.Pref;
 
 public class ExtendArmSubsystem extends SubsystemBase {
 
@@ -37,15 +31,17 @@ public class ExtendArmSubsystem extends SubsystemBase {
          * 
          */
 
+        RETRACT(0),
+
         HOME(1),
 
-        SAFE_TRAVEL(1),
+        SAFE_TRAVEL(2),
 
-        PICKUP_CUBE_GROUND_(28),
+        PICKUP_CUBE_GROUND(20),
 
-        PICKUP_CONE_GROUND_(27),
+        PICKUP_CONE_GROUND(17),
 
-        PLACE_CUBE_GROUND(28.),
+        PLACE_CUBE_GROUND(18.),
 
         PLACE_CUBE_MID_SHELF(5.),
 
@@ -81,7 +77,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public final CANSparkMax m_motor = new CANSparkMax(CanConstants.EXTEND_ARM_MOTOR,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
-    public final SparkMaxPIDController mPosController;
+    
 
     public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
             ExtendArmConstants.extendArmConstraints);
@@ -112,8 +108,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public double positionInches;
 
-    public double endpointInches;
-
     public double inchespersec;
 
     private int loopctr;
@@ -140,7 +134,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         useSoftwareLimit = false;
 
-        mPosController = m_motor.getPIDController();
+
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(1);
@@ -150,10 +144,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
 
-        mPosController.setOutputRange(-ExtendArmConstants.MAX_RATE_INCHES_PER_SEC,
-                ExtendArmConstants.MAX_RATE_INCHES_PER_SEC);
-
-        mPosController.setP(.1, 1);
 
         mEncoder.setPositionConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV);
 
@@ -163,21 +153,18 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
-        setGoal(getPositionInches());
-
         m_motor.setSmartCurrentLimit(25);
 
         m_motor.setClosedLoopRampRate(2);
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
-        mEncoder.setPosition(0);
+        mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
         if (RobotBase.isSimulation()) {
 
-            setGoal(ExtendArmConstants.MIN_POSITION);
+            setControllerGoal(ExtendArmConstants.MIN_POSITION);
 
-            mPosController.setP(5);
         }
 
         setSoftwareLimits();
@@ -193,21 +180,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        if (runPos) {
-           // new EndExtCommand(this);
-            new PositionProfileExtendArm(this, ExtendArmConstants.extendArmConstraints, Pref.getPref("EXTINCHES"))
-                    .schedule();
-            runPos = false;
-        }
-
-        SmartDashboard.putBoolean("RUNPOS", runPos);
-
-        SmartDashboard.putBoolean("EXTSTOPPE", isStopped());
-
         loopctr++;
 
-        if (RobotBase.isReal() && DriverStation.isDisabled())
-            endpointInches = getPositionInches();
 
         if (faultSeen != 0)
 
@@ -217,7 +191,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         if (loopctr >= 5) {
             appliedOutput = getAppliedOutput();
             amps = getAmps();
-            endpointInches = getEndpointInches();
             positionInches = getPositionInches();
             inchespersec = getInchesPerSec();
             extendMotorConnected = checkCANOK();
@@ -247,29 +220,40 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_extController.setConstraints(constraints);
     }
 
-    public void setGoal(double position) {
+    public void setControllerGoal(double position) {
         goalInches = position;
+    }
+
+    public void setController(TrapezoidProfile.Constraints constraints, double distance, boolean initial) {
+        
+        if (isStopped()) {
+
+            setControllerConstraints(constraints);
+            goalInches = distance;
+            if (initial)
+                m_extController.reset(new TrapezoidProfile.State(presetExtArmDistances.HOME.getDistance(), 0));
+            else
+                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
+
+        }
     }
 
     public void resetPosition(double position) {
 
         mEncoder.setPosition(position);
 
-        endpointInches = 0;
+
 
     }
 
     public boolean atTargetPosition() {
-        return Math.abs(endpointInches - getPositionInches()) < inPositionBandwidth;
+        return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
 
     public boolean isStopped() {
         return Math.abs(mEncoder.getVelocity()) < .5;
     }
 
-    public double getEndpointInches() {
-        return endpointInches;
-    }
 
     public double getPositionInches() {
 
@@ -320,12 +304,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public void setRunPos(boolean on) {
         runPos = on;
-    }
-
-    public Command startPosition() {
-        runPos = false;
-        return new PositionProfileExtendArm(this, ExtendArmConstants.extendArmConstraints, Pref.getPref("EXTINCHES"));
-
     }
 
     public void setSoftwareLimits() {

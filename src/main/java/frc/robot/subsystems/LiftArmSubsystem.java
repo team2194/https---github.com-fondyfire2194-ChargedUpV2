@@ -13,15 +13,11 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CTRECanCoder;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
-import frc.robot.commands.LiftArm.PositionProfileLift;
-import frc.robot.Pref;
 import frc.robot.utils.AngleUtils;
 
 public class LiftArmSubsystem extends SubsystemBase {
@@ -34,11 +30,11 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public enum presetLiftAngles {
 
-        SAFE_HOME(31.4),
+        SAFE_HOME(34.1),
 
-        TRAVEL(33),
+        TRAVEL(36),
 
-        CLEAR_ARMS(34),
+        CLEAR_ARMS(38),
 
         PICKUP_CUBE_GROUND(45),
 
@@ -71,7 +67,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         }
 
-        public double getAngle() {
+        public double getAngleRads() {
             return Units.degreesToRadians(this.angle);
         }
 
@@ -92,17 +88,13 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private boolean useSoftwareLimit;
 
-    private double inPositionBandwidth = .5;
+    private double inPositionBandwidth = .02;
 
     public boolean liftArmMotorConnected;
 
     public int faultSeen;
 
     public double positionError;
-
-    public double endpointInches;
-
-    private double pidout = 0;
 
     private double m_positionSim;
 
@@ -116,7 +108,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public ArmFeedforward m_armFeedforward;
 
-    public double deliverAngle;
+    public double deliverAngleRads;
 
     public double appliedOutput;
 
@@ -139,9 +131,6 @@ public class LiftArmSubsystem extends SubsystemBase {
     private double extEndAdjust;
 
     private double wristAngleAdj;
-
-    public double targetInchesFromSlider;
-    public double commandIPS;
 
     public double goalAngleRadians;
 
@@ -200,32 +189,20 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     }
 
-    public double getInchesFromDegrees(double degrees) {
+    // public double getInchesFromDegrees(double degrees) {
 
-        return LiftArmConstants.MIN_INCHES
+    //     return LiftArmConstants.MIN_INCHES
 
-                + (degrees - LiftArmConstants.MIN_ANGLE) / LiftArmConstants.DEGREES_PER_INCH;
-    }
+    //             + (degrees - LiftArmConstants.MIN_ANGLE) / LiftArmConstants.DEGREES_PER_INCH;
+    // }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
 
-        if (runPos) {
-            // new EndExtCommand(this);
-
-            double prefVAl = Pref.getPref("LIFTDEG");
-            SmartDashboard.putNumber("PREFVAL", prefVAl);
-            new PositionProfileLift(this, LiftArmConstants.liftArmConstraints,
-            Pref.getPref("LIFTDEG"))
-                    .schedule();
-            runPos = false;
-        }
-
         loopctr++;
 
-        if (RobotBase.isReal() && DriverStation.isDisabled())
-            endpointInches = getPositionInches();
+       
 
         if (faultSeen != 0)
             faultSeen = getFaults();
@@ -234,7 +211,6 @@ public class LiftArmSubsystem extends SubsystemBase {
             appliedOutput = getAppliedOutput();
             amps = getAmps();
             cancoderPosition = getCanCoderPosition();
-            endpointInches = getEndpointInches();
 
         }
         if (loopctr == 6) {
@@ -265,10 +241,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public void close() {
         m_motor.close();
-    }
-
-    public double getEndpointInches() {
-        return endpointInches;
     }
 
     public void setExtAdjust(double adj) {
@@ -393,12 +365,23 @@ public class LiftArmSubsystem extends SubsystemBase {
         return m_motor.getFaults();
     }
 
-    public void setGoal(double goalRadians) {
+    public void setControllerGoal(double goalRadians) {
         goalAngleRadians = goalRadians;
     }
 
     public void setControllerConstraints(TrapezoidProfile.Constraints constraints) {
         m_liftController.setConstraints(constraints);
+    }
+
+    public void setController(TrapezoidProfile.Constraints constraints, double anglerads, boolean initial) {
+        if (isStopped()) {
+            setControllerConstraints(constraints);
+            setControllerGoal(anglerads);
+            if (initial)
+                m_liftController.reset(new TrapezoidProfile.State(presetLiftAngles.SAFE_HOME.getAngleRads(), 0));
+            else
+                m_liftController.reset(new TrapezoidProfile.State(getCanCoderRadians(), 0));
+        }
     }
 
 }

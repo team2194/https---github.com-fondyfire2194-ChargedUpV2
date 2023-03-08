@@ -10,6 +10,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.WristSubsystem;
 
@@ -55,13 +57,13 @@ public class JogWrist extends CommandBase {
 
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE || m_bypassLimit;
 
-    throttle_sl *= WristConstants.MAX_DEGREES_PER_SEC;
+    throttle_sl *= WristConstants.MAX_RADS_PER_SEC;
 
-    m_wrist.commandDPS = throttle_sl;
+    m_wrist.commandRadPerSec = throttle_sl;
 
-    double positionRadians = m_wrist.getAngleRadians();
+    double positionRadians = 0;//m_wrist.getAngleRadians();
 
-    double angularVelocity = Units.degreesToRadians(throttle * WristConstants.MAX_DEGREES_PER_SEC);
+    double angularVelocity = Units.degreesToRadians(throttle * WristConstants.MAX_RADS_PER_SEC);
 
     m_wrist.ff = m_wrist.m_armfeedforward.calculate(positionRadians, angularVelocity);
 
@@ -69,7 +71,11 @@ public class JogWrist extends CommandBase {
 
       m_wrist.m_motor.setVoltage(m_wrist.ff);
 
-    m_wrist.setGoal(m_wrist.getAngleRadians());
+    else
+
+      m_wrist.m_motor.setVoltage(0);
+
+    m_wrist.setControllerGoal(m_wrist.getAngleRadians());
 
   }
 
@@ -77,7 +83,8 @@ public class JogWrist extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_wrist.m_motor.setVoltage(0);
-    m_wrist.endpointDegrees = m_wrist.getAngleDegrees();
+    m_wrist.setController(WristConstants.wristConstraints, m_wrist.getAngleRadians(), false);
+
   }
 
   // Returns true when the command should end.
