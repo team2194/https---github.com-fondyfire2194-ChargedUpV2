@@ -35,11 +35,11 @@ public class IntakeDeliverPiece extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_intake.conePresent) {
+    if (!m_intake.conePresent) {
       m_intake.moveManually(presetIntakeSpeeds.DELIVER_CONE.getSpeed());
     }
 
-    if (m_intake.cubePresent) {
+    if (!m_intake.cubePresent) {
       m_intake.moveManually(presetIntakeSpeeds.DELIVER_CUBE.getSpeed());
     }
   }

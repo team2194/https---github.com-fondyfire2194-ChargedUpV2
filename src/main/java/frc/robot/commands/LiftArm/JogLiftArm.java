@@ -8,22 +8,27 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 
 public class JogLiftArm extends CommandBase {
   /** Creates a new JogArm. */
   private LiftArmSubsystem m_lift;
+  private CommandXboxController m_controller;
   private DoubleSupplier m_speed;
   private double throttle;
   private double throttleMultiplier = .25;
 
-  private final SlewRateLimiter m_slewLift = new SlewRateLimiter(LiftArmConstants.JOG_SLEW_RATE, -10000, 0);
 
-  public JogLiftArm(LiftArmSubsystem lift, DoubleSupplier speed) {
+  //private final SlewRateLimiter m_slewLift = new SlewRateLimiter(LiftArmConstants.JOG_SLEW_RATE, -10000, 0);
+
+  public JogLiftArm(LiftArmSubsystem lift, DoubleSupplier speed,CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
+    m_controller=controller;
     m_speed = speed;
     addRequirements(m_lift);
   }
@@ -44,23 +49,17 @@ public class JogLiftArm extends CommandBase {
 
     throttle = Math.signum(throttle) * Math.pow(throttle, 2);
 
-    double throttle_sl = m_slewLift.calculate(throttle);
+    double throttle_sl = throttle;
 
-    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE;
+    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE ||m_controller.getHID().getBackButton();
 
-    boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE;
+    boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE||m_controller.getHID().getBackButton();
 
     throttle_sl *= throttleMultiplier;
 
-    throttle_sl *= LiftArmConstants.MAX_RATE_INCHES_PER_SEC;
+    if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
 
-    double positionRadians = 0;
-
-    m_lift.ff = m_lift.m_armFeedforward.calculate(positionRadians, throttle_sl);
-
-    if (m_lift.ff > 0 & allowUp || m_lift.ff < 0 && allowDown) {
-
-      m_lift.m_motor.setVoltage(m_lift.ff);
+      m_lift.m_motor.setVoltage(throttle_sl*RobotController.getBatteryVoltage());
     }
 
     else {
@@ -68,7 +67,7 @@ public class JogLiftArm extends CommandBase {
       m_lift.m_motor.setVoltage(0);
     }
 
-    m_lift.setControllerGoal(m_lift.getPositionInches());
+
 
   }
 

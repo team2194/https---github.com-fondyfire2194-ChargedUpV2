@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 //import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -77,7 +78,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public final CANSparkMax m_motor = new CANSparkMax(CanConstants.EXTEND_ARM_MOTOR,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
-    
+    public final SparkMaxPIDController mVelController;
 
     public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
             ExtendArmConstants.extendArmConstraints);
@@ -112,7 +113,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     private int loopctr;
 
-    private int tstctr;
+    public int tstctr;
 
     public double ff;// feedforward
 
@@ -127,6 +128,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
     private boolean runPos;
 
     public boolean endComm;
+
+    public double pidVal;
 
     public ExtendArmSubsystem() {
 
@@ -143,23 +146,31 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
-
+        mVelController = m_motor.getPIDController();
 
         mEncoder.setPositionConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV);
 
         mEncoder.setVelocityConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV / 60);
 
-        SmartDashboard.putNumber("EXTIPR", ExtendArmConstants.INCHES_PER_ENCODER_REV);
+
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
         m_motor.setSmartCurrentLimit(25);
 
-        m_motor.setClosedLoopRampRate(2);
+        m_motor.setClosedLoopRampRate(.5);
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
+        mVelController.setOutputRange(-.5,.5);
+
+        mVelController.setFF(1 / (ExtendArmConstants.MAX_RATE_INCHES_PER_SEC));
+
+        mVelController.setP(.1);
+
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
+
+        setController(ExtendArmConstants.extendArmConstraints, presetExtArmDistances.HOME.getDistance(), true);
 
         if (RobotBase.isSimulation()) {
 
@@ -179,7 +190,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
+SmartDashboard.putNumber("EXTTST", tstctr);
         loopctr++;
 
 

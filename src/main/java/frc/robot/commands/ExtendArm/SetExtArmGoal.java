@@ -5,18 +5,19 @@
 package frc.robot.commands.ExtendArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.ExtendArmSubsystem;
-import frc.robot.subsystems.WristSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SetExtArmGoal extends InstantCommand {
+public class SetExtArmGoal extends CommandBase {
   private ExtendArmSubsystem m_ext;
   private TrapezoidProfile.Constraints m_constraints;
   private double m_goalDist;
-
+int tstctr;
   public SetExtArmGoal(ExtendArmSubsystem ext, TrapezoidProfile.Constraints constraints, double goalDist) {
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -28,6 +29,25 @@ public class SetExtArmGoal extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_ext.setController(m_constraints, m_goalDist, false);
+
   }
+
+  @Override
+  public void execute() {
+    m_ext.setController(m_constraints, m_goalDist, false);
+    SmartDashboard.putNumber("EXTTST", tstctr++);
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return m_ext.goalInches == m_goalDist;
+  }
+
 }

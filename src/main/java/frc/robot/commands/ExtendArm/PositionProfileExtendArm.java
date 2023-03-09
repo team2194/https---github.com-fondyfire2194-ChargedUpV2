@@ -4,11 +4,12 @@
 
 package frc.robot.commands.ExtendArm;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -30,29 +31,16 @@ public class PositionProfileExtendArm extends CommandBase {
 
   private double error;
 
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
-  NetworkTable extprof = inst.getTable("extprof");
-
-  public DoublePublisher goalinches;
-  public DoublePublisher velocity;
-  public DoublePublisher distance;
-  public DoublePublisher feedforward;
-  public DoublePublisher pidval;
-  public DoublePublisher lastspeed;;
-  public DoublePublisher accel;
-  public DoublePublisher profpos;
-  public DoublePublisher disterr;
-
   private boolean inIZone;
 
   private boolean setController;
 
-  public PositionProfileExtendArm(ExtendArmSubsystem ext,LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalInches) {
+  public PositionProfileExtendArm(ExtendArmSubsystem ext, LiftArmSubsystem lift,
+      TrapezoidProfile.Constraints constraints, double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ext = ext;
 
-    m_lift=lift;
+    m_lift = lift;
 
     m_constraints = constraints;
 
@@ -63,9 +51,9 @@ public class PositionProfileExtendArm extends CommandBase {
     addRequirements(m_ext);
   }
 
-  public PositionProfileExtendArm(ExtendArmSubsystem ext,LiftArmSubsystem lift) {
+  public PositionProfileExtendArm(ExtendArmSubsystem ext, LiftArmSubsystem lift) {
     m_ext = ext;
-    m_lift=lift;
+    m_lift = lift;
     addRequirements(m_ext);
     setController = false;
   }
@@ -74,27 +62,15 @@ public class PositionProfileExtendArm extends CommandBase {
   @Override
   public void initialize() {
 
-    goalinches = extprof.getDoubleTopic("GOALINCH").publish();
-    velocity = extprof.getDoubleTopic("ACTVEL").publish();
-    distance = extprof.getDoubleTopic("ACTDIST").publish();
-    feedforward = extprof.getDoubleTopic("FFWD").publish();
-    pidval = extprof.getDoubleTopic("PIDVAL").publish();
-    lastspeed = extprof.getDoubleTopic("LASTSPEED").publish();
-    accel = extprof.getDoubleTopic("ACCEL").publish();
-    profpos = extprof.getDoubleTopic("PROFILEPOSN").publish();
-    disterr = extprof.getDoubleTopic("DISTERR").publish();
-  
-    
-
     loopctr = 0;
+
+    m_ext.m_extController.setI(0);
+
+    m_ext.m_extController.setIntegratorRange(-2, 2);
 
     if (setController) {
 
       m_ext.setControllerConstraints(m_constraints);
-
-      m_ext.m_extController.setI(0);
-
-      // m_ext.m_extController.setIntegratorRange(0, 0);
 
       m_ext.goalInches = m_goalInches;
 
@@ -118,7 +94,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     double lastTime = Timer.getFPGATimestamp();
 
-    double pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
+    m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
         m_ext.goalInches);
 
     double acceleration = (m_ext.m_extController.getSetpoint().velocity -
@@ -127,37 +103,32 @@ public class PositionProfileExtendArm extends CommandBase {
     m_ext.ff = m_ext.m_feedforward.calculate(m_ext.m_extController.getSetpoint().velocity,
         acceleration);
 
-    if (allowIn && allowOut)
+    double profvel = m_ext.m_extController.getSetpoint().velocity;
 
-      m_ext.m_motor.setVoltage(pidVal + m_ext.ff);
+    double pidvolts = m_ext.pidVal * RobotController.getBatteryVoltage();
 
-    else
+    if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
+
+      m_ext.m_motor.setVoltage(pidvolts + m_ext.ff);
+
+    } else {
 
       m_ext.m_motor.setVoltage(0);
+    }
 
     lastSpeed = m_ext.m_extController.getSetpoint().velocity;
 
     lastTime = Timer.getFPGATimestamp();
 
-    // inIZone = checkIzone(.05);
+    inIZone = checkIzone(2.0);
 
-    // if (!inIZone)
+    if (!inIZone && m_ext.m_extController.getI() != 0)
 
-    // m_ext.m_extController.setI(0);
+      m_ext.m_extController.setI(0);
 
-    // else
+    if (inIZone && m_ext.m_extController.getI() == 0)
 
-    // m_ext.m_extController.setI(0.01);
-
-    goalinches.set(m_goalInches);
-    velocity.set(m_ext.getInchesPerSec());
-    distance.set(m_ext.getPositionInches());
-    feedforward.set(m_ext.ff);
-    pidval.set(pidVal);
-    accel.set(acceleration);
-    lastspeed.set(lastSpeed);
-    profpos.set(m_ext.m_extController.getSetpoint().position);
-    disterr.set(m_goalInches - m_ext.getPositionInches());
+      m_ext.m_extController.setI(0.5);
   }
 
   // Called once the command ends or is interrupted.
@@ -173,6 +144,7 @@ public class PositionProfileExtendArm extends CommandBase {
   }
 
   private boolean checkIzone(double izonelimit) {
+
     return Math.abs(m_ext.goalInches - m_ext.getPositionInches()) < izonelimit;
 
   }

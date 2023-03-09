@@ -5,12 +5,10 @@
 package frc.robot.commands.LiftArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 
 public class PositionProfileLift extends CommandBase {
@@ -28,17 +26,6 @@ public class PositionProfileLift extends CommandBase {
   private double pidVal;
 
   private int loopctr;
-
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
-  NetworkTable liftprof = inst.getTable("liftprof");
-
-  public DoublePublisher goalAngle;
-  public DoublePublisher velocity;
-  public DoublePublisher feedforward;
-  public DoublePublisher pidval;
-  public DoublePublisher lastspeed;;
-  public DoublePublisher accel;
 
   private boolean directionIsDown;
 
@@ -65,12 +52,6 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void initialize() {
 
-    goalAngle = liftprof.getDoubleTopic("GOALANGLERADS").publish();
-    velocity = liftprof.getDoubleTopic("ACTVEL").publish();
-    feedforward = liftprof.getDoubleTopic("FFWD").publish();
-    pidval = liftprof.getDoubleTopic("PIDVAL").publish();
-    lastspeed = liftprof.getDoubleTopic("LASTSPEED").publish();
-    accel = liftprof.getDoubleTopic("ACCEL").publish();
     directionIsDown = m_goalAngleRadians < m_lift.getCanCoderRadians();
 
     loopctr = 0;
@@ -103,7 +84,7 @@ public class PositionProfileLift extends CommandBase {
 
     double lastTime = Timer.getFPGATimestamp();
 
-    pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_goalAngleRadians);
+    pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
     double acceleration = (m_lift.m_liftController.getSetpoint().velocity - lastSpeed)
 
@@ -112,31 +93,26 @@ public class PositionProfileLift extends CommandBase {
     m_lift.positionRadians = m_lift.getCanCoderRadians();
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
-    
+
         m_lift.m_liftController.getSetpoint().velocity);
 
-    m_lift.m_motor.setVoltage(pidVal + m_lift.ff);
+    m_lift.gravCalc = m_lift.m_liftController.getSetpoint().position - m_lift.positionRadians - (Math.PI / 2);
+
+    m_lift.m_motor.setVoltage((pidVal * RobotController.getBatteryVoltage()) + m_lift.ff);
 
     lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
 
     lastTime = Timer.getFPGATimestamp();
 
-    inIZone = checkIzone(.05);
+    inIZone = checkIzone(.1);
 
-    // if (!inIZone)
+    if (!inIZone)
 
-    // m_lift.m_liftController.setI(0);
+      m_lift.m_liftController.setI(0);
 
-    // else
+    else
 
-    // m_lift.m_liftController.setI(0.01);
-
-    goalAngle.set(m_lift.goalAngleRadians);
-    velocity.set(m_lift.getCanCoderRateRadsPerSec());
-    feedforward.set(m_lift.ff);
-    pidval.set(m_lift.m_liftController.getSetpoint().position);
-    accel.set(m_lift.positionRadians);
-    lastspeed.set(m_lift.m_liftController.getSetpoint().velocity);
+      m_lift.m_liftController.setI(0.1);
 
   }
 
@@ -144,12 +120,6 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void end(boolean interrupted) {
 
-    goalAngle.close();
-    velocity.close();
-    feedforward.close();
-    pidval.close();
-    lastspeed.close();
-    accel.close();
   }
 
   // Returns true when the command should end.

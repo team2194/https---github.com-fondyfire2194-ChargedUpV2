@@ -25,10 +25,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
-import frc.robot.commands.NTs.ExtendArmNT;
-import frc.robot.commands.NTs.IntakeNT;
-import frc.robot.commands.NTs.LiftArmNT;
-import frc.robot.commands.NTs.WristNT;
 import frc.robot.commands.swerve.SetSwerveOdometry;
 import frc.robot.simulation.SimConstants;
 import frc.robot.subsystems.LightStrip;
@@ -108,12 +104,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LP", lpctra++);
 
     // m_loop.poll();
-
-    m_robotContainer.m_fieldSim.periodic();
+    if (RobotBase.isSimulation())
+      m_robotContainer.m_fieldSim.periodic();
 
     loopCtr++;
 
-    if (loopCtr > 50) {
+    if (loopCtr < 5) {
 
       m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
           && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
@@ -188,10 +184,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_drive.setIdleMode(true);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
-      
-    }
-    runNTCommands();
 
+    }
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
         m_robotContainer.m_extendArm.getPositionInches(), false);
 
@@ -252,19 +246,6 @@ public class Robot extends TimedRobot {
           .schedule();
     }
 
-  }
-
-  private void runNTCommands() {
-
-    // new LiftArmNT(m_robotContainer.m_liftArm).schedule();
-    // new ExtendArmNT(m_robotContainer.m_extendArm).schedule();
-    new WristNT(m_robotContainer.m_wrist).schedule();
-    // new IntakeNT(m_robotContainer.m_intake).schedule();
-    // new DriveNT(m_robotContainer.m_drive).schedule();
-    // new SwerveModuleFLNT(m_robotContainer.m_drive.m_frontLeft).schedule();
-    // new SwerveModulesFRNT(m_robotContainer.m_drive.m_frontRight).schedule();
-    // new SwerveModuleBLNT(m_robotContainer.m_drive.m_backLeft).schedule();
-    // new SwerveModulesBRNT(m_robotContainer.m_drive.m_backRight).schedule();
   }
 
 }

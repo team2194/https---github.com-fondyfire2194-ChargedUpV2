@@ -7,11 +7,9 @@ package frc.robot.commands.Wrist;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.ExtendArmConstants;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.WristSubsystem;
 
@@ -19,15 +17,15 @@ public class JogWrist extends CommandBase {
   /** Creates a new JogWrist. */
   private WristSubsystem m_wrist;
   private DoubleSupplier m_speed;
-  private boolean m_bypassLimit;
+  private CommandXboxController m_controller;
   private double throttle;
-  private final SlewRateLimiter m_slewWrist = new SlewRateLimiter(WristConstants.JOG_SLEW_RATE, -10000, 0);
 
-  public JogWrist(WristSubsystem wrist, DoubleSupplier speed, boolean bypassLimit) {
+
+  public JogWrist(WristSubsystem wrist, DoubleSupplier speed, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_wrist = wrist;
     m_speed = speed;
-    m_bypassLimit = bypassLimit;
+    m_controller=controller;
     addRequirements(m_wrist);
   }
 
@@ -49,33 +47,24 @@ public class JogWrist extends CommandBase {
 
     throttle = Math.signum(throttle) * Math.pow(throttle, 2);
 
-    double throttle_sl = m_slewWrist.calculate(throttle);
+    double throttle_sl = throttle;
 
     throttle_sl *= throttleMultiplier;
+
+    boolean m_bypassLimit= m_controller.getHID().getBackButton();
 
     boolean allowUp = m_wrist.getAngleDegrees() <= WristConstants.MAX_ANGLE || m_bypassLimit;
 
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE || m_bypassLimit;
 
-    throttle_sl *= WristConstants.MAX_RADS_PER_SEC;
+    if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0)
 
-    m_wrist.commandRadPerSec = throttle_sl;
-
-    double positionRadians = 0;//m_wrist.getAngleRadians();
-
-    double angularVelocity = Units.degreesToRadians(throttle * WristConstants.MAX_RADS_PER_SEC);
-
-    m_wrist.ff = m_wrist.m_armfeedforward.calculate(positionRadians, angularVelocity);
-
-    if ((m_wrist.ff > 0 && allowUp) || (m_wrist.ff < 0 && allowDown))
-
-      m_wrist.m_motor.setVoltage(m_wrist.ff);
+      m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 
     else
 
       m_wrist.m_motor.setVoltage(0);
 
-    m_wrist.setControllerGoal(m_wrist.getAngleRadians());
 
   }
 

@@ -5,9 +5,7 @@
 package frc.robot.commands.Wrist;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -26,18 +24,6 @@ public class PositionProfileWrist extends CommandBase {
   private double m_goalAngleRadians;
 
   private int loopctr;
-
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-
-  NetworkTable wristprof = inst.getTable("wristprof");
-
-  public DoublePublisher goalangle;
-  public DoublePublisher velocity;
-  public DoublePublisher distance;
-  public DoublePublisher feedforward;
-  public DoublePublisher pidval;
-  public DoublePublisher lastspeed;;
-  public DoublePublisher accel;
 
   private boolean inIZone;
   private boolean setController;
@@ -64,23 +50,15 @@ public class PositionProfileWrist extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    goalangle = wristprof.getDoubleTopic("GOALANGLE").publish();
-    velocity = wristprof.getDoubleTopic("ACTVEL").publish();
-    distance = wristprof.getDoubleTopic("ACTDIST").publish();
-    feedforward = wristprof.getDoubleTopic("FFWD").publish();
-    pidval = wristprof.getDoubleTopic("PIDVAL").publish();
-    lastspeed = wristprof.getDoubleTopic("LASTSPEED").publish();
-    accel = wristprof.getDoubleTopic("ACCEL").publish();
 
     loopctr = 0;
 
     m_wrist.m_wristController.setI(0);
 
-    m_wrist.m_wristController.setI(0);
-
-    // m_wrist.m_wristController.setIntegratorRange(-.1, .1);
+    m_wrist.m_wristController.setIntegratorRange(-2, 2);
 
     if (setController) {
+
       m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
 
       m_wrist.m_wristController.reset(new TrapezoidProfile.State(m_wrist.getAngleRadians(), 0));
@@ -98,50 +76,46 @@ public class PositionProfileWrist extends CommandBase {
 
     double lastTime = Timer.getFPGATimestamp();
 
-    double pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_wrist.goalAngleRadians);
+    m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_wrist.goalAngleRadians);
 
     double acceleration = (m_wrist.m_wristController.getSetpoint().velocity - lastSpeed)
 
         / (Timer.getFPGATimestamp() - lastTime);
 
-    m_wrist.ff = m_wrist.m_armfeedforward.calculate(m_wrist.m_wristController.getSetpoint().position - (Math.PI / 2),
+    double cancodeAngle = m_lift.getCanCoderRadians();
+
+    cancodeAngle = 78;
+
+  
+    m_wrist.ff = m_wrist.m_armfeedforward.calculate(
+        m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2),
         m_wrist.m_wristController.getSetpoint().velocity);
 
-    m_wrist.m_motor.setVoltage(pidVal + m_wrist.ff);
+    m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2);
+
+    double pidvolts = m_wrist.pidVal * RobotController.getBatteryVoltage();
+
+    m_wrist.m_motor.setVoltage(pidvolts + m_wrist.ff);
 
     lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
 
     lastTime = Timer.getFPGATimestamp();
 
-    // inIZone = checkIzone(.05);
+    inIZone = checkIzone(.1);
 
-    // if (!inIZone)
+    if (!inIZone && m_wrist.m_wristController.getI() != 0)
 
-    // m_wrist.m_wristController.setI(0);
+      m_wrist.m_wristController.setI(0);
 
-    // else
+    if (inIZone && m_wrist.m_wristController.getI() == 0)
 
-    // m_wrist.m_wristController.setI(0.01);
-
-    goalangle.set(m_goalAngleRadians);
-    velocity.set(m_wrist.getRadsPerSec());
-    distance.set(m_wrist.getAngleDegrees());
-    feedforward.set(m_wrist.ff);
-    pidval.set(pidVal);
-    accel.set(acceleration);
-    lastspeed.set(lastSpeed);
+      m_wrist.m_wristController.setI(0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    goalangle.close();
-    velocity.close();
-    distance.close();
-    feedforward.close();
-    pidval.close();
-    lastspeed.close();
-    accel.close();
+
   }
 
   // Returns true when the command should end.

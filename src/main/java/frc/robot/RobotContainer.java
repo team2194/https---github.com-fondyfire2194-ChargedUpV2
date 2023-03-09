@@ -22,9 +22,12 @@ import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.Intake.JogIntake;
+import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
-import frc.robot.commands.LiftArm.PositionProfileLift;
 import frc.robot.commands.LiftArm.SetLiftGoal;
+import frc.robot.commands.NTs.MonitorThreadExt;
+import frc.robot.commands.NTs.MonitorThreadLift;
+import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.TeleopRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.HomeExtPositionLiftWrist;
 import frc.robot.commands.TeleopRoutines.IntakeDeliverPiece;
@@ -101,6 +104,10 @@ public class RobotContainer {
 
         public LightStrip m_ls = new LightStrip(9, 60);
 
+        public MonitorThreadExt mext;
+        public MonitorThreadLift mlift;
+        public MonitorThreadWrist mwrist;
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -114,7 +121,19 @@ public class RobotContainer {
 
                 m_liftArm = new LiftArmSubsystem();
 
+                mlift = new MonitorThreadLift(m_liftArm);
+
+                mlift.startThread();
+
                 m_extendArm = new ExtendArmSubsystem();
+
+                mext = new MonitorThreadExt(m_extendArm);
+
+                mext.startThread();
+
+                mwrist = new MonitorThreadWrist(m_wrist);
+
+                mwrist.startThread();
 
                 m_llv = new LimelightVision();
 
@@ -186,16 +205,13 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-                m_drive.setDefaultCommand(getDriveCommand());
+                // m_drive.setDefaultCommand(getDriveCommand());
 
-                m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm, m_liftArm));
-                // m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
-                // presetExtArmDistances.HOME.getDistance(), true);
+                // m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
+                // m_liftArm));
 
-                m_liftArm.setDefaultCommand(
-                                new PositionProfileLift(m_liftArm));
-                // m_liftArm.setController(LiftArmConstants.liftArmConstraints,
-                // presetLiftAngles.SAFE_HOME.getAngleRads(), true);
+                // m_liftArm.setDefaultCommand(
+                // new PositionProfileVelLift(m_liftArm));
 
                 m_wrist.setDefaultCommand(
                                 new PositionProfileWrist(m_wrist, m_liftArm));
@@ -221,9 +237,9 @@ public class RobotContainer {
                 // m_intake)
                 // .withName("Place Gamepiece In Grid"));
 
-                // m_driverController.x().onTrue(
+                m_driverController.x().onTrue(new RunIntake(m_intake, .75));
 
-                // m_driverController.y().onTrue(
+                m_driverController.y().onTrue(new RunIntake(m_intake, -.75));
 
                 m_driverController.a().onTrue(new IntakeDeliverPiece(m_intake)
                                 .withName("Deliver Sensed"));
@@ -293,12 +309,11 @@ public class RobotContainer {
 
         public void configArmControllerButtons() {
 
-                m_armController.leftBumper().whileTrue(getJogLiftArmCommand());
+                m_armController.leftBumper().whileTrue(getJogLiftArmCommand(m_armController));
 
-                m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController.back().getAsBoolean()));
+                m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController));
 
-                m_armController.rightBumper()
-                                .whileTrue(getJogWristCommand(m_armController.back().getAsBoolean()));
+                m_armController.rightBumper().whileTrue(getJogWristCommand(m_armController));
 
                 // m_armController.rightTrigger().whileTrue(getJogIntakeCommand());
 
@@ -306,7 +321,6 @@ public class RobotContainer {
                                 RumbleType.kLeftRumble, 1, 1));
 
                 // m_armController.a()
-                // .onTrue(runWristPos());
 
                 m_armController.y()
                                 .onTrue(new InstantCommand(() -> m_liftArm.setRunPos(true)));
@@ -329,11 +343,11 @@ public class RobotContainer {
 
                 testArms.a().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
 
-                testArms.b().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+                testArms.b().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 5));
 
-                testArms.x().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+                testArms.x().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 10));
 
-                testArms.y().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
+                testArms.y().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 15));
 
                 testArms.povUp().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
                                 Units.degreesToRadians(35)));
@@ -345,7 +359,7 @@ public class RobotContainer {
                                 Units.degreesToRadians(60)));
 
                 testArms.povRight().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
-                                Units.degreesToRadians(85)));
+                                Units.degreesToRadians(88)));
 
                 testArms.leftBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
                                 Units.degreesToRadians(120)));
@@ -354,10 +368,10 @@ public class RobotContainer {
                                 Units.degreesToRadians(90)));
 
                 testArms.rightBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(45)));
+                                Units.degreesToRadians(180)));
 
                 testArms.rightTrigger().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(-25)));
+                                Units.degreesToRadians(245)));
         }
 
         public Command getDriveCommand() {
@@ -368,22 +382,22 @@ public class RobotContainer {
 
         }
 
-        public Command getJogLiftArmCommand() {
+        public Command getJogLiftArmCommand(CommandXboxController m_armController2) {
 
-                return new JogLiftArm(m_liftArm, () -> -m_armController.getRawAxis(1));
+                return new JogLiftArm(m_liftArm, () -> -m_armController.getRawAxis(1), m_armController2);
         }
 
-        public Command getJogWristCommand(boolean allByp) {
+        public Command getJogWristCommand(CommandXboxController m_armController2) {
 
-                return new JogWrist(m_wrist, () -> -m_armController.getRawAxis(5), allByp);
+                return new JogWrist(m_wrist, () -> m_armController.getRawAxis(5), m_armController2);
         }
 
         public Command getStopDriveCommand() {
                 return new InstantCommand(() -> m_drive.stopModules());
         }
 
-        public Command getJogExtendArmCommand(boolean allByp) {
-                return new JogExtendArm(m_extendArm, () -> -m_armController.getRawAxis(0), allByp);
+        public Command getJogExtendArmCommand(CommandXboxController m_armController2) {
+                return new JogExtendArm(m_extendArm, () -> -m_armController.getRawAxis(0), m_armController2);
 
         }
 

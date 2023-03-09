@@ -31,26 +31,26 @@ public class WristSubsystem extends SubsystemBase {
 
     public enum presetWristAngles {
 
-        HOME(120),
+        HOME(52),
 
-        SAFE_TRAVEL(120),
+        SAFE_TRAVEL(58),
 
         PICKUP_CUBE_GROUND(90),
         PICKUP_CONE_GROUND(90),
 
-        PICKUP_CUBE_LOAD_STATION(-3),
-        PICKUP_CONE_LOAD_STATION(-3),
+        PICKUP_CUBE_LOAD_STATION(89),
+        PICKUP_CONE_LOAD_STATION(89),
 
-        PLACE_CUBE_GROUND(00),
-        PLACE_CUBE_MID_SHELF(17),
-        PLACE_CUBE_TOP_SHELF(18),
+        PLACE_CUBE_GROUND(60),
+        PLACE_CUBE_MID_SHELF(113),
+        PLACE_CUBE_TOP_SHELF(118),
 
-        PLACE_CONE_GROUND(10),
-        PLACE_CONE_MID_SHELF(20),
-        PLACE_CONE_TOP_SHELF(21),
+        PLACE_CONE_GROUND(100),
+        PLACE_CONE_MID_SHELF(120),
+        PLACE_CONE_TOP_SHELF(121),
 
-        PLACE_CONE_MID_PIPE(-45),
-        PLACE_CONE_TOP_PIPE(-45);
+        PLACE_CONE_MID_PIPE(145),
+        PLACE_CONE_TOP_PIPE(145);
 
         private double angle;
 
@@ -63,6 +63,8 @@ public class WristSubsystem extends SubsystemBase {
         }
 
     }
+
+    public double pidVal = 0;
 
     public final CANSparkMax m_motor;
 
@@ -84,7 +86,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private double positionChangeper20ms;
 
-    public ProfiledPIDController m_wristController = new ProfiledPIDController(.05, 0, 0,
+    public ProfiledPIDController m_wristController = new ProfiledPIDController(.2, 0, 0,
             WristConstants.wristConstraints);
 
     public double deliverAngleRads;
@@ -108,13 +110,17 @@ public class WristSubsystem extends SubsystemBase {
     public double commandRadPerSec;
     public double goalAngleRadians;
 
+    public int tstCtr;
+
+    public double gravCalc;
+
     public WristSubsystem() {
 
         useSoftwareLimit = false;
         m_motor = new CANSparkMax(CanConstants.WRIST_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
         m_motor.restoreFactoryDefaults();
-        m_motor.setInverted(true);
+        m_motor.setInverted(false);
         m_motor.setOpenLoopRampRate(1);
         m_motor.setClosedLoopRampRate(.5);
 
@@ -144,6 +150,8 @@ public class WristSubsystem extends SubsystemBase {
 
         m_armfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
                 WristConstants.kvWristVoltSecondsPerRadian);
+
+       // SmartDashboard.putNumber("WRPSM", WristConstants.MAX_RADS_PER_SEC);// 1.04
 
     }
 
@@ -205,7 +213,7 @@ public class WristSubsystem extends SubsystemBase {
         if (isStopped()) {
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
-            goalAngleRadians=angleRads;
+            goalAngleRadians = angleRads;
 
             if (initial)
                 m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
@@ -257,7 +265,7 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean isStopped() {
-        return Math.abs(getRadsPerSec()) < .05;
+        return Math.abs(getRadsPerSec()) < .01;
     }
 
     public double getAmps() {

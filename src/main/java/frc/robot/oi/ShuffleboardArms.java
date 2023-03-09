@@ -48,8 +48,9 @@ public class ShuffleboardArms {
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
                 liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionInches));
-                liftLayout.addNumber("CanCoderPosn", () -> round2dp(m_lift.cancoderPosition));
+                liftLayout.addNumber("CanCoderRads", () -> round2dp(m_lift.getCanCoderRadians()));
                 liftLayout.addNumber("GoalAngleRada", () -> round2dp(m_lift.goalAngleRadians));
+                liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.getCanCoderPosition()));
 
                 liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
@@ -88,6 +89,8 @@ public class ShuffleboardArms {
                                 .withProperties(Map.of("Label position", "LEFT"));
 
                 wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.getAngleRadians()));
+                wristLayout.addNumber("WristPosdeg", () -> round2dp(m_wrist.getAngleDegrees()));
+      
                 wristLayout.addNumber("CommandRadPerSec", () -> round2dp(m_wrist.commandRadPerSec));
                 wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));
                 wristLayout.addNumber("WristVelRadPS", () -> round2dp(m_wrist.getRadsPerSec()));

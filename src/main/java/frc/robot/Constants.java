@@ -33,22 +33,22 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 4;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 5;
     public static final int FRONT_LEFT_MODULE_STEER_CANCODER = 6;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 231.5;// -Math.toRadians(0.0);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 232.56;//231.5;// -Math.toRadians(0.0);
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 7;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 8;
     public static final int FRONT_RIGHT_MODULE_STEER_CANCODER = 9;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 317;// -Math.toRadians(-42);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 317.37;// -Math.toRadians(-42);
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 10;
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 11;
     public static final int BACK_LEFT_MODULE_STEER_CANCODER = 12;
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 181.1;// -Math.toRadians(0.0);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 181.9;// -Math.toRadians(0.0);
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 13;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 14;
     public static final int BACK_RIGHT_MODULE_STEER_CANCODER = 15;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 253.7;// -Math.toRadians(-105);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 253.83;// -Math.toRadians(-105);
 
     public static final int LIFT_ARM_MOTOR = 18;
     public static final int EXTEND_ARM_MOTOR = 19;
@@ -185,7 +185,7 @@ public final class Constants {
 
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .197"
 
-    public static final double MIN_ANGLE = 34;
+    public static final double MIN_ANGLE = 31;
 
     public static final double MAX_ANGLE = 90;
 
@@ -195,7 +195,7 @@ public final class Constants {
 
     public static final double MAX_CANCODER = 92;
 
-    public static final double MIN_CANCODER = 35;
+    public static final double MIN_CANCODER = 31;
 
     private static final double ANGLE_RANGE = MAX_ANGLE - MIN_ANGLE;// 56
 
@@ -211,9 +211,11 @@ public final class Constants {
 
     public static final double MAX_DEG_PER_SEC = DEGREES_PER_INCH * MAX_RATE_INCHES_PER_SEC;// 80
 
+    public static final double MAX_RAD_PER_SEC = Units.degreesToRadians(MAX_DEG_PER_SEC);
+
     public static final double MAX_ANGULAR_ACCEL = MAX_DEG_PER_SEC * 3;
 
-    public static final double LIFT_CANCODER_OFFSET = -200;
+    public static final double LIFT_CANCODER_OFFSET = -204;
 
     public static final double CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 13.875;// 87
 
@@ -223,15 +225,15 @@ public final class Constants {
 
     public static final double DEG_PER_INCH_STROKE = 360 / CIRCLE_CIRCUMFERENCE;// 4.13
     // simple feed forward
-    public static final double kSVolts = .45;
+    public static final double ksVolts = .45;
 
     public static final double kGVolts = 0.5;// 1;
 
-    public static final double kVVoltSecondPerInch = .35;// .56 max tried .28 gave 50%
+    public static final double kVVoltSecondPerInch = .5;// .56 max tried .28 gave 50%
 
     public static final double kAVoltSecondSquaredPerInch = 0;
     // arm feedforward
-    public static final double kvVoltSecondsPerRadian = 1.2;
+    public static final double kvVoltSecondsPerRadian = .02;
 
     public static final double kAVoltSecondSquaredPerRadian = 0.0;
 
@@ -241,7 +243,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmConstraints
 
-        = new Constraints(Units.degreesToRadians(60), Units.degreesToRadians(80));
+        = new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -257,15 +259,16 @@ public final class Constants {
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 
     public static final double MIN_POSITION = -1;
+
     public static final double MAX_POSITION = 26;
 
     public static final double INCHES_PER_ENCODER_REV = TOOTH_BELT_PITCH * PULLEY_TEETH / GEAR_RATIO;// .1
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 18
 
-    public static double ksExtArmVolts = .1;
+    public static double ksExtArmVolts = .01;//.1;
 
-    public static double kvExtArmVoltSecondsPerInch = .6;// .68 max .34 gave just over 50% try .5
+    public static double kvExtArmVoltSecondsPerInch = .05;//.6;// .68 max .34 gave just over 50% try .5
 
     public static double kaExtArmVoltSecondsSquaredPerInch = 0;
 
@@ -307,17 +310,15 @@ public final class Constants {
 
     public static final double MAX_DEGREES_PER_SEC = DEGREES_PER_ENCODER_REV * 11000 / 60;// 60
 
-    public static final double MAX_RADS_PER_SEC = Units.degreesToRadians( MAX_DEGREES_PER_SEC);
+    public static final double MAX_RADS_PER_SEC = Units.degreesToRadians(MAX_DEGREES_PER_SEC);
 
-    
+    public static final double MIN_ANGLE = 50;
 
-    public static final double MIN_ANGLE = -55;
-
-    public static final double MAX_ANGLE = 120;
+    public static final double MAX_ANGLE =250 ;
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
-        new Constraints(Units.degreesToRadians(40), Units.degreesToRadians(60));
+        new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(100));
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -325,9 +326,9 @@ public final class Constants {
 
     public static double ksVolts = .06;
 
-    public static double kgVolts = 0;// .16;
+    public static double kgVolts = .16;
 
-    public static double kvWristVoltSecondsPerRadian = Math.PI * 4;
+    public static double kvWristVoltSecondsPerRadian = 1;//Math.PI * 4;
 
     public static double kaWristVoltSecondsSquaredPerRadian;
 

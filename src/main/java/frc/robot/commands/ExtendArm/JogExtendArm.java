@@ -7,25 +7,25 @@ package frc.robot.commands.ExtendArm;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 
 public class JogExtendArm extends CommandBase {
   /** Creates a new JogArm. */
   private ExtendArmSubsystem m_ext;
+  private CommandXboxController m_controller;
   private DoubleSupplier m_speed;
-  private boolean m_bypassLimit;
   private double throttle;
-  private final SlewRateLimiter m_slewExt = new SlewRateLimiter(ExtendArmConstants.JOG_SLEW_RATE, -10000, 0);
+  
 
-  public JogExtendArm(ExtendArmSubsystem ext, DoubleSupplier speed, boolean bypassLimit) {
+  public JogExtendArm(ExtendArmSubsystem ext, DoubleSupplier speed, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_ext = ext;
+    m_controller = controller;
     m_speed = speed;
-    m_bypassLimit = bypassLimit;
     addRequirements(m_ext);
   }
 
@@ -40,7 +40,7 @@ public class JogExtendArm extends CommandBase {
   @Override
   public void execute() {
 
-    double throttleMultiplier = .5;
+    double throttleMultiplier = .1;
 
     throttle = MathUtil.applyDeadband(Math.abs(m_speed.getAsDouble()),
         ExtendArmConstants.kControllerDeadband)
@@ -48,23 +48,21 @@ public class JogExtendArm extends CommandBase {
 
     throttle = Math.signum(throttle) * Math.pow(throttle, 2);
 
-    double throttle_sl = m_slewExt.calculate(throttle);
+    double throttle_sl = throttle;
 
     throttle_sl *= throttleMultiplier;
 
-    boolean allowOut = m_ext.getPositionInches() <= ExtendArmConstants.MAX_POSITION || m_bypassLimit;
+    boolean allowOut = m_ext.getPositionInches() <= ExtendArmConstants.MAX_POSITION
+        || m_controller.getHID().getBackButton();
 
-    boolean allowIn = m_ext.getPositionInches() >= ExtendArmConstants.MIN_POSITION || m_bypassLimit;
-
-    throttle_sl *= ExtendArmConstants.MAX_RATE_INCHES_PER_SEC;
+    boolean allowIn = m_ext.getPositionInches() >= ExtendArmConstants.MIN_POSITION
+        || m_controller.getHID().getBackButton();
 
     m_ext.commandIPS = throttle_sl;
 
-    m_ext.ff = m_ext.m_feedforward.calculate(throttle_sl);
+    if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn)
 
-    if (m_ext.ff > 0 && allowOut || m_ext.ff < 0 && allowIn)
-
-      m_ext.m_motor.setVoltage(m_ext.ff);
+      m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 
     else
 
@@ -78,7 +76,8 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.m_motor.setVoltage(0);
 
-    m_ext.setController(ExtendArmConstants.extendArmConstraints, m_ext.getPositionInches(), false);
+    // m_ext.setController(ExtendArmConstants.extendArmConstraints,
+    // m_ext.getPositionInches(), false);
 
   }
 

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CTRECanCoder;
 import frc.robot.Constants.CanConstants;
+import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.utils.AngleUtils;
 
@@ -79,7 +80,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private final RelativeEncoder mEncoder;
 
-    public final SparkMaxPIDController mPosController;
+    public final SparkMaxPIDController mVelController;
 
     public final CTRECanCoder m_liftCANcoder;
 
@@ -138,11 +139,13 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private boolean runPos;
 
+    public double gravCalc;
+
     public LiftArmSubsystem() {
-        useSoftwareLimit = false;
+        useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
-        mPosController = m_motor.getPIDController();
+        mVelController = m_motor.getPIDController();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(1);
@@ -163,14 +166,15 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         // SmartDashboard.putNumber("LIIPR", LiftArmConstants.INCHES_PER_ENCODER_REV);
 
-        mPosController.setOutputRange(-LiftArmConstants.MAX_RATE_INCHES_PER_SEC,
-                LiftArmConstants.MAX_RATE_INCHES_PER_SEC);
+         mVelController.setOutputRange(-.5,.5);
 
-        mPosController.setP(.001);
+        mVelController.setFF(1 / (60 * LiftArmConstants.MAX_RAD_PER_SEC));
+
+        mVelController.setP(.001);
 
         m_motor.setSmartCurrentLimit(40);
 
-        m_motor.setClosedLoopRampRate(.5);
+        m_motor.setClosedLoopRampRate(.25);
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
@@ -184,16 +188,19 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_armFeedforward = new ArmFeedforward(LiftArmConstants.kSVolts, LiftArmConstants.kGVolts,
+        m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
                 LiftArmConstants.kvVoltSecondsPerRadian);
+
+        setController(LiftArmConstants.liftArmConstraints,
+                presetLiftAngles.SAFE_HOME.getAngleRads(), false);
 
     }
 
     // public double getInchesFromDegrees(double degrees) {
 
-    //     return LiftArmConstants.MIN_INCHES
+    // return LiftArmConstants.MIN_INCHES
 
-    //             + (degrees - LiftArmConstants.MIN_ANGLE) / LiftArmConstants.DEGREES_PER_INCH;
+    // + (degrees - LiftArmConstants.MIN_ANGLE) / LiftArmConstants.DEGREES_PER_INCH;
     // }
 
     @Override
@@ -201,8 +208,6 @@ public class LiftArmSubsystem extends SubsystemBase {
         // This method will be called once per scheduler run
 
         loopctr++;
-
-       
 
         if (faultSeen != 0)
             faultSeen = getFaults();
@@ -236,7 +241,7 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getIaccum() {
-        return mPosController.getIAccum();
+        return mVelController.getIAccum();
     }
 
     public void close() {
@@ -264,7 +269,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     // will be 0 at horizontal
     public double getCanCoderRadians() {
+
         return Units.degreesToRadians(m_liftCANcoder.getAbsolutePosition())
+
                 + Units.degreesToRadians(LiftArmConstants.LIFT_CANCODER_OFFSET);
 
     }
@@ -274,6 +281,7 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getCanCoderRateRadsPerSec() {
+        
         return Units.degreesToRadians(m_liftCANcoder.getVelValue());
     }
 
