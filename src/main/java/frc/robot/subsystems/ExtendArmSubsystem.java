@@ -137,7 +137,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         useSoftwareLimit = false;
 
-
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(1);
@@ -152,8 +151,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         mEncoder.setVelocityConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV / 60);
 
-
-
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
         m_motor.setSmartCurrentLimit(25);
@@ -162,7 +159,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
-        mVelController.setOutputRange(-.5,.5);
+        mVelController.setOutputRange(-.5, .5);
 
         mVelController.setFF(1 / (ExtendArmConstants.MAX_RATE_INCHES_PER_SEC));
 
@@ -190,9 +187,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-SmartDashboard.putNumber("EXTTST", tstctr);
+        SmartDashboard.putNumber("EXTTST", tstctr);
         loopctr++;
-
 
         if (faultSeen != 0)
 
@@ -236,7 +232,7 @@ SmartDashboard.putNumber("EXTTST", tstctr);
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double distance, boolean initial) {
-        
+
         if (isStopped()) {
 
             setControllerConstraints(constraints);
@@ -249,11 +245,14 @@ SmartDashboard.putNumber("EXTTST", tstctr);
         }
     }
 
+    public void setControllerAtPosition() {
+        setController(ExtendArmConstants.extendArmConstraints, getPositionInches(), false);
+
+    }
+
     public void resetPosition(double position) {
 
         mEncoder.setPosition(position);
-
-
 
     }
 
@@ -264,7 +263,6 @@ SmartDashboard.putNumber("EXTTST", tstctr);
     public boolean isStopped() {
         return Math.abs(mEncoder.getVelocity()) < .5;
     }
-
 
     public double getPositionInches() {
 

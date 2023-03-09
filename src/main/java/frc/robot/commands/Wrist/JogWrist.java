@@ -72,8 +72,6 @@ public class JogWrist extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_wrist.m_motor.setVoltage(0);
-    m_wrist.setController(WristConstants.wristConstraints, m_wrist.getAngleRadians(), false);
-
   }
 
   // Returns true when the command should end.

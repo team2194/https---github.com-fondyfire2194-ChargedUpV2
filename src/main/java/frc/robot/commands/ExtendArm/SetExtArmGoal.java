@@ -35,7 +35,7 @@ int tstctr;
   @Override
   public void execute() {
     m_ext.setController(m_constraints, m_goalDist, false);
-    SmartDashboard.putNumber("EXTTST", tstctr++);
+    
   }
 
   // Called once the command ends or is interrupted.

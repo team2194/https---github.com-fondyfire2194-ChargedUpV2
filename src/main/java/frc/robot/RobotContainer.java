@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -309,12 +310,20 @@ public class RobotContainer {
 
         public void configArmControllerButtons() {
 
-                m_armController.leftBumper().whileTrue(getJogLiftArmCommand(m_armController));
+                m_armController.leftBumper().whileTrue(getJogLiftArmCommand(m_armController))
 
-                m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController));
+                                .onFalse(Commands.runOnce(() -> m_liftArm.stop(), m_liftArm))
 
-                m_armController.rightBumper().whileTrue(getJogWristCommand(m_armController));
+                                .onFalse(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(), m_liftArm));
 
+                m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController))
+                                .onFalse(Commands.runOnce(() -> m_extendArm.stop(), m_extendArm))
+                                .onFalse(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(), m_extendArm));
+
+                m_armController.rightBumper().whileTrue(getJogWristCommand(m_armController))
+                                .onFalse(Commands.runOnce(() -> m_wrist.stop(), m_wrist))
+                                .onFalse(Commands.runOnce(() -> m_wrist.setControllerAtPosition(), m_wrist));
+                                
                 // m_armController.rightTrigger().whileTrue(getJogIntakeCommand());
 
                 m_armController.start().whileTrue(new RumbleCommand(m_armController,

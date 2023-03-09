@@ -5,14 +5,13 @@
 package frc.robot.commands.LiftArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LiftArmSubsystem;
-import frc.robot.subsystems.WristSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SetLiftGoal extends InstantCommand {
+public class SetLiftGoal extends CommandBase {
   private LiftArmSubsystem m_lift;
   private TrapezoidProfile.Constraints m_constraints;
   private double m_goalAngleRadians;
@@ -29,5 +28,23 @@ public class SetLiftGoal extends InstantCommand {
   @Override
   public void initialize() {
     m_lift.setController(m_constraints, m_goalAngleRadians, false);
+  }
+
+  @Override
+  public void execute() {
+    m_lift.setController(m_constraints, m_goalAngleRadians, false);
+
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return m_lift.goalAngleRadians == m_goalAngleRadians;
   }
 }

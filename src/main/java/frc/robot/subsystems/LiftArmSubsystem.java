@@ -166,7 +166,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         // SmartDashboard.putNumber("LIIPR", LiftArmConstants.INCHES_PER_ENCODER_REV);
 
-         mVelController.setOutputRange(-.5,.5);
+        mVelController.setOutputRange(-.5, .5);
 
         mVelController.setFF(1 / (60 * LiftArmConstants.MAX_RAD_PER_SEC));
 
@@ -281,7 +281,7 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getCanCoderRateRadsPerSec() {
-        
+
         return Units.degreesToRadians(m_liftCANcoder.getVelValue());
     }
 
@@ -390,6 +390,11 @@ public class LiftArmSubsystem extends SubsystemBase {
             else
                 m_liftController.reset(new TrapezoidProfile.State(getCanCoderRadians(), 0));
         }
+    }
+
+    public void setControllerAtPosition() {
+        setController(LiftArmConstants.liftArmConstraints, getCanCoderRadians(), false);
+
     }
 
 }

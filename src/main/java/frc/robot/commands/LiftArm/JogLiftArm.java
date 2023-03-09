@@ -75,7 +75,6 @@ public class JogLiftArm extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_lift.m_motor.setVoltage(0);
-    m_lift.setController(LiftArmConstants.liftArmConstraints, m_lift.getCanCoderRadians(), false);
   }
 
   // Returns true when the command should end.

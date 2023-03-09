@@ -223,6 +223,11 @@ public class WristSubsystem extends SubsystemBase {
         }
     }
 
+    public void setControllerAtPosition() {
+        setController(WristConstants.wristConstraints, getAngleRadians(), false);
+
+    }
+
     // public double getEndpointDegrees() {
 
     // return endpointDegrees;

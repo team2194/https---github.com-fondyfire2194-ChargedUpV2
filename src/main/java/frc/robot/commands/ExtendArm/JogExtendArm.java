@@ -76,9 +76,6 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.m_motor.setVoltage(0);
 
-    // m_ext.setController(ExtendArmConstants.extendArmConstraints,
-    // m_ext.getPositionInches(), false);
-
   }
 
   // Returns true when the command should end.
