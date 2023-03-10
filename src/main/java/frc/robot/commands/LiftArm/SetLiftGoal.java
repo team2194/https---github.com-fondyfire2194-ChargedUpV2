@@ -6,6 +6,7 @@ package frc.robot.commands.LiftArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -21,6 +22,14 @@ public class SetLiftGoal extends CommandBase {
 
     m_lift = lift;
     m_constraints = constraints;
+    m_goalAngleRadians = goalAngleRadians;
+  }
+
+  public SetLiftGoal(LiftArmSubsystem lift, double goalAngleRadians) {
+    // Use addRequirements() here to declare subsystem dependencies.
+
+    m_lift = lift;
+    m_constraints = LiftArmConstants.liftArmConstraints;
     m_goalAngleRadians = goalAngleRadians;
   }
 

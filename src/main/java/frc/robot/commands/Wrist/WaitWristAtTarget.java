@@ -2,31 +2,37 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.TeleopRoutines;
+package frc.robot.commands.Wrist;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.WristSubsystem;
 
-public class GetPieceAtIntake extends CommandBase {
-  /** Creates a new GetPieceAtIntake. */
-  private IntakeSubsystem m_intake;
-  private gamePiece m_type;
+public class WaitWristAtTarget extends CommandBase {
+  /** Creates a new WaitWristAtTarget. */
+  private WristSubsystem m_wrist;
+  private double m_startTime;
+  private double m_atTargetTime;
 
-  public GetPieceAtIntake(IntakeSubsystem intake, gamePiece type) {
+  public WaitWristAtTarget(WristSubsystem wrist, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_intake = intake;
-    m_type = type;
+    m_wrist = wrist;
+    m_atTargetTime=atTargetTime;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_startTime = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    if (m_wrist.atTargetAngle() && m_startTime == 0) {
+      m_startTime = Timer.getFPGATimestamp();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -37,6 +43,6 @@ public class GetPieceAtIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_type == gamePiece.CONE && m_intake.conePresent || m_type == gamePiece.CUBE && m_intake.cubePresent;
+    return Timer.getFPGATimestamp() > m_startTime + m_atTargetTime;
   }
 }

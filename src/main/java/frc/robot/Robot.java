@@ -28,6 +28,7 @@ import frc.robot.Constants.WristConstants;
 import frc.robot.commands.swerve.SetSwerveOdometry;
 import frc.robot.simulation.SimConstants;
 import frc.robot.subsystems.LightStrip;
+import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.LightStrip.ledColors;
 
 /**
@@ -40,8 +41,6 @@ import frc.robot.subsystems.LightStrip.ledColors;
  * project.
  */
 public class Robot extends TimedRobot {
-
-  private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
 
@@ -161,9 +160,12 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_drive.setIdleMode(true);
 
+    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+        presetExtArmDistances.RETRACT.getDistance(), false);
+
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
+      m_robotContainer.m_autoFactory.autonomousCommand.schedule();
     }
 
   }
@@ -182,8 +184,8 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     m_robotContainer.m_drive.setIdleMode(true);
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
+      m_robotContainer.m_autoFactory.autonomousCommand.cancel();
 
     }
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,

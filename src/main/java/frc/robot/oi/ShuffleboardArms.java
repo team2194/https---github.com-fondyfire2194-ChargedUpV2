@@ -55,7 +55,7 @@ public class ShuffleboardArms {
                 liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                liftLayout.addBoolean("AtGoal", () -> m_lift.atTargetPosition())
+                liftLayout.addBoolean("AtGoal", () -> m_lift.atTargetAngle())
                                 .withWidget(BuiltInWidgets.kTextView);
 
                 liftLayout.addBoolean("LiftCANOK", () -> m_lift.checkCANOK())
@@ -72,6 +72,7 @@ public class ShuffleboardArms {
                 extLayout.addNumber("ExtAmps", () -> round2dp(m_ext.amps));
                 extLayout.addNumber("GoalInches", () -> round2dp(m_ext.goalInches));
                 extLayout.addNumber("MotorOut", () -> round2dp(m_ext.getAppliedOutput()));
+                extLayout.addNumber("VELIPS", () -> round2dp(m_ext.getInchesPerSec()));
                 extLayout.addBoolean("Stopped", () -> m_ext.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
                 extLayout.addBoolean("AtGoal", () -> m_ext.atTargetPosition())

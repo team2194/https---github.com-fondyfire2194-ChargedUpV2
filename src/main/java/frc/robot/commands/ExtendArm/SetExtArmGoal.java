@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -17,12 +18,21 @@ public class SetExtArmGoal extends CommandBase {
   private ExtendArmSubsystem m_ext;
   private TrapezoidProfile.Constraints m_constraints;
   private double m_goalDist;
-int tstctr;
+  int tstctr;
+
   public SetExtArmGoal(ExtendArmSubsystem ext, TrapezoidProfile.Constraints constraints, double goalDist) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_ext = ext;
     m_constraints = constraints;
+    m_goalDist = goalDist;
+  }
+
+  public SetExtArmGoal(ExtendArmSubsystem ext, double goalDist) {
+    // Use addRequirements() here to declare subsystem dependencies.
+
+    m_ext = ext;
+    m_constraints = ExtendArmConstants.extendArmConstraints;
     m_goalDist = goalDist;
   }
 
@@ -35,7 +45,7 @@ int tstctr;
   @Override
   public void execute() {
     m_ext.setController(m_constraints, m_goalDist, false);
-    
+
   }
 
   // Called once the command ends or is interrupted.

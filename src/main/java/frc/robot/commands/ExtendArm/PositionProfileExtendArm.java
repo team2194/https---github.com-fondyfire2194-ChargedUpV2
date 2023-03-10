@@ -107,7 +107,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     double volts = m_ext.ff + m_ext.pidVal * RobotController.getBatteryVoltage();
 
-    boolean usevel = false;
+    boolean usevel = true;
 
     if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
 

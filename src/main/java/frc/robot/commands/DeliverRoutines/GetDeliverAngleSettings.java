@@ -2,16 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.TeleopRoutines;
+package frc.robot.commands.DeliverRoutines;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.GridDrop;
 import frc.robot.subsystems.GameHandlerSubsystem.dropOffLevel;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.IntakeSubsystem.presetIntakeSpeeds;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -25,6 +26,7 @@ public class GetDeliverAngleSettings extends CommandBase {
   private ExtendArmSubsystem m_ext;
   private GameHandlerSubsystem m_ghs;
   private WristSubsystem m_wrist;
+  private IntakeSubsystem m_intake;
 
   private gamePiece m_piece;
   private dropOffLevel m_level;
@@ -34,16 +36,19 @@ public class GetDeliverAngleSettings extends CommandBase {
   private double m_liftAngleRads;
   private double m_extDistance;
   private double m_wristAngleRads;
+  private double m_intakeSpeed;
+  private boolean m_intakeSensor;
   private boolean done;
 
   public GetDeliverAngleSettings(LiftArmSubsystem lift, ExtendArmSubsystem ext, WristSubsystem wrist,
+      IntakeSubsystem intake,
       GameHandlerSubsystem ghs) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
     m_ext = ext;
     m_ghs = ghs;
     m_wrist = wrist;
-
+    m_intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -54,7 +59,6 @@ public class GetDeliverAngleSettings extends CommandBase {
     m_level = m_ghs.getDropOffLevel();
     m_activeDrop = m_ghs.getActiveDrop();
     m_isPipe = m_activeDrop.getIsPipeBlue() || m_activeDrop.getIsPipeRed();
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -72,11 +76,13 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_liftAngleRads = presetLiftAngles.PLACE_CUBE_GROUND.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_GROUND.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_GROUND.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
       if (m_piece == gamePiece.CONE) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_GROUND.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_GROUND.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_GROUND.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
     }
 
@@ -86,17 +92,20 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_liftAngleRads = presetLiftAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_MID_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE && !m_isPipe) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_SHELF.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
       if (m_piece == gamePiece.CONE && m_isPipe) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_PIPE.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
 
     }
@@ -107,27 +116,32 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_liftAngleRads = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       } else {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE && !m_isPipe) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
       if (m_piece == gamePiece.CONE && m_isPipe) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
+        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
     }
 
     m_lift.deliverAngleRads = m_liftAngleRads;
     m_ext.deliverDistance = m_extDistance;
     m_wrist.deliverAngleRads = m_wristAngleRads;
+    m_intake.deliverSpeed = m_intakeSpeed;
 
   }
 

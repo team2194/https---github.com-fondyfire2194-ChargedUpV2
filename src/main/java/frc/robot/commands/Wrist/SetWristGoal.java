@@ -6,6 +6,7 @@ package frc.robot.commands.Wrist;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.WristSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -21,6 +22,14 @@ public class SetWristGoal extends CommandBase {
 
     m_wrist = wrist;
     m_constraints = constraints;
+    m_goalAngleRadians = goalAngleRadians;
+  }
+
+  public SetWristGoal(WristSubsystem wrist, double goalAngleRadians) {
+    // Use addRequirements() here to declare subsystem dependencies.
+
+    m_wrist = wrist;
+    m_constraints = WristConstants.wristConstraints;
     m_goalAngleRadians = goalAngleRadians;
   }
 

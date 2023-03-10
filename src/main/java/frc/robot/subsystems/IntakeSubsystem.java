@@ -1,25 +1,20 @@
 package frc.robot.subsystems;
 
-import java.util.Map;
-
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
-import frc.robot.commands.Intake.RunIntake;
+import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -64,9 +59,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public int coneSensedDistance;
 
-  public int cubeSenseThreshold=100;
+  public int cubeSenseThreshold = 100;
 
-  public int coneSenseThreshold=100;
+  public int coneSenseThreshold = 100;
 
   public boolean cubePresent;
 
@@ -82,7 +77,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private int normalCubeDistance;
 
+  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
+
+  LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
+
   private int loopctr;
+
+  public double deliverSpeed;
+
+  public int deliverSensor;
 
   public IntakeSubsystem() {
 
@@ -134,9 +137,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
       intakeMotorConnected = checkCANOK();
 
-      cubePresent = getCubeSensorDistance() < cubeSenseThreshold;
+      cubePresent = cubeSensorFilter.calculate(getCubeSensorDistance()) < cubeSenseThreshold;
 
-      conePresent = getConeSensorDistance() < coneSenseThreshold;
+      conePresent = coneSensorFilter.calculate(getConeSensorDistance()) < coneSenseThreshold;
 
       coneSensorOK = getConeSensorOK();
 
@@ -226,6 +229,13 @@ public class IntakeSubsystem extends SubsystemBase {
   public void close() {
     mIntakeMotor.close();
 
+  }
+
+  public boolean selectSensor(gamePiece piece) {
+    if (piece == gamePiece.CUBE)
+      return conePresent;
+    else
+      return cubePresent;
   }
 
   // public void runIntakeAtVelocity(double rpm) {

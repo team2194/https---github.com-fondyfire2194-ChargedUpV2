@@ -257,7 +257,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         wristAngleAdj = adj;
     }
 
-    public boolean atTargetPosition() {
+    public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getCanCoderRadians()) < inPositionBandwidth;
     }
 
