@@ -6,6 +6,8 @@ package frc.robot.commands.ExtendArm;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -19,7 +21,6 @@ public class JogExtendArm extends CommandBase {
   private CommandXboxController m_controller;
   private DoubleSupplier m_speed;
   private double throttle;
-  
 
   public JogExtendArm(ExtendArmSubsystem ext, DoubleSupplier speed, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -60,14 +61,31 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.commandIPS = throttle_sl;
 
-    if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn)
+    boolean useVel = false;
 
-      m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
+    double inpersec;
+    ;
 
-    else
+    if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn) {
+
+      if (useVel) {
+
+        m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
+
+      }
+
+      else {
+
+        inpersec = throttle_sl * ExtendArmConstants.MAX_RATE_INCHES_PER_SEC;
+
+        m_ext.mVelController.setReference(inpersec, ControlType.kVelocity);
+      }
+
+    } else {
 
       m_ext.m_motor.setVoltage(0);
-
+    }
+    
   }
 
   // Called once the command ends or is interrupted.

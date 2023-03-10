@@ -83,7 +83,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public final CTRECanCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(.05, 0, 0,
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(.01, 0, 0,
             LiftArmConstants.liftArmConstraints, .02);
 
     private boolean useSoftwareLimit;
@@ -116,9 +116,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double cancoderPosition;
 
-    public double positionInches;
+    public double positionrads;
 
-    public double inchespersec;
+    public double radianspersec;
 
     private int loopctr;
 
@@ -169,8 +169,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         mVelController.setFF(1 / LiftArmConstants.MAX_RAD_PER_SEC);
 
-        mVelController.setP(.01);
-
         m_motor.setSmartCurrentLimit(40);
 
         m_motor.setClosedLoopRampRate(.25);
@@ -192,6 +190,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         setController(LiftArmConstants.liftArmConstraints,
                 presetLiftAngles.SAFE_HOME.getAngleRads(), false);
+
+        mEncoder.setPosition(presetLiftAngles.SAFE_HOME.getAngleRads());
 
     }
 
@@ -218,8 +218,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         }
         if (loopctr == 6) {
-            positionInches = getPositionInches();
-            inchespersec = getInchesPerSec();
+            positionrads = getPositionRadians();
+            radianspersec = getRadiansPerSec();
             liftArmMotorConnected = checkCANOK();
             loopctr = 0;
         }
@@ -288,7 +288,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         return Math.abs(mEncoder.getVelocity()) < .05;
     }
 
-    public double getPositionInches() {
+    public double getPositionRadians() {
 
         if (RobotBase.isReal())
 
@@ -307,7 +307,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         return m_motor.getOutputCurrent();
     }
 
-    public double getInchesPerSec() {
+    public double getRadiansPerSec() {
         return mEncoder.getVelocity();
     }
 

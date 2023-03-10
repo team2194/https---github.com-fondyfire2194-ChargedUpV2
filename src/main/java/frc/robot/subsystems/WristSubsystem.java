@@ -90,7 +90,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private double positionChangeper20ms;
 
-    public ProfiledPIDController m_wristController = new ProfiledPIDController(.2, 0, 0,
+    public ProfiledPIDController m_wristController = new ProfiledPIDController(.01, 0, 0,
             WristConstants.wristConstraints);
 
     public double deliverAngleRads;

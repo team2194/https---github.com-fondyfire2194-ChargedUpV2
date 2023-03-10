@@ -6,6 +6,8 @@ package frc.robot.commands.Wrist;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,12 +22,11 @@ public class JogWrist extends CommandBase {
   private CommandXboxController m_controller;
   private double throttle;
 
-
   public JogWrist(WristSubsystem wrist, DoubleSupplier speed, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_wrist = wrist;
     m_speed = speed;
-    m_controller=controller;
+    m_controller = controller;
     addRequirements(m_wrist);
   }
 
@@ -51,21 +52,37 @@ public class JogWrist extends CommandBase {
 
     throttle_sl *= throttleMultiplier;
 
-    boolean m_bypassLimit= m_controller.getHID().getBackButton();
+    boolean m_bypassLimit = m_controller.getHID().getBackButton();
 
     boolean allowUp = m_wrist.getAngleDegrees() <= WristConstants.MAX_ANGLE || m_bypassLimit;
 
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE || m_bypassLimit;
 
-    if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0)
+    boolean useVel = false;
 
-      m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
+    double radspersec;
 
-    else
+    if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0) {
+
+      if (!useVel) {
+
+        m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
+
+      } else {
+
+        radspersec = throttle_sl * WristConstants.MAX_RADS_PER_SEC;
+
+        m_wrist.mVelController.setReference(radspersec, ControlType.kVelocity);
+
+      }
+
+    }
+
+    else {
 
       m_wrist.m_motor.setVoltage(0);
 
-
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -47,14 +46,15 @@ public class ShuffleboardArms {
                                 .withPosition(0, 0)
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
-                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionInches));
+                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionrads));
                 liftLayout.addNumber("CanCoderRads", () -> round2dp(m_lift.getCanCoderRadians()));
                 liftLayout.addNumber("GoalAngleRada", () -> round2dp(m_lift.goalAngleRadians));
                 liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.getCanCoderPosition()));
+                liftLayout.addNumber("EncRadsPeSec", () -> round2dp(m_lift.radianspersec));
 
                 liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
-                
+
                 liftLayout.addBoolean("AtGoal", () -> m_lift.atTargetPosition())
                                 .withWidget(BuiltInWidgets.kTextView);
 
@@ -90,11 +90,11 @@ public class ShuffleboardArms {
 
                 wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.getAngleRadians()));
                 wristLayout.addNumber("WristPosdeg", () -> round2dp(m_wrist.getAngleDegrees()));
-      
+
                 wristLayout.addNumber("CommandRadPerSec", () -> round2dp(m_wrist.commandRadPerSec));
                 wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));
                 wristLayout.addNumber("WristVelRadPS", () -> round2dp(m_wrist.getRadsPerSec()));
-                 
+
                 wristLayout.addBoolean("WristCANOK", () -> m_wrist.wristMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
                 wristLayout.addBoolean("Stopped", () -> m_wrist.isStopped())

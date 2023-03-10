@@ -25,6 +25,7 @@ import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
+import frc.robot.commands.LiftArm.PositionProfileLift;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.NTs.MonitorThreadLift;
@@ -211,8 +212,8 @@ public class RobotContainer {
                 // m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                 // m_liftArm));
 
-                // m_liftArm.setDefaultCommand(
-                // new PositionProfileVelLift(m_liftArm));
+                m_liftArm.setDefaultCommand(
+                                new PositionProfileLift(m_liftArm));
 
                 m_wrist.setDefaultCommand(
                                 new PositionProfileWrist(m_wrist, m_liftArm));
@@ -312,18 +313,25 @@ public class RobotContainer {
 
                 m_armController.leftBumper().whileTrue(getJogLiftArmCommand(m_armController))
 
-                                .onFalse(Commands.runOnce(() -> m_liftArm.stop(), m_liftArm))
+                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
 
-                                .onFalse(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(), m_liftArm));
+                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                                m_liftArm)));
 
                 m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController))
-                                .onFalse(Commands.runOnce(() -> m_extendArm.stop(), m_extendArm))
-                                .onFalse(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(), m_extendArm));
+
+                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
+
+                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                                m_extendArm)));
 
                 m_armController.rightBumper().whileTrue(getJogWristCommand(m_armController))
-                                .onFalse(Commands.runOnce(() -> m_wrist.stop(), m_wrist))
-                                .onFalse(Commands.runOnce(() -> m_wrist.setControllerAtPosition(), m_wrist));
-                                
+
+                                .onFalse(Commands.waitUntil(() -> m_wrist.isStopped())
+
+                                                .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
+                                                                m_wrist)));
+
                 // m_armController.rightTrigger().whileTrue(getJogIntakeCommand());
 
                 m_armController.start().whileTrue(new RumbleCommand(m_armController,

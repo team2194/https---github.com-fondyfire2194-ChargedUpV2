@@ -6,6 +6,8 @@ package frc.robot.commands.LiftArm;
 
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.RobotController;
@@ -22,13 +24,13 @@ public class JogLiftArm extends CommandBase {
   private double throttle;
   private double throttleMultiplier = .25;
 
+  // private final SlewRateLimiter m_slewLift = new
+  // SlewRateLimiter(LiftArmConstants.JOG_SLEW_RATE, -10000, 0);
 
-  //private final SlewRateLimiter m_slewLift = new SlewRateLimiter(LiftArmConstants.JOG_SLEW_RATE, -10000, 0);
-
-  public JogLiftArm(LiftArmSubsystem lift, DoubleSupplier speed,CommandXboxController controller) {
+  public JogLiftArm(LiftArmSubsystem lift, DoubleSupplier speed, CommandXboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
-    m_controller=controller;
+    m_controller = controller;
     m_speed = speed;
     addRequirements(m_lift);
   }
@@ -51,23 +53,32 @@ public class JogLiftArm extends CommandBase {
 
     double throttle_sl = throttle;
 
-    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE ||m_controller.getHID().getBackButton();
+    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE
+        || m_controller.getHID().getBackButton();
 
-    boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE||m_controller.getHID().getBackButton();
+    boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE
+        || m_controller.getHID().getBackButton();
 
     throttle_sl *= throttleMultiplier;
 
+    boolean useVel = true;
+
+    double radspersec;
+
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
 
-      m_lift.m_motor.setVoltage(throttle_sl*RobotController.getBatteryVoltage());
+      if (!useVel) {
+        m_lift.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
+      } else {
+        radspersec = throttle_sl * LiftArmConstants.MAX_RAD_PER_SEC;
+        m_lift.mVelController.setReference(radspersec, ControlType.kVelocity);
+      }
     }
 
     else {
 
       m_lift.m_motor.setVoltage(0);
     }
-
-
 
   }
 

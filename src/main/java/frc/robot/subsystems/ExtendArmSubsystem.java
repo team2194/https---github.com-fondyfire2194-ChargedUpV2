@@ -80,7 +80,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
     public final SparkMaxPIDController mVelController;
 
-    public ProfiledPIDController m_extController = new ProfiledPIDController(0.1, 0, 0,
+    public ProfiledPIDController m_extController = new ProfiledPIDController(0.01, 0, 0,
             ExtendArmConstants.extendArmConstraints);
 
     private double inPositionBandwidth = .25;
@@ -162,8 +162,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         mVelController.setOutputRange(-.5, .5);
 
         mVelController.setFF(1 / (ExtendArmConstants.MAX_RATE_INCHES_PER_SEC));
-
-        mVelController.setP(.1);
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
