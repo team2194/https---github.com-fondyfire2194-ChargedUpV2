@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -70,6 +71,9 @@ public class WristSubsystem extends SubsystemBase {
 
     private final RelativeEncoder mEncoder;
 
+    public final SparkMaxPIDController mVelController;
+
+
     public ArmFeedforward m_armfeedforward;
 
     private double inPositionBandwidth = 1;
@@ -119,6 +123,7 @@ public class WristSubsystem extends SubsystemBase {
         useSoftwareLimit = false;
         m_motor = new CANSparkMax(CanConstants.WRIST_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
+        mVelController = m_motor.getPIDController();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(false);
         m_motor.setOpenLoopRampRate(1);
@@ -131,6 +136,10 @@ public class WristSubsystem extends SubsystemBase {
         mEncoder.setPositionConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV);
 
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
+
+        mVelController.setOutputRange(-1, 1);
+
+        mVelController.setFF(1 / WristConstants.MAX_RADS_PER_SEC);
 
         SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 

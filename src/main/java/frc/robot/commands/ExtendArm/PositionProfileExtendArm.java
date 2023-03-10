@@ -105,13 +105,29 @@ public class PositionProfileExtendArm extends CommandBase {
 
     double profvel = m_ext.m_extController.getSetpoint().velocity;
 
-    double pidvolts = m_ext.pidVal * RobotController.getBatteryVoltage();
+    double volts = m_ext.ff + m_ext.pidVal * RobotController.getBatteryVoltage();
+
+    boolean usevel = false;
 
     if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
 
-      m_ext.m_motor.setVoltage(pidvolts + m_ext.ff);
+      if (!usevel) {
 
-    } else {
+        m_ext.m_motor.setVoltage(volts);
+
+      }
+
+      else {
+
+        double radpersec = ExtendArmConstants.MAX_RATE_INCHES_PER_SEC * volts / RobotController.getBatteryVoltage();
+        ;
+
+        m_ext.mVelController.setReference(radpersec, ControlType.kVelocity);
+      }
+
+    } else
+
+    {
 
       m_ext.m_motor.setVoltage(0);
     }
@@ -120,7 +136,9 @@ public class PositionProfileExtendArm extends CommandBase {
 
     lastTime = Timer.getFPGATimestamp();
 
-    inIZone = checkIzone(2.0);
+    inIZone =
+
+        checkIzone(2.0);
 
     if (!inIZone && m_ext.m_extController.getI() != 0)
 

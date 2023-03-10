@@ -4,10 +4,13 @@
 
 package frc.robot.commands.Wrist;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
@@ -86,16 +89,26 @@ public class PositionProfileWrist extends CommandBase {
 
     cancodeAngle = 78;
 
-  
     m_wrist.ff = m_wrist.m_armfeedforward.calculate(
         m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2),
         m_wrist.m_wristController.getSetpoint().velocity);
 
     m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2);
 
-    double pidvolts = m_wrist.pidVal * RobotController.getBatteryVoltage();
+    double volts = m_wrist.pidVal * RobotController.getBatteryVoltage() + m_wrist.ff;
 
-    m_wrist.m_motor.setVoltage(pidvolts + m_wrist.ff);
+    boolean useVel = false;
+
+    if (!useVel) {
+
+      m_wrist.m_motor.setVoltage(volts);
+    }
+
+    else {
+
+      m_wrist.mVelController.setReference(WristConstants.MAX_RADS_PER_SEC * volts / RobotController.getBatteryVoltage(),
+          ControlType.kVelocity);
+    }
 
     lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
 
@@ -107,9 +120,9 @@ public class PositionProfileWrist extends CommandBase {
 
       m_wrist.m_wristController.setI(0);
 
-    if (inIZone && m_wrist.m_wristController.getI() == 0)
+    // if (inIZone && m_wrist.m_wristController.getI() == 0)
 
-      m_wrist.m_wristController.setI(0.5);
+    //   m_wrist.m_wristController.setI(0.5);
   }
 
   // Called once the command ends or is interrupted.

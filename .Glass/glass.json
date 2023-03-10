@@ -7,7 +7,9 @@
       "Shuffleboard": {
         "Arms": {
           "ExtLayout": {
-            "open": true
+            "EXPfPID": {
+              "open": true
+            }
           },
           "WristLayout": {
             "WRPfPID": {
@@ -28,7 +30,8 @@
             "open": true
           },
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "Scheduler": {
@@ -123,6 +126,9 @@
     "dsClient": false,
     "mode": "Client (NT3)",
     "serverTeam": "10.21.94.2",
+    "visible": false
+  },
+  "NetworkTables View": {
     "visible": false
   }
 }

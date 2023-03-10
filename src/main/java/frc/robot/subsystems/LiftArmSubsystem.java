@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CTRECanCoder;
 import frc.robot.Constants.CanConstants;
-import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.utils.AngleUtils;
 
@@ -166,11 +165,11 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         // SmartDashboard.putNumber("LIIPR", LiftArmConstants.INCHES_PER_ENCODER_REV);
 
-        mVelController.setOutputRange(-.5, .5);
+        mVelController.setOutputRange(-1, 1);
 
-        mVelController.setFF(1 / (60 * LiftArmConstants.MAX_RAD_PER_SEC));
+        mVelController.setFF(1 / LiftArmConstants.MAX_RAD_PER_SEC);
 
-        mVelController.setP(.001);
+        mVelController.setP(.01);
 
         m_motor.setSmartCurrentLimit(40);
 

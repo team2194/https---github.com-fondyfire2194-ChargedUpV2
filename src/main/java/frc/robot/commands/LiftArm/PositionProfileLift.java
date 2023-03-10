@@ -4,6 +4,8 @@
 
 package frc.robot.commands.LiftArm;
 
+import com.revrobotics.CANSparkMax.ControlType;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
@@ -98,7 +100,20 @@ public class PositionProfileLift extends CommandBase {
 
     m_lift.gravCalc = m_lift.m_liftController.getSetpoint().position - m_lift.positionRadians - (Math.PI / 2);
 
-    m_lift.m_motor.setVoltage((pidVal * RobotController.getBatteryVoltage()) + m_lift.ff);
+    boolean useVolts = false;
+
+    double volts = pidVal * RobotController.getBatteryVoltage() + m_lift.ff;
+
+    if (useVolts) {
+
+      m_lift.m_motor.setVoltage(volts);
+
+    } else {
+
+      double radpersec = LiftArmConstants.MAX_RAD_PER_SEC * volts / RobotController.getBatteryVoltage();
+
+      m_lift.mVelController.setReference(radpersec, ControlType.kVelocity);
+    }
 
     lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
 
