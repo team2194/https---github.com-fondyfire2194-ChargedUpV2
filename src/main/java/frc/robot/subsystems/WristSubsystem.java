@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.WristConstants;
 
@@ -73,7 +74,6 @@ public class WristSubsystem extends SubsystemBase {
 
     public final SparkMaxPIDController mVelController;
 
-
     public ArmFeedforward m_armfeedforward;
 
     private double inPositionBandwidth = 1;
@@ -118,7 +118,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
-    public boolean useVel;
+    public boolean useVel = true;
 
     public WristSubsystem() {
 
@@ -162,7 +162,7 @@ public class WristSubsystem extends SubsystemBase {
         m_armfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
                 WristConstants.kvWristVoltSecondsPerRadian);
 
-       // SmartDashboard.putNumber("WRPSM", WristConstants.MAX_RADS_PER_SEC);// 1.04
+        // SmartDashboard.putNumber("WRPSM", WristConstants.MAX_RADS_PER_SEC);// 1.04
 
     }
 
@@ -232,6 +232,10 @@ public class WristSubsystem extends SubsystemBase {
                 m_wristController.reset(new TrapezoidProfile.State(getAngleRadians(), 0));
 
         }
+
+        m_armfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
+                Pref.getPref("wristKv"));
+
     }
 
     public void setControllerAtPosition() {

@@ -34,6 +34,9 @@ public class PositionProfileLift extends CommandBase {
   private boolean inIZone;
 
   private boolean setController;
+  private double lastSpeed = 0;
+
+  private double lastTime = Timer.getFPGATimestamp();
 
   public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -80,21 +83,18 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void execute() {
 
-    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE;
+    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE + 5;
 
     boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE;
 
     loopctr++;
 
-    double lastSpeed = 0;
-
-    double lastTime = Timer.getFPGATimestamp();
-
     pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
-    double acceleration = (m_lift.m_liftController.getSetpoint().velocity - lastSpeed)
+    // double acceleration = (m_lift.m_liftController.getSetpoint().velocity -
+    // lastSpeed)
 
-        / (Timer.getFPGATimestamp() - lastTime);
+    // / (Timer.getFPGATimestamp() - lastTime);
 
     m_lift.positionRadians = m_lift.getCanCoderRadians();
 
@@ -102,9 +102,8 @@ public class PositionProfileLift extends CommandBase {
 
         m_lift.m_liftController.getSetpoint().velocity);
 
-    m_lift.gravCalc = m_lift.m_liftController.getSetpoint().position - m_lift.positionRadians - (Math.PI / 2);
 
-    double volts = pidVal * RobotController.getBatteryVoltage() + m_lift.ff;
+    double volts = pidVal  + m_lift.ff;
 
     if (allowUp && allowDown) {
 
@@ -118,7 +117,7 @@ public class PositionProfileLift extends CommandBase {
 
         m_lift.mVelController.setReference(radpersec, ControlType.kVelocity);
       }
-      
+
       lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
 
       lastTime = Timer.getFPGATimestamp();
@@ -133,7 +132,7 @@ public class PositionProfileLift extends CommandBase {
 
       if (!m_lift.useVel && inIZone && m_lift.m_liftController.getI() == 0)
 
-        m_lift.m_liftController.setI(0.5);
+        m_lift.m_liftController.setI(0.0);
 
     }
 

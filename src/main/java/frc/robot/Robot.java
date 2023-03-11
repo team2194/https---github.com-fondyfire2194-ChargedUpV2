@@ -119,16 +119,16 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    loopCtr++;
+    // loopCtr++;
 
-    if (loopCtr < 5) {
+    // if (loopCtr < 5) {
 
-      m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
-          && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
-          && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
+    //   m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
+    //       && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
+    //       && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
 
-      loopCtr = 0;
-    }
+    //   loopCtr = 0;
+    // }
 
     if (!m_robotContainer.m_drive.isbraked()) {
       if (m_disableStartTime == 0)
@@ -139,14 +139,14 @@ public class Robot extends TimedRobot {
       }
     }
 
-    if (firstScan || m_robotContainer.m_ghs.CANOK != lastOKState) {
-      if (m_robotContainer.m_ghs.CANOK)
-        LightStrip.setColor(ledColors.GREEN);
-      else
-        LightStrip.setColor(ledColors.RED);
-      lastOKState = m_robotContainer.m_ghs.CANOK;
-      firstScan = false;
-    }
+    // if (firstScan || m_robotContainer.m_ghs.CANOK != lastOKState) {
+    //   if (m_robotContainer.m_ghs.CANOK)
+    //     LightStrip.setColor(ledColors.GREEN);
+    //   else
+    //     LightStrip.setColor(ledColors.RED);
+    //   lastOKState = m_robotContainer.m_ghs.CANOK;
+    //   firstScan = false;
+    // }
   }
 
   /**

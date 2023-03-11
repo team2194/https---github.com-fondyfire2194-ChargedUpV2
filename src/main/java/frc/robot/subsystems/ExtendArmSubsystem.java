@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.ExtendArmConstants;
 
@@ -243,6 +244,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
                 m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
 
         }
+
+        
+        m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
     }
 
     public void setControllerAtPosition() {

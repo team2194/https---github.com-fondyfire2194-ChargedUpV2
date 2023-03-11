@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.LiftArmConstants;
@@ -62,8 +63,10 @@ public class JogLiftArm extends CommandBase {
     throttle_sl *= throttleMultiplier;
 
     double radspersec;
+    SmartDashboard.putNumber("LIFTV", throttle_sl* RobotController.getBatteryVoltage());
 
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
+
 
       if (!m_lift.useVel) {
         m_lift.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());

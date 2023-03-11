@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.FaultID;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -11,11 +12,14 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.CTRECanCoder;
+import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.utils.AngleUtils;
@@ -76,14 +80,13 @@ public class LiftArmSubsystem extends SubsystemBase {
     public final int VELOCITY_SLOT = 0;
 
     public final CANSparkMax m_motor;
-
     private final RelativeEncoder mEncoder;
 
     public final SparkMaxPIDController mVelController;
 
-    public final CTRECanCoder m_liftCANcoder;
+    public final CANCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(.01, 0, 0,
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(.0005, 0, 0,
             LiftArmConstants.liftArmConstraints, .02);
 
     private boolean useSoftwareLimit;
@@ -107,6 +110,8 @@ public class LiftArmSubsystem extends SubsystemBase {
     public int liftAngleSelect;
 
     public ArmFeedforward m_armFeedforward;
+
+    public SimpleMotorFeedforward m_sFF;
 
     public double deliverAngleRads;
 
@@ -140,7 +145,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
-    public boolean useVel;
+    public boolean useVel = false;
+
+    public double pidval;
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
@@ -157,7 +164,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
 
         // absolute encoder used to establish known wheel position on start position
-        m_liftCANcoder = new CTRECanCoder(CanConstants.LIFT_CANCODER);
+        m_liftCANcoder = new CANCoder(CanConstants.LIFT_CANCODER, "CV1");
         m_liftCANcoder.configFactoryDefault();
         m_liftCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
 
@@ -170,6 +177,8 @@ public class LiftArmSubsystem extends SubsystemBase {
         mVelController.setOutputRange(-1, 1);
 
         mVelController.setFF(1 / LiftArmConstants.MAX_RAD_PER_SEC);
+
+        mVelController.setP(.005);
 
         m_motor.setSmartCurrentLimit(40);
 
@@ -187,8 +196,10 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
+        m_armFeedforward= new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
                 LiftArmConstants.kvVoltSecondsPerRadian);
+
+        m_sFF = new SimpleMotorFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kvVoltSecondsPerRadian);
 
         setController(LiftArmConstants.liftArmConstraints,
                 presetLiftAngles.SAFE_HOME.getAngleRads(), false);
@@ -278,12 +289,12 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getCanCoderRate() {
-        return m_liftCANcoder.getVelValue();
+        return m_liftCANcoder.getVelocity();
     }
 
     public double getCanCoderRateRadsPerSec() {
 
-        return Units.degreesToRadians(m_liftCANcoder.getVelValue());
+        return Units.degreesToRadians(m_liftCANcoder.getVelocity());
     }
 
     public boolean isStopped() {
@@ -386,11 +397,15 @@ public class LiftArmSubsystem extends SubsystemBase {
         if (isStopped()) {
             setControllerConstraints(constraints);
             setControllerGoal(anglerads);
+            goalAngleRadians = anglerads;
             if (initial)
                 m_liftController.reset(new TrapezoidProfile.State(presetLiftAngles.SAFE_HOME.getAngleRads(), 0));
             else
                 m_liftController.reset(new TrapezoidProfile.State(getCanCoderRadians(), 0));
         }
+
+        m_armFeedforward = new ArmFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKg"),
+                Pref.getPref("liftKv"));
     }
 
     public void setControllerAtPosition() {

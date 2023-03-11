@@ -75,7 +75,7 @@ public class RobotContainer {
 
         final LimelightVision m_llv;// = new LimelightVision();
 
-        final ShuffleboardCompetition m_shc;
+       // final ShuffleboardCompetition m_shc;
 
         final ShuffleboardArms m_sharm;
 
@@ -99,7 +99,7 @@ public class RobotContainer {
 
         public CommandXboxController m_armController = new CommandXboxController(OIConstants.kArmControllerPort);
 
-        public CommandXboxController testArms = new CommandXboxController(4);
+        public CommandXboxController testArms = new CommandXboxController(OIConstants.kTestControllerPort);
 
         final PowerDistribution m_pdp = new PowerDistribution();
 
@@ -158,9 +158,9 @@ public class RobotContainer {
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
 
-                m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
-                                m_liftArm, m_extendArm,
-                                m_wrist, m_intake);
+                // m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
+                //                 m_liftArm, m_extendArm,
+                //                 m_wrist, m_intake);
 
                 m_sharm = new ShuffleboardArms(m_liftArm, m_extendArm, m_wrist,
                                 m_intake, m_tf);
@@ -210,7 +210,7 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-                // m_drive.setDefaultCommand(getDriveCommand());
+                m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));

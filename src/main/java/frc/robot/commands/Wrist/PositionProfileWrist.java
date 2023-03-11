@@ -79,23 +79,17 @@ public class PositionProfileWrist extends CommandBase {
 
     loopctr++;
 
-    double lastSpeed = 0;
-
-    double lastTime = Timer.getFPGATimestamp();
-
     m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_wrist.goalAngleRadians);
 
-    double acceleration = (m_wrist.m_wristController.getSetpoint().velocity - lastSpeed)
-
-        / (Timer.getFPGATimestamp() - lastTime);
-
     m_wrist.ff = m_wrist.m_armfeedforward.calculate(
-        m_wrist.m_wristController.getSetpoint().position - m_lift.getCanCoderRadians() - (Math.PI / 2),
+        m_wrist.m_wristController.getSetpoint().position - m_wrist.getAngleRadians() - (Math.PI / 2)
+            - m_lift.getCanCoderRadians(),
         m_wrist.m_wristController.getSetpoint().velocity);
 
-    m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position - m_lift.getCanCoderRadians() - (Math.PI / 2);
+    // m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position -
+    // m_lift.getCanCoderRadians() - (Math.PI / 2);
 
-    double volts = m_wrist.pidVal * RobotController.getBatteryVoltage() + m_wrist.ff;
+    double volts = m_wrist.pidVal + m_wrist.ff;
 
     if (allowDown && allowUp) {
 
@@ -111,10 +105,6 @@ public class PositionProfileWrist extends CommandBase {
             ControlType.kVelocity);
       }
 
-      lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
-
-      lastTime = Timer.getFPGATimestamp();
-
       inIZone = checkIzone(.1);
 
       if ((m_wrist.useVel || !inIZone) && m_wrist.m_wristController.getI() != 0)
@@ -123,7 +113,7 @@ public class PositionProfileWrist extends CommandBase {
 
       if (!m_wrist.useVel && inIZone && m_wrist.m_wristController.getI() == 0)
 
-        m_wrist.m_wristController.setI(0.5);
+        m_wrist.m_wristController.setI(0.0);
     }
 
     else {

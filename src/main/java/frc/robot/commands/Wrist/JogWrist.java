@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.WristConstants;
@@ -59,6 +60,8 @@ public class JogWrist extends CommandBase {
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE || m_bypassLimit;
 
     double radspersec;
+
+    SmartDashboard.putNumber("WRVOLTS", throttle_sl * RobotController.getBatteryVoltage());
 
     if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0) {
 

@@ -64,6 +64,7 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
       loopctr = 0;
 
       llresults = LimelightHelpers.getLatestResults("limelight");
+
       m_drive.botPose = getBotPose();
 
       if (m_llv.getCurrentPipelineType() == pipelinetype.fiducialmarkers) {
@@ -112,31 +113,28 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
       else {
         m_drive.coneFound = false;
       }
-    }
 
-    if (m_llv.getCurrentPipeline() == pipelines.CUBE_DETECT) {
+      if (m_llv.getCurrentPipeline() == pipelines.CUBE_DETECT) {
 
-      neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
+        neuralClassID = LimelightHelpers.getNeuralClassID("limelight");
 
-      // String temp = LimelightHelpers.getNeuralClassName("limelight");
+        m_drive.cubeFound = neuralClassID == cubeID;
 
-      SmartDashboard.putNumber("ncidcube", neuralClassID);
-      // SmartDashboard.putString("NCN", temp);
-      m_drive.cubeFound = neuralClassID == cubeID;
+        m_drive.tx = LimelightHelpers.getTX("limelight");
+        m_drive.ty = LimelightHelpers.getTY("limelight");
+        m_drive.targetArea = LimelightHelpers.getTA("limelight");
+      }
 
-      m_drive.tx = LimelightHelpers.getTX("limelight");
-      m_drive.ty = LimelightHelpers.getTY("limelight");
-      m_drive.targetArea = LimelightHelpers.getTA("limelight");
-    }
+      else {
 
-    else {
-      m_drive.cubeFound = false;
+        m_drive.cubeFound = false;
 
+      }
     }
   }
 
   public Pose2d getBotPose() {
-    Pose2d temp;
+    Pose2d temp = new Pose2d();
     if (DriverStation.getAlliance() == Alliance.Blue)
       temp = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
     else

@@ -66,7 +66,7 @@ public class MonitorThreadLift {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_lift.tstCtr++;
 
-                    if (!m_lift.isStopped()) {
+                    if (true) {
 
                         goalAngle.set(m_lift.goalAngleRadians);
                         velocity.set(m_lift.getCanCoderRateRadsPerSec());

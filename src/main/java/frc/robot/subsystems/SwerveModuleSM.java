@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -50,7 +51,7 @@ public class SwerveModuleSM extends SubsystemBase {
       ModuleTuneConstants.kIModuleTurningController, ModuleTuneConstants.kDModuleTurningController);
 
   
-public final CTRECanCoder m_turnCANcoder;
+public final CANCoder m_turnCANcoder;
   SwerveModuleState state;
 
   public int m_moduleNumber;
@@ -144,7 +145,7 @@ public final CTRECanCoder m_turnCANcoder;
     m_turnMotor.enableVoltageCompensation(ModuleConstants.kVoltCompensation);
 
     // absolute encoder used to establish known wheel position on start position
-    m_turnCANcoder = new CTRECanCoder(cancoderCanChannel);
+    m_turnCANcoder = new CANCoder(cancoderCanChannel,"CV1");
     m_turnCANcoder.configFactoryDefault();
     m_turnCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
     m_turnEncoderOffset = turningEncoderOffset;
@@ -221,13 +222,13 @@ public final CTRECanCoder m_turnCANcoder;
       tuneOn = (int) Pref.getPref("SwerveTune");
     }
 
-    if (m_turnCANcoder.getFaulted()) {
-      // SmartDashboard.putStringArray("CanCoderFault"
-      // + m_modulePosition.toString(), m_turnCANcoder.getFaults());
-      // SmartDashboard.putStringArray("CanCoderStickyFault"
-      // + String.valueOf(m_locationIndex), m_turnCANcoder.getStickyFaults());
+    // if (m_turnCANcoder.getFaults(null)) {
+    //   // SmartDashboard.putStringArray("CanCoderFault"
+    //   // + m_modulePosition.toString(), m_turnCANcoder.getFaults());
+    //   // SmartDashboard.putStringArray("CanCoderStickyFault"
+    //   // + String.valueOf(m_locationIndex), m_turnCANcoder.getStickyFaults());
 
-    }
+    // }
   }
 
   @Override
@@ -461,7 +462,7 @@ public final CTRECanCoder m_turnCANcoder;
   }
 
   public boolean hasFault() {
-    return m_driveMotor.getFaults() != 0 || m_turnMotor.getFaults() != 0 || m_turnCANcoder.getFaulted();
+    return m_driveMotor.getFaults() != 0 || m_turnMotor.getFaults() != 0 ;//|| m_turnCANcoder.getFaulted();
   }
 
   public boolean checkCAN() {

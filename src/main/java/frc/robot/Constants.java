@@ -225,15 +225,15 @@ public final class Constants {
 
     public static final double DEG_PER_INCH_STROKE = 360 / CIRCLE_CIRCUMFERENCE;// 4.13
     // simple feed forward
-    public static final double ksVolts = .45;
+    public static final double ksVolts = .6;
 
-    public static final double kGVolts = 0.5;// 1;
+    public static final double kGVolts =  .52;
 
     public static final double kVVoltSecondPerInch = .5;// .56 max tried .28 gave 50%
 
     public static final double kAVoltSecondSquaredPerInch = 0;
     // arm feedforward
-    public static final double kvVoltSecondsPerRadian = .02;
+    public static final double kvVoltSecondsPerRadian = 2.5;//.15;
 
     public static final double kAVoltSecondSquaredPerRadian = 0.0;
 
@@ -243,7 +243,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmConstraints
 
-        = new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
+        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(75));
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -266,9 +266,9 @@ public final class Constants {
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 18
 
-    public static double ksExtArmVolts = .01;//.1;
+    public static double ksExtArmVolts = .1;
 
-    public static double kvExtArmVoltSecondsPerInch = .05;//.6;// .68 max .34 gave just over 50% try .5
+    public static double kvExtArmVoltSecondsPerInch = .6;// .68 max .34 gave just over 50% try .5
 
     public static double kaExtArmVoltSecondsSquaredPerInch = 0;
 
@@ -318,7 +318,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
-        new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(100));
+        new Constraints(Units.degreesToRadians(57), Units.degreesToRadians(114));
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -328,19 +328,10 @@ public final class Constants {
 
     public static double kgVolts = .16;
 
-    public static double kvWristVoltSecondsPerRadian = 1;//Math.PI * 4;
+    public static double kvWristVoltSecondsPerRadian = 10;//Math.PI * 4;
 
     public static double kaWristVoltSecondsSquaredPerRadian;
 
-    // public static double kvVoltsper = .05;// max .2
-
-    // public static double kVVoltSecondPerRad;
-
-    // public static double kAVoltSecondSquaredPerRad;
-
-    // public static double kMaxVelocityRadPerSecond;
-
-    // public static double kMaxAccelerationRadPerSecSquared;
   }
 
   public static final class CurrentLimitConstants {
@@ -378,6 +369,8 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kCoDriverControllerPort = 1;
     public static final int kArmControllerPort = 3;
+    public static final int kTestControllerPort = 4;
+    
 
   }
 

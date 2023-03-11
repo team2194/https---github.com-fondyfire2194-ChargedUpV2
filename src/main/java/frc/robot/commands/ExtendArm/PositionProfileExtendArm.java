@@ -35,6 +35,8 @@ public class PositionProfileExtendArm extends CommandBase {
 
   private boolean setController;
 
+  
+
   public PositionProfileExtendArm(ExtendArmSubsystem ext, LiftArmSubsystem lift,
       TrapezoidProfile.Constraints constraints, double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -143,7 +145,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     if (inIZone && m_ext.m_extController.getI() == 0)
 
-      m_ext.m_extController.setI(0.5);
+      m_ext.m_extController.setI(0.00);
   }
 
   // Called once the command ends or is interrupted.
