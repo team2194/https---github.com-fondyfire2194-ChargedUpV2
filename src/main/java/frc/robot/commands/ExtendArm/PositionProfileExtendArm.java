@@ -107,11 +107,9 @@ public class PositionProfileExtendArm extends CommandBase {
 
     double volts = m_ext.ff + m_ext.pidVal * RobotController.getBatteryVoltage();
 
-    boolean usevel = true;
-
     if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
 
-      if (!usevel) {
+      if (!m_ext.useVel) {
 
         m_ext.m_motor.setVoltage(volts);
 
@@ -120,7 +118,6 @@ public class PositionProfileExtendArm extends CommandBase {
       else {
 
         double radpersec = ExtendArmConstants.MAX_RATE_INCHES_PER_SEC * volts / RobotController.getBatteryVoltage();
-        ;
 
         m_ext.mVelController.setReference(radpersec, ControlType.kVelocity);
       }

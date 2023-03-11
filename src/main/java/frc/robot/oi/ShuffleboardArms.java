@@ -6,10 +6,14 @@ package frc.robot.oi;
 
 import java.util.Map;
 
+import javax.lang.model.type.UnionType;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -118,6 +122,19 @@ public class ShuffleboardArms {
 
                 intakeLayout.addBoolean("IntakeCANOK", () -> intake.checkCANOK())
                                 .withWidget(BuiltInWidgets.kTextView);
+
+                ShuffleboardTab deliverLayout = Shuffleboard.getTab("Arms");
+
+                deliverLayout.addNumber("LiftDelDeg", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
+                                .withPosition(6, 2).withSize(1, 1);
+                deliverLayout.addNumber("WristDelDeg", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
+                                .withPosition(6, 3).withSize(1, 1);
+
+                deliverLayout.addNumber("ExtDelInch", () -> round2dp(ext.deliverDistance))
+                                .withPosition(7, 2).withSize(1, 1);
+
+                deliverLayout.addNumber("Intake Speed", () -> round2dp(intake.deliverSpeed))
+                                .withPosition(7, 3).withSize(1, 1);
 
                 ShuffleboardLayout trajLayout = Shuffleboard.getTab("Arms")
                                 .getLayout("TrajLayout", BuiltInLayouts.kList)

@@ -58,13 +58,11 @@ public class JogWrist extends CommandBase {
 
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE || m_bypassLimit;
 
-    boolean useVel = false;
-
     double radspersec;
 
     if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0) {
 
-      if (!useVel) {
+      if (!m_wrist.useVel) {
 
         m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 

@@ -106,6 +106,19 @@ public class Robot extends TimedRobot {
     if (RobotBase.isSimulation())
       m_robotContainer.m_fieldSim.periodic();
 
+  }
+
+  /** This function is called once each time the robot enters Disabled mode. */
+  @Override
+  public void disabledInit() {
+    m_disableStartTime = 0;
+    firstScan = true;
+    CommandScheduler.getInstance().cancelAll();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+
     loopCtr++;
 
     if (loopCtr < 5) {
@@ -117,26 +130,13 @@ public class Robot extends TimedRobot {
       loopCtr = 0;
     }
 
-  }
+    if (!m_robotContainer.m_drive.isbraked()) {
+      if (m_disableStartTime == 0)
+        m_disableStartTime = Timer.getFPGATimestamp();
 
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {
-    m_disableStartTime = 0;
-    driveIsBraked = false;
-    firstScan = true;
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  @Override
-  public void disabledPeriodic() {
-    // CommandScheduler.getInstance().run();
-    if (m_disableStartTime == 0 && !driveIsBraked)
-      m_disableStartTime = Timer.getFPGATimestamp();
-
-    if (m_disableStartTime != 0 && Timer.getFPGATimestamp() > m_disableStartTime + 3) {
-      m_robotContainer.m_drive.setIdleMode(false);
-      driveIsBraked = true;
+      if (m_disableStartTime != 0 && Timer.getFPGATimestamp() > m_disableStartTime + 3) {
+        m_robotContainer.m_drive.setIdleMode(false);
+      }
     }
 
     if (firstScan || m_robotContainer.m_ghs.CANOK != lastOKState) {
@@ -173,7 +173,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    m_robotContainer.m_fieldSim.periodic();
+    if (RobotBase.isSimulation())
+      m_robotContainer.m_fieldSim.periodic();
   }
 
   @Override
@@ -184,6 +185,7 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     m_robotContainer.m_drive.setIdleMode(true);
+
     if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
       m_robotContainer.m_autoFactory.autonomousCommand.cancel();
 
@@ -202,8 +204,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // m_robotContainer.m_ls.rainbow();
-    m_robotContainer.m_fieldSim.periodic();
+    if (RobotBase.isSimulation())
+      m_robotContainer.m_fieldSim.periodic();
 
   }
 

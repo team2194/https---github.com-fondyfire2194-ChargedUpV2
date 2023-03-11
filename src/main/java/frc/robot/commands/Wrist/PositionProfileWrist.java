@@ -73,6 +73,10 @@ public class PositionProfileWrist extends CommandBase {
   @Override
   public void execute() {
 
+    boolean allowUp = m_wrist.getAngleDegrees() <= WristConstants.MAX_ANGLE;
+
+    boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE;
+
     loopctr++;
 
     double lastSpeed = 0;
@@ -85,44 +89,49 @@ public class PositionProfileWrist extends CommandBase {
 
         / (Timer.getFPGATimestamp() - lastTime);
 
-    double cancodeAngle = m_lift.getCanCoderRadians();
-
-    cancodeAngle = 78;
-
     m_wrist.ff = m_wrist.m_armfeedforward.calculate(
-        m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2),
+        m_wrist.m_wristController.getSetpoint().position - m_lift.getCanCoderRadians() - (Math.PI / 2),
         m_wrist.m_wristController.getSetpoint().velocity);
 
-    m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position - cancodeAngle - (Math.PI / 2);
+    m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position - m_lift.getCanCoderRadians() - (Math.PI / 2);
 
     double volts = m_wrist.pidVal * RobotController.getBatteryVoltage() + m_wrist.ff;
 
-    boolean useVel = false;
+    if (allowDown && allowUp) {
 
-    if (!useVel) {
+      if (!m_wrist.useVel) {
 
-      m_wrist.m_motor.setVoltage(volts);
+        m_wrist.m_motor.setVoltage(volts);
+      }
+
+      else {
+
+        m_wrist.mVelController.setReference(
+            WristConstants.MAX_RADS_PER_SEC * volts / RobotController.getBatteryVoltage(),
+            ControlType.kVelocity);
+      }
+
+      lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
+
+      lastTime = Timer.getFPGATimestamp();
+
+      inIZone = checkIzone(.1);
+
+      if ((m_wrist.useVel || !inIZone) && m_wrist.m_wristController.getI() != 0)
+
+        m_wrist.m_wristController.setI(0);
+
+      if (!m_wrist.useVel && inIZone && m_wrist.m_wristController.getI() == 0)
+
+        m_wrist.m_wristController.setI(0.5);
     }
 
     else {
 
-      m_wrist.mVelController.setReference(WristConstants.MAX_RADS_PER_SEC * volts / RobotController.getBatteryVoltage(),
-          ControlType.kVelocity);
+      m_wrist.m_motor.setVoltage(0);
+
     }
 
-    lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
-
-    lastTime = Timer.getFPGATimestamp();
-
-    inIZone = checkIzone(.1);
-
-    if (!inIZone && m_wrist.m_wristController.getI() != 0)
-
-      m_wrist.m_wristController.setI(0);
-
-    // if (inIZone && m_wrist.m_wristController.getI() == 0)
-
-    //   m_wrist.m_wristController.setI(0.5);
   }
 
   // Called once the command ends or is interrupted.

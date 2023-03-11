@@ -171,6 +171,9 @@
           "open": true
         },
         "open": true
+      },
+      "wristprof": {
+        "open": true
       }
     }
   },

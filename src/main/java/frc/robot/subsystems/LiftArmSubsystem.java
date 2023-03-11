@@ -140,6 +140,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
+    public boolean useVel;
+
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);

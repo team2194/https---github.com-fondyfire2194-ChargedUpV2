@@ -6,6 +6,7 @@ package frc.robot.oi;
 
 import java.util.Map;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -182,12 +183,14 @@ public class ShuffleboardCompetition {
 
                 area1.addNumber("ActiveY", () -> m_gps.getActiveDropPose().getY())
                                 .withPosition(9, 2);
-                area1.addNumber("LiftDlvrAngle", () -> lift.deliverAngleRads)
+                area1.addNumber("LiftDlvrAngle", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
                                 .withPosition(6, 3);
                 area1.addNumber("ExtDlvrDist", () -> ext.deliverDistance)
                                 .withPosition(7, 3);
-                area1.addNumber("WristDlvrAngle", () -> wrist.deliverAngleRads)
+                area1.addNumber("WristDlvrAngle", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
                                 .withPosition(8, 3);
+                area1.addNumber("Intake Speed", () -> round2dp(intake.deliverSpeed))
+                                .withPosition(9, 3).withSize(1, 1);
         }
 
         public double round2dp(double number) {

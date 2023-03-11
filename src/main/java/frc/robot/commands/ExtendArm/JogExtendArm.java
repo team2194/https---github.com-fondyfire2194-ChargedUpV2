@@ -61,14 +61,13 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.commandIPS = throttle_sl;
 
-    boolean useVel = false;
-
+  
     double inpersec;
-    ;
+    
 
     if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn) {
 
-      if (useVel) {
+      if (m_ext.useVel) {
 
         m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 

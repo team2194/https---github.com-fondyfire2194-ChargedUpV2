@@ -7,6 +7,7 @@ package frc.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,6 +43,7 @@ import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.swerve.SetSwerveDrive;
 import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
+import frc.robot.oi.ShuffleboardCompetition;
 import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -73,7 +75,7 @@ public class RobotContainer {
 
         final LimelightVision m_llv;// = new LimelightVision();
 
-        // final ShuffleboardCompetition m_shc;
+        final ShuffleboardCompetition m_shc;
 
         final ShuffleboardArms m_sharm;
 
@@ -144,7 +146,7 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
-                // LiveWindow.disableAllTelemetry();
+                LiveWindow.disableAllTelemetry();
 
                 m_autoFactory = new AutoFactory(m_drive);
 
@@ -156,9 +158,9 @@ public class RobotContainer {
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
 
-                // m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
-                // m_liftArm, m_extendArm,
-                // m_wrist, m_intake);
+                m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
+                                m_liftArm, m_extendArm,
+                                m_wrist, m_intake);
 
                 m_sharm = new ShuffleboardArms(m_liftArm, m_extendArm, m_wrist,
                                 m_intake, m_tf);

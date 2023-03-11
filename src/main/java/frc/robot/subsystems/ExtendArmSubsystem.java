@@ -131,6 +131,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public double pidVal;
 
+    public boolean useVel;
+
     public ExtendArmSubsystem() {
 
         firstUp = true;

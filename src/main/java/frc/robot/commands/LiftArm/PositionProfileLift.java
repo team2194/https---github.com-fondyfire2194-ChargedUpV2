@@ -80,6 +80,10 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void execute() {
 
+    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE;
+
+    boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE;
+
     loopctr++;
 
     double lastSpeed = 0;
@@ -100,34 +104,44 @@ public class PositionProfileLift extends CommandBase {
 
     m_lift.gravCalc = m_lift.m_liftController.getSetpoint().position - m_lift.positionRadians - (Math.PI / 2);
 
-    boolean useVolts = false;
-
     double volts = pidVal * RobotController.getBatteryVoltage() + m_lift.ff;
 
-    if (useVolts) {
+    if (allowUp && allowDown) {
 
-      m_lift.m_motor.setVoltage(volts);
+      if (!m_lift.useVel) {
 
-    } else {
+        m_lift.m_motor.setVoltage(volts);
 
-      double radpersec = LiftArmConstants.MAX_RAD_PER_SEC * volts / RobotController.getBatteryVoltage();
+      } else {
 
-      m_lift.mVelController.setReference(radpersec, ControlType.kVelocity);
+        double radpersec = LiftArmConstants.MAX_RAD_PER_SEC * volts / RobotController.getBatteryVoltage();
+
+        m_lift.mVelController.setReference(radpersec, ControlType.kVelocity);
+      }
+      
+      lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
+
+      lastTime = Timer.getFPGATimestamp();
+
+      inIZone = checkIzone(.1);
+
+      inIZone = checkIzone(.1);
+
+      if ((m_lift.useVel || !inIZone) && m_lift.m_liftController.getI() != 0)
+
+        m_lift.m_liftController.setI(0);
+
+      if (!m_lift.useVel && inIZone && m_lift.m_liftController.getI() == 0)
+
+        m_lift.m_liftController.setI(0.5);
+
     }
 
-    lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
+    else {
 
-    lastTime = Timer.getFPGATimestamp();
+      m_lift.m_motor.setVoltage(0);
 
-    inIZone = checkIzone(.1);
-
-    if (!inIZone)
-
-      m_lift.m_liftController.setI(0);
-
-    else
-
-      m_lift.m_liftController.setI(0.1);
+    }
 
   }
 

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.unmanaged.Unmanaged;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
@@ -41,7 +42,6 @@ import frc.robot.Pref;
 import frc.robot.simulation.SimConstants;
 
 public class DriveSubsystem extends SubsystemBase {
-
 
   public SwerveDriveKinematics m_kinematics = DriveConstants.m_kinematics;
 
@@ -146,7 +146,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean runTrajectory;
 
- // private final EventLoop m_drloop = new EventLoop();
+  // private final EventLoop m_drloop = new EventLoop();
 
   /**
    * All vision related variables
@@ -158,7 +158,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double lastVisionUpdateTime;
 
   LimelightResults llresults;
-  
+
   public Pose2d botPose = new Pose2d();
 
   public int numberTags;
@@ -227,13 +227,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double neuralClassID;
 
-public boolean coneFound;
+  public boolean coneFound;
 
-public boolean cubeFound;
+  public boolean cubeFound;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-  
+
     m_gyro.reset();
 
     resetModuleEncoders();
@@ -253,10 +253,9 @@ public boolean cubeFound;
       rotatePID.setP(.004);
     }
 
-   // m_Field2d = new Field2d();
+    // m_Field2d = new Field2d();
 
-  //   SmartDashboard.putData(m_Field2d);
-
+    // SmartDashboard.putData(m_Field2d);
 
   }
 
@@ -333,7 +332,7 @@ public boolean cubeFound;
     if (Pref.getPref("XTune") == 1)
       tuneXPIDGains();
 
-    //m_drloop.poll();
+    // m_drloop.poll();
 
   }
 
@@ -511,6 +510,10 @@ public boolean cubeFound;
   // return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   // }
 
+  public boolean isbraked() {
+    return m_frontLeft.m_driveMotor.getIdleMode() == IdleMode.kBrake;
+  }
+
   public void setIdleMode(boolean brake) {
 
     m_frontLeft.setDriveBrakeMode(brake);
@@ -607,7 +610,7 @@ public boolean cubeFound;
      */
 
     double temp = chassisSpeedSim.omegaRadiansPerSecond * 1.15;
-   // SmartDashboard.putNumber("CHSSM", chassisSpeedSim.omegaRadiansPerSecond);
+    // SmartDashboard.putNumber("CHSSM", chassisSpeedSim.omegaRadiansPerSecond);
     temp += m_simAngle.get();
     m_simAngle.set(temp);
 

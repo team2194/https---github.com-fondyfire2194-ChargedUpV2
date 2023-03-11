@@ -118,6 +118,8 @@ public class WristSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
+    public boolean useVel;
+
     public WristSubsystem() {
 
         useSoftwareLimit = false;

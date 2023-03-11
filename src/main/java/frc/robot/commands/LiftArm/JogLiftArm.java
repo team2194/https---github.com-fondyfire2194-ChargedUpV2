@@ -61,13 +61,11 @@ public class JogLiftArm extends CommandBase {
 
     throttle_sl *= throttleMultiplier;
 
-    boolean useVel = true;
-
     double radspersec;
 
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
 
-      if (!useVel) {
+      if (!m_lift.useVel) {
         m_lift.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
       } else {
         radspersec = throttle_sl * LiftArmConstants.MAX_RAD_PER_SEC;
