@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CTRECanCoder;
 import frc.robot.Constants.CurrentLimitConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ModuleConstants;
@@ -469,7 +468,7 @@ public final CANCoder m_turnCANcoder;
 
     driveMotorConnected = m_driveMotor.getFirmwareVersion() != 0;
     turnMotorConnected = m_turnMotor.getFirmwareVersion() != 0;
-    turnCoderConnected = m_turnCANcoder.getFirmwareVersion() > 0;
+   // turnCoderConnected = m_turnCANcoder.getFirmwareVersion() > 0;
 
     return RobotBase.isSimulation() || (driveMotorConnected && turnMotorConnected && turnCoderConnected);
 

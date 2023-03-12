@@ -26,7 +26,7 @@ public class MonitorThreadWrist {
     public DoublePublisher feedforward;
     public DoublePublisher pidval;
     public DoublePublisher lastspeed;;
-    public DoublePublisher accel;
+
 
     public DoublePublisher profpos;
     public DoublePublisher disterr;
@@ -43,7 +43,6 @@ public class MonitorThreadWrist {
         feedforward = wristprof.getDoubleTopic("FFWD").publish();
         pidval = wristprof.getDoubleTopic("PIDVAL").publish();
         lastspeed = wristprof.getDoubleTopic("LASTSPEED").publish();
-        accel = wristprof.getDoubleTopic("ACCEL").publish();
         profpos = wristprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = wristprof.getDoubleTopic("DISTERR").publish();
         volts = wristprof.getDoubleTopic("VOLTS").publish();

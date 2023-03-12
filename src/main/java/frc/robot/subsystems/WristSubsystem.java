@@ -40,7 +40,7 @@ public class WristSubsystem extends SubsystemBase {
 
         PICKUP_CONE_GROUND(105),
 
-        PICKUP_TIPPED_CONE_GROUND(219),      
+        PICKUP_TIPPED_CONE_GROUND(219),
 
         PICKUP_CUBE_LOAD_STATION(137),
 
@@ -88,7 +88,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private double positionChangeper20ms;
 
-    public ProfiledPIDController m_wristController = new ProfiledPIDController(.01, 0, 0,
+    public ProfiledPIDController m_wristController = new ProfiledPIDController(0, 0, 0,
             WristConstants.wristConstraints);
 
     public double deliverAngleRads;
@@ -229,26 +229,28 @@ public class WristSubsystem extends SubsystemBase {
         m_armfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
                 Pref.getPref("wristKv"));
 
+        m_wristController.setP(Pref.getPref("wristKp"));
+
     }
 
     public void setControllerAtPosition() {
         setController(WristConstants.wristConstraints, getAngleRadians(), false);
-
     }
 
-
+    public void runDeliverAngle() {
+        setController(WristConstants.wristConstraints, deliverAngleRads, false);
+        SmartDashboard.putNumber("RRRRRRRRRRRRR", 999);
+    }
 
     public void resetAngle() {
-
         mEncoder.setPosition(0);
-
     }
 
     public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getAngleDegrees()) < inPositionBandwidth;
     }
 
-    public boolean controllerAtGoal(){
+    public boolean controllerAtGoal() {
         return m_wristController.atGoal();
     }
 

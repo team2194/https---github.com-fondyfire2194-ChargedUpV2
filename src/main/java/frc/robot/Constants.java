@@ -33,7 +33,7 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 4;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 5;
     public static final int FRONT_LEFT_MODULE_STEER_CANCODER = 6;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 232.56;//231.5;// -Math.toRadians(0.0);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 232.56;// 231.5;// -Math.toRadians(0.0);
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 7;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 8;
@@ -224,16 +224,12 @@ public final class Constants {
     // compare to 80 degrees per sec gives an additional 20:1 ratio
 
     public static final double DEG_PER_INCH_STROKE = 360 / CIRCLE_CIRCUMFERENCE;// 4.13
-    // simple feed forward
+    // arm feedforward
     public static final double ksVolts = .6;
 
-    public static final double kGVolts =  .52;
+    public static final double kGVolts = .52;
 
-    public static final double kVVoltSecondPerInch = .5;// .56 max tried .28 gave 50%
-
-    public static final double kAVoltSecondSquaredPerInch = 0;
-    // arm feedforward
-    public static final double kvVoltSecondsPerRadian = 2.5;//.15;
+    public static final double kvVoltSecondsPerRadian = 2.5;
 
     public static final double kAVoltSecondSquaredPerRadian = 0.0;
 
@@ -243,7 +239,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmConstraints
 
-        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(75));
+        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(50));
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -314,7 +310,7 @@ public final class Constants {
 
     public static final double MIN_ANGLE = 50;
 
-    public static final double MAX_ANGLE =250 ;
+    public static final double MAX_ANGLE = 250;
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
@@ -328,7 +324,7 @@ public final class Constants {
 
     public static double kgVolts = .16;
 
-    public static double kvWristVoltSecondsPerRadian = 10;//Math.PI * 4;
+    public static double kvWristVoltSecondsPerRadian = 10;// Math.PI * 4;
 
     public static double kaWristVoltSecondsSquaredPerRadian;
 
@@ -370,7 +366,6 @@ public final class Constants {
     public static final int kCoDriverControllerPort = 1;
     public static final int kArmControllerPort = 3;
     public static final int kTestControllerPort = 4;
-    
 
   }
 

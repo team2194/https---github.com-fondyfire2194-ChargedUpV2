@@ -312,14 +312,6 @@
     }
   },
   {
-    "name": "/Preferences/liftKa",
-    "type": "double",
-    "value": 0.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/extKa",
     "type": "double",
     "value": 0.0,
@@ -360,14 +352,6 @@
     }
   },
   {
-    "name": "/Preferences/wristKa",
-    "type": "double",
-    "value": 0.0,
-    "properties": {
-      "persistent": true
-    }
-  },
-  {
     "name": "/Preferences/liftKs",
     "type": "double",
     "value": 0.0,
@@ -387,6 +371,30 @@
     "name": "/Preferences/extKs",
     "type": "double",
     "value": 0.45,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/liftKp",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/wristKp",
+    "type": "double",
+    "value": 0.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/extKp",
+    "type": "double",
+    "value": 0.0,
     "properties": {
       "persistent": true
     }

@@ -4,6 +4,8 @@
 
 package frc.robot.commands.NTs;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -23,14 +25,19 @@ public class MonitorThreadLift {
     public DoublePublisher velocity;
     public DoublePublisher feedforward;
     public DoublePublisher pidval;
-    public DoublePublisher lastspeed;;
-    public DoublePublisher accel;
 
     public DoublePublisher profpos;
     public DoublePublisher disterr;
     public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
+    public DoublePublisher velerr;;
+    public DoublePublisher posnerr;
+
+
+
+
+    public DoublePublisher inizone;
 
     public MonitorThreadLift(LiftArmSubsystem lift) {
 
@@ -40,14 +47,15 @@ public class MonitorThreadLift {
         velocity = liftprof.getDoubleTopic("ACTVEL").publish();
         feedforward = liftprof.getDoubleTopic("FFWD").publish();
         pidval = liftprof.getDoubleTopic("PIDVAL").publish();
-        lastspeed = liftprof.getDoubleTopic("LASTSPEED").publish();
-        accel = liftprof.getDoubleTopic("ACCEL").publish();
         profpos = liftprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = liftprof.getDoubleTopic("DISTERR").publish();
         volts = liftprof.getDoubleTopic("VOLTS").publish();
         kvEst = liftprof.getDoubleTopic("KVEEST").publish();
         profvel = liftprof.getDoubleTopic("PROFVEL").publish();
-
+        inizone = liftprof.getDoubleTopic("INIZONE").publish();
+        velerr=liftprof.getDoubleTopic("VELERR").publish();
+        posnerr=liftprof.getDoubleTopic("POSNERR").publish();
+  
     }
 
     public void startThread() {
@@ -63,22 +71,24 @@ public class MonitorThreadLift {
         public void run() {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
+
                     m_lift.tstCtr++;
 
-                    if (true) {
+                    if (!m_lift.isStopped()) {
 
                         goalAngle.set(m_lift.goalAngleRadians);
                         velocity.set(m_lift.getCanCoderRateRadsPerSec());
                         feedforward.set(m_lift.ff);
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
-                        accel.set(m_lift.positionRadians);
-                        lastspeed.set(m_lift.m_liftController.getSetpoint().velocity);
                         volts.set(m_lift.volts);
                         kvEst.set((m_lift.volts - LiftArmConstants.ksVolts - LiftArmConstants.kGVolts)
                                 / m_lift.getCanCoderRateRadsPerSec());
                         profpos.set(m_lift.m_liftController.getSetpoint().position);
                         disterr.set(m_lift.m_liftController.getPositionError());
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);
+                        inizone.set(m_lift.inIZone ? -1.0 : 1.0);
+                    
+                        velerr.set(m_lift.m_liftController.getVelocityError());
 
                     }
                     Thread.sleep(100);

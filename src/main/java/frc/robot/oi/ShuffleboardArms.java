@@ -59,7 +59,7 @@ public class ShuffleboardArms {
                 liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                liftLayout.addBoolean("AtGoal", () -> m_lift.atTargetAngle())
+                liftLayout.addBoolean("AtGoal", () -> m_lift.m_liftController.atSetpoint())
                                 .withWidget(BuiltInWidgets.kTextView);
 
                 liftLayout.addBoolean("LiftCANOK", () -> m_lift.checkCANOK())

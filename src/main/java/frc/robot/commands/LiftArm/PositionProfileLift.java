@@ -28,8 +28,6 @@ public class PositionProfileLift extends CommandBase {
 
   private boolean directionIsDown;
 
-  private boolean inIZone;
-
   private boolean setController;
 
   public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
@@ -83,9 +81,8 @@ public class PositionProfileLift extends CommandBase {
 
     loopctr++;
 
-    pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
-    m_lift.positionRadians = m_lift.getCanCoderRadians();
+    pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
 
@@ -93,13 +90,13 @@ public class PositionProfileLift extends CommandBase {
 
     m_lift.volts = pidVal + m_lift.ff;
 
-    if (allowUp && allowDown) {
+    if (allowUp && m_lift.volts > 0 || allowDown && m_lift.volts < 0) {
 
       m_lift.m_motor.setVoltage(m_lift.volts);
 
-      inIZone = checkIzone(.1);
+      m_lift.inIZone = checkIzone(.1);
 
-      if ((!inIZone || m_lift.m_liftController.atSetpoint()) && m_lift.m_liftController.getI() != 0) {
+      if ((!m_lift.inIZone || m_lift.m_liftController.atSetpoint()) && m_lift.m_liftController.getI() != 0) {
 
         m_lift.m_liftController.setI(0);
 
@@ -107,7 +104,7 @@ public class PositionProfileLift extends CommandBase {
 
       }
 
-      if (inIZone && m_lift.m_liftController.getI() == 0) {
+      if (m_lift.inIZone && m_lift.m_liftController.getI() == 0) {
 
         m_lift.m_liftController.setI(0.001);
 

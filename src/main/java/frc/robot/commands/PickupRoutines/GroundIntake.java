@@ -41,6 +41,7 @@ public class GroundIntake extends SequentialCommandGroup {
                 new ParallelCommandGroup(
 
                         new ConditionalCommand(
+
                                 new SetLiftGoal(lift, presetLiftAngles.PICKUP_CONE_GROUND.getAngleRads()),
 
                                 new SetLiftGoal(lift, presetLiftAngles.PICKUP_CUBE_GROUND.getAngleRads()),
@@ -48,6 +49,7 @@ public class GroundIntake extends SequentialCommandGroup {
                                 () -> type == gamePiece.CONE),
 
                         new ConditionalCommand(
+                                
                                 new SetWristGoal(wrist, presetWristAngles.PICKUP_CONE_GROUND.getAngleRads()),
 
                                 new SetWristGoal(wrist, presetWristAngles.PICKUP_CUBE_GROUND.getAngleRads()),

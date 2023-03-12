@@ -89,21 +89,26 @@ public class Pref {
     prefDict.put("tapeStopTy", 1.);
 
     // lift characterization
-    prefDict.put("liftKs", 0.);
-    prefDict.put("liftKg", 0.);
-    prefDict.put("liftKv", .0);// 12V/max in per sec 12/21 starting estimate
-    prefDict.put("liftKa", .0);
+    prefDict.put("liftKs", 0.6);
+    prefDict.put("liftKg", 0.52);
+    prefDict.put("liftKv", 2.5);
+
+    prefDict.put("liftKp", .005);
 
     // ext characterization
-    prefDict.put("extKs", .45);
-    prefDict.put("extKv", .07);// 12/180
+    prefDict.put("extKs", .1);
+    prefDict.put("extKv", .6);//
     prefDict.put("extKa", .0);
 
+    prefDict.put("extKp", .0);
+
     // wrist characterization
-    prefDict.put("wristKs", .1);
-    prefDict.put("wristKg", .98);
-    prefDict.put("wristKv", .016);// 1/60
-    prefDict.put("wristKa", .0);
+    prefDict.put("wristKs", .06);
+    prefDict.put("wristKg", .16);
+    prefDict.put("wristKv", 10.);
+
+    prefDict.put("wristKp", 0.);
+
   }
 
   public static void ensureRioPrefs() {

@@ -72,7 +72,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
 
-    public ProfiledPIDController m_extController = new ProfiledPIDController(0.01, 0, 0,
+    public ProfiledPIDController m_extController = new ProfiledPIDController(0, 0, 0,
             ExtendArmConstants.extendArmConstraints);
 
     private double inPositionBandwidth = .25;
@@ -117,7 +117,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean firstUp;
 
-    private boolean runPos;
 
     public boolean endComm;
 
@@ -230,8 +229,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
                 m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
 
         }
-
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
+
+        m_extController.setP(Pref.getPref("extKp"));
     }
 
     public void setControllerAtPosition() {
@@ -249,10 +249,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
 
-    public boolean controllerAtGoal(){
+    public boolean controllerAtGoal() {
         return m_extController.atGoal();
     }
-
 
     public boolean isStopped() {
         return Math.abs(mEncoder.getVelocity()) < .5;
@@ -303,10 +302,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         m_motor.set(0);
 
-    }
-
-    public void setRunPos(boolean on) {
-        runPos = on;
     }
 
     public void setSoftwareLimits() {

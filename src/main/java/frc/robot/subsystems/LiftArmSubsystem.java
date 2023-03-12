@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -70,12 +71,12 @@ public class LiftArmSubsystem extends SubsystemBase {
     public final int VELOCITY_SLOT = 0;
 
     public final CANSparkMax m_motor;
-    
+
     private final RelativeEncoder mEncoder;
 
     public final CANCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(.0005, 0, 0,
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(0, 0, 0,
             LiftArmConstants.liftArmConstraints, .02);
 
     private boolean useSoftwareLimit;
@@ -126,15 +127,14 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double goalAngleRadians;
 
-    public double positionRadians;
-
-    private boolean runPos;
-
     public double gravCalc;
 
     public double pidval;
 
     public double volts;
+
+    public boolean inIZone;
+
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
@@ -177,16 +177,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
                 LiftArmConstants.kvVoltSecondsPerRadian);
 
-        mEncoder.setPosition(presetLiftAngles.SAFE_HOME.getAngleRads());
-
     }
-
-    // public double getInchesFromDegrees(double degrees) {
-
-    // return LiftArmConstants.MIN_INCHES
-
-    // + (degrees - LiftArmConstants.MIN_ANGLE) / LiftArmConstants.DEGREES_PER_INCH;
-    // }
 
     @Override
     public void periodic() {
@@ -243,10 +234,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         return Math.abs(goalAngleRadians - getCanCoderRadians()) < inPositionBandwidth;
     }
 
-    public boolean controllerAtGoal(){
+    public boolean controllerAtGoal() {
         return m_liftController.atGoal();
     }
-
 
     // will be 0 at horizontal
     public double getCanCoderPosition() {
@@ -255,9 +245,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     // will be 0 at horizontal
     public double getCanCoderRadians() {
-
         return Units.degreesToRadians(m_liftCANcoder.getAbsolutePosition())
-
                 + Units.degreesToRadians(LiftArmConstants.LIFT_CANCODER_OFFSET);
 
     }
@@ -267,7 +255,6 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getCanCoderRateRadsPerSec() {
-
         return Units.degreesToRadians(m_liftCANcoder.getVelocity());
     }
 
@@ -276,14 +263,10 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public double getPositionRadians() {
-
         if (RobotBase.isReal())
-
             return mEncoder.getPosition();
-
         else
             return m_positionSim;
-
     }
 
     public double getAppliedOutput() {
@@ -318,19 +301,12 @@ public class LiftArmSubsystem extends SubsystemBase {
         return m_motor.getFault(FaultID.kHardLimitRev);
     }
 
-    public void setRunPos(boolean on) {
-        runPos = on;
-    }
-
     public void stop() {
-
         m_motor.set(0);
-
     }
 
     public void setSoftwareLimits() {
         m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, (float) LiftArmConstants.MIN_INCHES);
-
         m_motor.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, (float) LiftArmConstants.MAX_INCHES);
         m_motor.setIdleMode(IdleMode.kBrake);
 
@@ -380,6 +356,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         m_armFeedforward = new ArmFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKg"),
                 Pref.getPref("liftKv"));
+
+        m_liftController.setP(Pref.getPref("liftKp"));
+
     }
 
     public void setControllerAtPosition() {
@@ -387,4 +366,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     }
 
+    public void runDeliverAngle() {
+        setController(LiftArmConstants.liftArmConstraints, deliverAngleRads, false);
+    }
 }

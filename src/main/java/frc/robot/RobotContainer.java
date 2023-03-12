@@ -5,7 +5,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
@@ -36,7 +37,6 @@ import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
-import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
 import frc.robot.oi.ShuffleboardCompetition;
 import frc.robot.simulation.FieldSim;
@@ -84,7 +84,7 @@ public class RobotContainer {
 
         public FieldSim m_fieldSim = null;
 
-        // The driver and codriver controllers
+        // The driver, codriver and arm controllers
 
         public CommandXboxController m_driverController = new CommandXboxController(
                         OIConstants.kDriverControllerPort);
@@ -92,9 +92,9 @@ public class RobotContainer {
         public CommandXboxController m_coDriverController = new CommandXboxController(
                         OIConstants.kCoDriverControllerPort);
 
-        public CommandXboxController m_armController = new CommandXboxController(OIConstants.kArmControllerPort);
+        public CommandXboxController m_armController = new CommandXboxController(
+                        OIConstants.kArmControllerPort);
 
-        public CommandXboxController testArms = new CommandXboxController(OIConstants.kTestControllerPort);
 
         final PowerDistribution m_pdp = new PowerDistribution();
 
@@ -324,33 +324,30 @@ public class RobotContainer {
                                                 .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
                                                                 m_wrist)));
                 // get extend arm off the hook
-                m_armController.rightTrigger()
-                                .onTrue(Commands.runOnce(
-                                                () -> m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
-                                                                presetExtArmDistances.RETRACT.getDistance(), false)));
+                m_armController.rightTrigger().onTrue(Commands.runOnce(
+                                () -> m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+                                                presetExtArmDistances.RETRACT.getDistance(), false)));
 
-                m_armController.start().whileTrue(new RumbleCommand(m_armController,
-                                RumbleType.kLeftRumble, 1, 1));
+                // m_armController.start()
 
                 // m_armController.a()
 
-                m_armController.y()
-                                .onTrue(new InstantCommand(() -> m_liftArm.setRunPos(true)));
+                // m_armController.y()
 
-                m_armController.x().onTrue(new InstantCommand(() -> m_extendArm.setRunPos(true)));
+                // m_armController.x().
 
-                m_armController.povUp().onTrue(new RetractExtPositionLiftWrist(m_liftArm, m_extendArm, m_wrist, true));
+                m_armController.povUp()
+                                .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
 
-                m_armController.povRight().onTrue(new InstantCommand(() -> m_ghs.incDropNumber()));
+                m_armController.povRight().onTrue(Commands.runOnce(() -> m_liftArm.runDeliverAngle()).withTimeout(5));
 
-                m_armController.povDown().onTrue(new InstantCommand(() -> m_ghs.stepDropOffLevel()))
-                                .onFalse(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
+                m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle()).withTimeout(5));
 
-                m_armController.povLeft().onTrue(new InstantCommand(() -> m_ghs.toggleGamePieceType()))
-                                .onFalse(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
+                // m_armController.povLeft().
 
         }
 
+       
         public Command getDriveCommand() {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),

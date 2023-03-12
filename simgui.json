@@ -137,6 +137,9 @@
       },
       "Shuffleboard": {
         "Arms": {
+          "WristLayout": {
+            "open": true
+          },
           "extLayout": {
             "open": true
           },
@@ -158,12 +161,15 @@
         },
         "Vision": {
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "Scheduler": {
           "open": true
-        },
+        }
+      },
+      "liftprof": {
         "open": true
       },
       "swerve": {

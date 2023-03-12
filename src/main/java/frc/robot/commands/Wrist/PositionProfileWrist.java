@@ -86,7 +86,7 @@ public class PositionProfileWrist extends CommandBase {
 
     m_wrist.volts = m_wrist.pidVal + m_wrist.ff;
 
-    if (allowDown && allowUp) {
+    if (allowDown && m_wrist.volts<0 ||allowUp && m_wrist.volts>0 ) {
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 

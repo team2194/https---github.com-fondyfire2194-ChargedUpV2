@@ -119,16 +119,16 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
 
-    // loopCtr++;
+    loopCtr++;
 
-    // if (loopCtr < 5) {
+    if (loopCtr < 5) {
 
-    //   m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
-    //       && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
-    //       && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
+      m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
+          && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
+          && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
 
-    //   loopCtr = 0;
-    // }
+      loopCtr = 0;
+    }
 
     if (!m_robotContainer.m_drive.isbraked()) {
       if (m_disableStartTime == 0)
