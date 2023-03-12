@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -37,22 +36,23 @@ public class WristSubsystem extends SubsystemBase {
 
         SAFE_TRAVEL(58),
 
-        PICKUP_CUBE_GROUND(90),
-        PICKUP_CONE_GROUND(90),
+        PICKUP_CUBE_GROUND(106),
 
-        PICKUP_CUBE_LOAD_STATION(89),
-        PICKUP_CONE_LOAD_STATION(89),
+        PICKUP_CONE_GROUND(105),
 
-        PLACE_CUBE_GROUND(60),
-        PLACE_CUBE_MID_SHELF(113),
-        PLACE_CUBE_TOP_SHELF(118),
+        PICKUP_TIPPED_CONE_GROUND(219),      
 
-        PLACE_CONE_GROUND(100),
-        PLACE_CONE_MID_SHELF(120),
-        PLACE_CONE_TOP_SHELF(121),
+        PICKUP_CUBE_LOAD_STATION(137),
 
-        PLACE_CONE_MID_PIPE(145),
-        PLACE_CONE_TOP_PIPE(145);
+        PICKUP_CONE_LOAD_STATION(150),
+
+        PLACE_CUBE_MID_SHELF(98),
+
+        PLACE_CUBE_TOP_SHELF(122),
+
+        PLACE_CONE_MID_PIPE(146),
+
+        PLACE_CONE_TOP_PIPE(163);
 
         private double angle;
 
@@ -71,8 +71,6 @@ public class WristSubsystem extends SubsystemBase {
     public final CANSparkMax m_motor;
 
     private final RelativeEncoder mEncoder;
-
-    public final SparkMaxPIDController mVelController;
 
     public ArmFeedforward m_armfeedforward;
 
@@ -118,14 +116,13 @@ public class WristSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
-    public boolean useVel = true;
+    public double volts;
 
     public WristSubsystem() {
 
         useSoftwareLimit = false;
         m_motor = new CANSparkMax(CanConstants.WRIST_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
-        mVelController = m_motor.getPIDController();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(false);
         m_motor.setOpenLoopRampRate(1);
@@ -138,10 +135,6 @@ public class WristSubsystem extends SubsystemBase {
         mEncoder.setPositionConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV);
 
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
-
-        mVelController.setOutputRange(-1, 1);
-
-        mVelController.setFF(1 / WristConstants.MAX_RADS_PER_SEC);
 
         SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 
@@ -243,10 +236,7 @@ public class WristSubsystem extends SubsystemBase {
 
     }
 
-    // public double getEndpointDegrees() {
 
-    // return endpointDegrees;
-    // }
 
     public void resetAngle() {
 
@@ -256,6 +246,10 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getAngleDegrees()) < inPositionBandwidth;
+    }
+
+    public boolean controllerAtGoal(){
+        return m_wristController.atGoal();
     }
 
     public double getAngleDegrees() {

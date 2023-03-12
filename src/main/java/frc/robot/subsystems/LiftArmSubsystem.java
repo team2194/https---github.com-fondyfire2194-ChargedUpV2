@@ -8,20 +8,16 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.CTRECanCoder;
-import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
+import frc.robot.Pref;
 import frc.robot.utils.AngleUtils;
 
 public class LiftArmSubsystem extends SubsystemBase {
@@ -40,29 +36,23 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         CLEAR_ARMS(38),
 
-        PICKUP_CUBE_GROUND(45),
+        PICKUP_CUBE_GROUND(43.6),
 
-        PICKUP_CONE_GROUND(45),
+        PICKUP_CONE_GROUND(43.6),
+
+        PICKUP_TIPPED_CONE_GROUND(56),
 
         PICKUP_CUBE_LOAD_STATION(84),
 
-        PICKUP_CONE_LOAD_STATION(82),
+        PICKUP_CONE_LOAD_STATION(89),
 
-        PLACE_CUBE_GROUND(45),
+        PLACE_CUBE_MID_SHELF(72),
 
-        PLACE_CUBE_MID_SHELF(60),
+        PLACE_CUBE_TOP_SHELF(87),
 
-        PLACE_CUBE_TOP_SHELF(72),
+        PLACE_CONE_MID_PIPE(78.5),
 
-        PLACE_CONE_GROUND(45),
-
-        PLACE_CONE_MID_SHELF(60.),
-
-        PLACE_CONE_TOP_SHELF(81.),
-
-        PLACE_CONE_MID_PIPE(75),
-
-        PLACE_CONE_TOP_PIPE(88.3);
+        PLACE_CONE_TOP_PIPE(95);
 
         private double angle;
 
@@ -80,9 +70,8 @@ public class LiftArmSubsystem extends SubsystemBase {
     public final int VELOCITY_SLOT = 0;
 
     public final CANSparkMax m_motor;
+    
     private final RelativeEncoder mEncoder;
-
-    public final SparkMaxPIDController mVelController;
 
     public final CANCoder m_liftCANcoder;
 
@@ -110,8 +99,6 @@ public class LiftArmSubsystem extends SubsystemBase {
     public int liftAngleSelect;
 
     public ArmFeedforward m_armFeedforward;
-
-    public SimpleMotorFeedforward m_sFF;
 
     public double deliverAngleRads;
 
@@ -145,15 +132,14 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
-    public boolean useVel = false;
-
     public double pidval;
+
+    public double volts;
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
-        mVelController = m_motor.getPIDController();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(1);
@@ -172,14 +158,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         mEncoder.setVelocityConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV / 60));
 
-        // SmartDashboard.putNumber("LIIPR", LiftArmConstants.INCHES_PER_ENCODER_REV);
-
-        mVelController.setOutputRange(-1, 1);
-
-        mVelController.setFF(1 / LiftArmConstants.MAX_RAD_PER_SEC);
-
-        mVelController.setP(.005);
-
         m_motor.setSmartCurrentLimit(40);
 
         m_motor.setClosedLoopRampRate(.25);
@@ -196,13 +174,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_armFeedforward= new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
+        m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
                 LiftArmConstants.kvVoltSecondsPerRadian);
-
-        m_sFF = new SimpleMotorFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kvVoltSecondsPerRadian);
-
-        setController(LiftArmConstants.liftArmConstraints,
-                presetLiftAngles.SAFE_HOME.getAngleRads(), false);
 
         mEncoder.setPosition(presetLiftAngles.SAFE_HOME.getAngleRads());
 
@@ -252,10 +225,6 @@ public class LiftArmSubsystem extends SubsystemBase {
         return RobotBase.isSimulation() || m_motor.getFirmwareVersion() != 0;
     }
 
-    public double getIaccum() {
-        return mVelController.getIAccum();
-    }
-
     public void close() {
         m_motor.close();
     }
@@ -273,6 +242,11 @@ public class LiftArmSubsystem extends SubsystemBase {
     public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getCanCoderRadians()) < inPositionBandwidth;
     }
+
+    public boolean controllerAtGoal(){
+        return m_liftController.atGoal();
+    }
+
 
     // will be 0 at horizontal
     public double getCanCoderPosition() {

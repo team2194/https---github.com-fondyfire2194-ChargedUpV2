@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ExtendArmConstants;
-import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
+import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
+import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
@@ -28,67 +30,75 @@ import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundIntake extends SequentialCommandGroup {
-  /** Creates a new GroundIntake. */
-  public GroundIntake(LiftArmSubsystem lift, WristSubsystem wrist, ExtendArmSubsystem extend, IntakeSubsystem intake,
-      gamePiece type) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand() extend, Intake);
-    // assumes start from travel position
-    addCommands(
+    /** Creates a new GroundIntake. */
+    public GroundIntake(LiftArmSubsystem lift, WristSubsystem wrist, ExtendArmSubsystem extend, IntakeSubsystem intake,
+            gamePiece type) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand() extend, Intake);
+        // assumes start from travel position
+        addCommands(
 
-        new ParallelCommandGroup(
+                new ParallelCommandGroup(
 
-            new ConditionalCommand(new SetLiftGoal(lift, presetLiftAngles.PICKUP_CONE_GROUND.getAngleRads()),
+                        new ConditionalCommand(
+                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CONE_GROUND.getAngleRads()),
 
-                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CUBE_GROUND.getAngleRads()),
+                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CUBE_GROUND.getAngleRads()),
 
-                () -> type == gamePiece.CONE),
+                                () -> type == gamePiece.CONE),
 
-            new ConditionalCommand(new SetWristGoal(wrist, presetWristAngles.PICKUP_CONE_GROUND.getAngleRads()),
+                        new ConditionalCommand(
+                                new SetWristGoal(wrist, presetWristAngles.PICKUP_CONE_GROUND.getAngleRads()),
 
-                new SetWristGoal(wrist, presetWristAngles.PICKUP_CUBE_GROUND.getAngleRads()),
+                                new SetWristGoal(wrist, presetWristAngles.PICKUP_CUBE_GROUND.getAngleRads()),
 
-                () -> type == gamePiece.CONE)),
+                                () -> type == gamePiece.CONE)),
 
-        new ConditionalCommand(new SetExtArmGoal(extend, presetExtArmDistances.PICKUP_CONE_GROUND.getDistance()),
+                new WaitLiftAtTarget(lift, .25),
 
-            new SetExtArmGoal(extend, presetExtArmDistances.PICKUP_CUBE_GROUND.getDistance()),
+                new WaitWristAtTarget(wrist, .25),
 
-            () -> type == gamePiece.CONE),
+                new ConditionalCommand(
+                        new SetExtArmGoal(extend, presetExtArmDistances.PICKUP_CONE_GROUND.getDistance()),
 
-        new ConditionalCommand(
+                        new SetExtArmGoal(extend, presetExtArmDistances.PICKUP_CUBE_GROUND.getDistance()),
 
-            new RunIntake(intake,
-                presetIntakeSpeeds.PICKUP_CONE
-                    .getSpeed()),
+                        () -> type == gamePiece.CONE),
 
-            new RunIntake(intake,
-                presetIntakeSpeeds.PICKUP_CUBE
-                    .getSpeed()),
+                new ConditionalCommand(
 
-            () -> type == gamePiece.CONE),
+                        new RunIntake(intake,
+                                presetIntakeSpeeds.PICKUP_CONE
+                                        .getSpeed()),
 
-        new ConditionalCommand(
+                        new RunIntake(intake,
+                                presetIntakeSpeeds.PICKUP_CUBE
+                                        .getSpeed()),
 
-            new SetExtArmGoal(extend,
-                ExtendArmConstants.intakeConstraints,
-                presetExtArmDistances.PICKUP_CONE_LOAD_STATION
-                    .getDistance()),
+                        () -> type == gamePiece.CONE),
 
-            new SetExtArmGoal(extend,
-                ExtendArmConstants.intakeConstraints,
-                presetExtArmDistances.PICKUP_CUBE_LOAD_STATION
-                    .getDistance()),
+                new ConditionalCommand(
 
-            () -> type == gamePiece.CONE),
+                        new SetExtArmGoal(extend,
+                                ExtendArmConstants.intakeConstraints,
+                                presetExtArmDistances.PICKUP_CONE_GROUND
+                                        .getDistance()),
 
-        new GetPieceAtIntake(intake, type),
+                        new SetExtArmGoal(extend,
+                                ExtendArmConstants.intakeConstraints,
+                                presetExtArmDistances.PICKUP_CUBE_GROUND
+                                        .getDistance()),
 
+                        () -> type == gamePiece.CONE),
 
-        new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
-            presetExtArmDistances.HOME.getDistance()),
+                new WaitExtendAtTarget(extend, .25),
 
-        new RetractExtPositionLiftWrist(lift, extend, wrist,true));
+                new GetPieceAtIntake(intake, type),
 
-  }
+                new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
+                        presetExtArmDistances.HOME.getDistance()),
+
+                new RetractExtPositionLiftWrist(lift, extend, wrist, true));
+
+    }
 }

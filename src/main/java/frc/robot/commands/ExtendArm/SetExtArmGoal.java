@@ -5,9 +5,7 @@
 package frc.robot.commands.ExtendArm;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 
@@ -39,7 +37,8 @@ public class SetExtArmGoal extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    m_ext.setController(m_constraints, m_goalDist, false);
+    m_ext.deliverDistance = m_goalDist;
   }
 
   @Override

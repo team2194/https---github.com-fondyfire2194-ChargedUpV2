@@ -5,10 +5,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,29 +16,25 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
-import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.WristConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
-import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLift;
-import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GroundIntake;
+import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
 import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.SetSwerveDriveTape;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
-import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.swerve.SetSwerveDrive;
 import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
@@ -75,7 +70,7 @@ public class RobotContainer {
 
         final LimelightVision m_llv;// = new LimelightVision();
 
-       // final ShuffleboardCompetition m_shc;
+        final ShuffleboardCompetition m_shc;
 
         final ShuffleboardArms m_sharm;
 
@@ -158,9 +153,9 @@ public class RobotContainer {
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
 
-                // m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
-                //                 m_liftArm, m_extendArm,
-                //                 m_wrist, m_intake);
+                m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
+                                m_liftArm, m_extendArm,
+                                m_wrist, m_intake);
 
                 m_sharm = new ShuffleboardArms(m_liftArm, m_extendArm, m_wrist,
                                 m_intake, m_tf);
@@ -204,8 +199,6 @@ public class RobotContainer {
 
                 configArmControllerButtons();
 
-                configTestArmsButtons();
-
         }
 
         private void setDefaultCommands() {
@@ -225,8 +218,9 @@ public class RobotContainer {
 
         void configDriverButtons() {
 
-                // m_driverController.leftBumper().
-
+                m_driverController.leftBumper()
+                                .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
+                                                m_intake, m_ghs));
                 // m_driverController.rightBumper()
 
                 m_driverController.leftTrigger().onTrue(new StrafeToGridSlot(m_drive, m_tf,
@@ -237,14 +231,17 @@ public class RobotContainer {
 
                 m_driverController.x()
                                 .onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
-                                                .withName("Ground  Cone Pickup"));
+                                                .withName("Ground  Cone Pickup")
+                                                .withTimeout(1));
 
                 m_driverController.y()
                                 .onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
-                                                .withName("Ground  Cube Pickup"));
+                                                .withName("Ground  Cube Pickup")
+                                                .withTimeout(1));
 
-                m_driverController.a().onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
-                                m_intake, m_ghs));
+                m_driverController.a().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake)
+                                .withName("Ground Tipped Cone Pickup")
+                                .withTimeout(1).withTimeout(2));
 
                 m_driverController.povLeft()
                                 .onTrue(new SequentialCommandGroup(
@@ -282,8 +279,9 @@ public class RobotContainer {
 
                 // m_coDriverController.rightTrigger().
 
-                // m_coDriverController.a()whileTrue(new PositionLiftArm(m_liftArm,
-                // presetLiftAngles.LOAD_CONE_LOAD_STATION.getAngle()));
+                m_coDriverController.a()
+                                .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
+                                                m_intake, m_ghs).withTimeout(2));
 
                 // m_coDriverController.b().
                 // m_coDriverController.x().
@@ -351,41 +349,6 @@ public class RobotContainer {
                 m_armController.povLeft().onTrue(new InstantCommand(() -> m_ghs.toggleGamePieceType()))
                                 .onFalse(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
 
-        }
-
-        public void configTestArmsButtons() {
-
-                testArms.a().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 0));
-
-                testArms.b().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 5));
-
-                testArms.x().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 10));
-
-                testArms.y().onTrue(new SetExtArmGoal(m_extendArm, ExtendArmConstants.extendArmConstraints, 15));
-
-                testArms.povUp().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
-                                Units.degreesToRadians(35)));
-
-                testArms.povDown().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
-                                Units.degreesToRadians(90)));
-
-                testArms.povLeft().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
-                                Units.degreesToRadians(60)));
-
-                testArms.povRight().onTrue(new SetLiftGoal(m_liftArm, LiftArmConstants.liftArmConstraints,
-                                Units.degreesToRadians(88)));
-
-                testArms.leftBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(120)));
-
-                testArms.leftTrigger().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(90)));
-
-                testArms.rightBumper().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(180)));
-
-                testArms.rightTrigger().onTrue(new SetWristGoal(m_wrist, WristConstants.wristConstraints,
-                                Units.degreesToRadians(245)));
         }
 
         public Command getDriveCommand() {

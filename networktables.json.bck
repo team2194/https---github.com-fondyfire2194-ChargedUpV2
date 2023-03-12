@@ -390,5 +390,29 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/LIFTDEG",
+    "type": "double",
+    "value": 1.2,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/EXTINCHES",
+    "type": "double",
+    "value": 1.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/WRISTDEG",
+    "type": "double",
+    "value": 120.0,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

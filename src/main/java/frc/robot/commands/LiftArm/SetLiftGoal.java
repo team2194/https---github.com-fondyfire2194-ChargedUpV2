@@ -37,6 +37,7 @@ public class SetLiftGoal extends CommandBase {
   @Override
   public void initialize() {
     m_lift.setController(m_constraints, m_goalAngleRadians, false);
+    m_lift.deliverAngleRads = m_goalAngleRadians;
   }
 
   @Override

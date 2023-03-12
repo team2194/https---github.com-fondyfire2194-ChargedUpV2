@@ -62,18 +62,12 @@ public class JogLiftArm extends CommandBase {
 
     throttle_sl *= throttleMultiplier;
 
-    double radspersec;
-    SmartDashboard.putNumber("LIFTV", throttle_sl* RobotController.getBatteryVoltage());
+    SmartDashboard.putNumber("LIFTV", throttle_sl * RobotController.getBatteryVoltage());
 
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
 
+      m_lift.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 
-      if (!m_lift.useVel) {
-        m_lift.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
-      } else {
-        radspersec = throttle_sl * LiftArmConstants.MAX_RAD_PER_SEC;
-        m_lift.mVelController.setReference(radspersec, ControlType.kVelocity);
-      }
     }
 
     else {

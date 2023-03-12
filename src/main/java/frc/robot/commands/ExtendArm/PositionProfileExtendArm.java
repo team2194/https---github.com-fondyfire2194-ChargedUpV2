@@ -4,12 +4,8 @@
 
 package frc.robot.commands.ExtendArm;
 
-import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -35,7 +31,9 @@ public class PositionProfileExtendArm extends CommandBase {
 
   private boolean setController;
 
-  
+  double lastSpeed = 0;
+
+  double lastTime;
 
   public PositionProfileExtendArm(ExtendArmSubsystem ext, LiftArmSubsystem lift,
       TrapezoidProfile.Constraints constraints, double goalInches) {
@@ -63,12 +61,14 @@ public class PositionProfileExtendArm extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    lastTime = Timer.getFPGATimestamp();
 
     loopctr = 0;
 
     m_ext.m_extController.setI(0);
 
-    m_ext.m_extController.setIntegratorRange(-2, 2);
+    m_ext.m_extController.setTolerance(1);
+
 
     if (setController) {
 
@@ -92,10 +92,6 @@ public class PositionProfileExtendArm extends CommandBase {
 
     loopctr++;
 
-    double lastSpeed = 0;
-
-    double lastTime = Timer.getFPGATimestamp();
-
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
         m_ext.goalInches);
 
@@ -105,24 +101,11 @@ public class PositionProfileExtendArm extends CommandBase {
     m_ext.ff = m_ext.m_feedforward.calculate(m_ext.m_extController.getSetpoint().velocity,
         acceleration);
 
-    double profvel = m_ext.m_extController.getSetpoint().velocity;
-
-    double volts = m_ext.ff + m_ext.pidVal * RobotController.getBatteryVoltage();
+    m_ext.volts = m_ext.ff + m_ext.pidVal;
 
     if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
 
-      if (!m_ext.useVel) {
-
-        m_ext.m_motor.setVoltage(volts);
-
-      }
-
-      else {
-
-        double radpersec = ExtendArmConstants.MAX_RATE_INCHES_PER_SEC * volts / RobotController.getBatteryVoltage();
-
-        m_ext.mVelController.setReference(radpersec, ControlType.kVelocity);
-      }
+      m_ext.m_motor.setVoltage(m_ext.volts);
 
     } else
 
@@ -135,17 +118,23 @@ public class PositionProfileExtendArm extends CommandBase {
 
     lastTime = Timer.getFPGATimestamp();
 
-    inIZone =
+    inIZone = checkIzone(2.0);
 
-        checkIzone(2.0);
-
-    if (!inIZone && m_ext.m_extController.getI() != 0)
+    if ((m_ext.m_extController.atSetpoint() || !inIZone) && m_ext.m_extController.getI() != 0){
 
       m_ext.m_extController.setI(0);
 
-    if (inIZone && m_ext.m_extController.getI() == 0)
+      m_ext.m_extController.setIntegratorRange(0, 0);
 
-      m_ext.m_extController.setI(0.00);
+    }
+
+    if (inIZone && m_ext.m_extController.getI() == 0){
+
+      m_ext.m_extController.setI(0.001);
+
+      m_ext.m_extController.setIntegratorRange(-.02, .02);
+
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -28,10 +28,9 @@ public class MonitorThreadLift {
 
     public DoublePublisher profpos;
     public DoublePublisher disterr;
-    public DoublePublisher motout;
+    public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
-    public DoublePublisher gravcalc;
 
     public MonitorThreadLift(LiftArmSubsystem lift) {
 
@@ -45,10 +44,10 @@ public class MonitorThreadLift {
         accel = liftprof.getDoubleTopic("ACCEL").publish();
         profpos = liftprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = liftprof.getDoubleTopic("DISTERR").publish();
-        motout = liftprof.getDoubleTopic("MOTOUT").publish();
+        volts = liftprof.getDoubleTopic("VOLTS").publish();
         kvEst = liftprof.getDoubleTopic("KVEEST").publish();
         profvel = liftprof.getDoubleTopic("PROFVEL").publish();
-        gravcalc = liftprof.getDoubleTopic("GRAVCALC").publish();
+
     }
 
     public void startThread() {
@@ -74,13 +73,13 @@ public class MonitorThreadLift {
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
                         accel.set(m_lift.positionRadians);
                         lastspeed.set(m_lift.m_liftController.getSetpoint().velocity);
-                        motout.set(m_lift.getAppliedOutput());
-                        kvEst.set((m_lift.getAppliedOutput() - LiftArmConstants.ksVolts)
+                        volts.set(m_lift.volts);
+                        kvEst.set((m_lift.volts - LiftArmConstants.ksVolts - LiftArmConstants.kGVolts)
                                 / m_lift.getCanCoderRateRadsPerSec());
                         profpos.set(m_lift.m_liftController.getSetpoint().position);
                         disterr.set(m_lift.m_liftController.getPositionError());
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);
-                        gravcalc.set(m_lift.gravCalc);
+
                     }
                     Thread.sleep(100);
                 }

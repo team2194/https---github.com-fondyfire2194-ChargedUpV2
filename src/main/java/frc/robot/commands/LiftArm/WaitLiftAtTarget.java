@@ -30,7 +30,7 @@ public class WaitLiftAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_lift.atTargetAngle() && m_startTime == 0) {
+    if (m_lift.controllerAtGoal() && m_startTime == 0) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }

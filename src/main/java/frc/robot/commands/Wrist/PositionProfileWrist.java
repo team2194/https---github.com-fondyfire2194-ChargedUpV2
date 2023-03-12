@@ -4,11 +4,8 @@
 
 package frc.robot.commands.Wrist;
 
-import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -29,6 +26,7 @@ public class PositionProfileWrist extends CommandBase {
   private int loopctr;
 
   private boolean inIZone;
+  
   private boolean setController;
 
   public PositionProfileWrist(WristSubsystem wrist, LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
@@ -58,7 +56,7 @@ public class PositionProfileWrist extends CommandBase {
 
     m_wrist.m_wristController.setI(0);
 
-    m_wrist.m_wristController.setIntegratorRange(-2, 2);
+    m_wrist.m_wristController.setTolerance(Units.degreesToRadians(1));
 
     if (setController) {
 
@@ -86,34 +84,27 @@ public class PositionProfileWrist extends CommandBase {
             - m_lift.getCanCoderRadians(),
         m_wrist.m_wristController.getSetpoint().velocity);
 
-    // m_wrist.gravCalc = m_wrist.m_wristController.getSetpoint().position -
-    // m_lift.getCanCoderRadians() - (Math.PI / 2);
-
-    double volts = m_wrist.pidVal + m_wrist.ff;
+    m_wrist.volts = m_wrist.pidVal + m_wrist.ff;
 
     if (allowDown && allowUp) {
 
-      if (!m_wrist.useVel) {
-
-        m_wrist.m_motor.setVoltage(volts);
-      }
-
-      else {
-
-        m_wrist.mVelController.setReference(
-            WristConstants.MAX_RADS_PER_SEC * volts / RobotController.getBatteryVoltage(),
-            ControlType.kVelocity);
-      }
+      m_wrist.m_motor.setVoltage(m_wrist.volts);
 
       inIZone = checkIzone(.1);
 
-      if ((m_wrist.useVel || !inIZone) && m_wrist.m_wristController.getI() != 0)
+      if ((m_wrist.m_wristController.atSetpoint() || !inIZone) && m_wrist.m_wristController.getI() != 0){
 
         m_wrist.m_wristController.setI(0);
 
-      if (!m_wrist.useVel && inIZone && m_wrist.m_wristController.getI() == 0)
 
-        m_wrist.m_wristController.setI(0.0);
+      }
+
+      if (inIZone && m_wrist.m_wristController.getI() == 0){
+
+        m_wrist.m_wristController.setI(0.001);
+
+
+      }
     }
 
     else {

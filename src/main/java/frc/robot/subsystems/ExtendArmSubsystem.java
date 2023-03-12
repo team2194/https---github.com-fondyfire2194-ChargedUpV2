@@ -7,8 +7,6 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-//import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -39,29 +37,23 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         SAFE_TRAVEL(2),
 
-        PICKUP_CUBE_GROUND(20),
+        PICKUP_CUBE_GROUND(15.7),
 
-        PICKUP_CONE_GROUND(17),
+        PICKUP_CONE_GROUND(15.7),
 
-        PLACE_CUBE_GROUND(18.),
+        PICKUP_TIPPED_CONE_GROUND(118.2),
 
-        PLACE_CUBE_MID_SHELF(5.),
+        PLACE_CUBE_MID_SHELF(4.9),
 
-        PLACE_CUBE_TOP_SHELF(8.),
+        PLACE_CUBE_TOP_SHELF(22.7),
 
         PICKUP_CONE_LOAD_STATION(1.),
 
-        PICKUP_CUBE_LOAD_STATION(2.),
+        PICKUP_CUBE_LOAD_STATION(4.2),
 
-        PLACE_CONE_GROUND(28),
+        PLACE_CONE_MID_PIPE(5.3),
 
-        PLACE_CONE_MID_SHELF(6.),
-
-        PLACE_CONE_TOP_SHELF(9.),
-
-        PLACE_CONE_MID_PIPE(7),
-
-        PLACE_CONE_TOP_PIPE(24);
+        PLACE_CONE_TOP_PIPE(26);
 
         private double distance;
 
@@ -79,7 +71,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public final CANSparkMax m_motor = new CANSparkMax(CanConstants.EXTEND_ARM_MOTOR,
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
-    public final SparkMaxPIDController mVelController;
 
     public ProfiledPIDController m_extController = new ProfiledPIDController(0.01, 0, 0,
             ExtendArmConstants.extendArmConstraints);
@@ -132,7 +123,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public double pidVal;
 
-    public boolean useVel;
+    public double volts;
 
     public ExtendArmSubsystem() {
 
@@ -148,7 +139,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
-        mVelController = m_motor.getPIDController();
 
         mEncoder.setPositionConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV);
 
@@ -161,10 +151,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setClosedLoopRampRate(.5);
 
         m_motor.setIdleMode(IdleMode.kBrake);
-
-        mVelController.setOutputRange(-.5, .5);
-
-        mVelController.setFF(1 / (ExtendArmConstants.MAX_RATE_INCHES_PER_SEC));
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
@@ -245,7 +231,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         }
 
-        
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
     }
 
@@ -263,6 +248,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public boolean atTargetPosition() {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
+
+    public boolean controllerAtGoal(){
+        return m_extController.atGoal();
+    }
+
 
     public boolean isStopped() {
         return Math.abs(mEncoder.getVelocity()) < .5;

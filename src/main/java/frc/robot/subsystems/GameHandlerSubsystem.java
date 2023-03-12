@@ -190,7 +190,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
         }
 
 
-        public dropOffLevel chosenLevel = dropOffLevel.GROUND_LEVEL;
+        public dropOffLevel chosenLevel = dropOffLevel.MID_LEVEL;
 
         public gamePiece gamePieceType = gamePiece.CONE;
 
@@ -347,16 +347,16 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public void stepDropOffLevel() {
                 boolean levelChanged = false;
-                if (getDropOffLevel() == dropOffLevel.GROUND_LEVEL) {
-                        setDropOffLevel(dropOffLevel.MID_LEVEL);
-                        levelChanged = true;
-                }
+                // if (getDropOffLevel() == dropOffLevel.GROUND_LEVEL) {
+                //         setDropOffLevel(dropOffLevel.MID_LEVEL);
+                //         levelChanged = true;
+                // }
                 if (!levelChanged && getDropOffLevel() == dropOffLevel.MID_LEVEL) {
                         setDropOffLevel(dropOffLevel.TOP_LEVEL);
                         levelChanged = true;
                 }
                 if (!levelChanged && getDropOffLevel() == dropOffLevel.TOP_LEVEL)
-                        setDropOffLevel(dropOffLevel.GROUND_LEVEL);
+                        setDropOffLevel(dropOffLevel.MID_LEVEL);
         }
 
         public boolean getAllianceBlue() {

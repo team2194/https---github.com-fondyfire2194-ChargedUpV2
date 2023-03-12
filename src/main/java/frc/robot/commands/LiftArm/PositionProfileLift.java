@@ -4,11 +4,8 @@
 
 package frc.robot.commands.LiftArm;
 
-import com.revrobotics.CANSparkMax.ControlType;
-
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -34,9 +31,6 @@ public class PositionProfileLift extends CommandBase {
   private boolean inIZone;
 
   private boolean setController;
-  private double lastSpeed = 0;
-
-  private double lastTime = Timer.getFPGATimestamp();
 
   public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -63,7 +57,7 @@ public class PositionProfileLift extends CommandBase {
 
     m_lift.m_liftController.setI(0.0);
 
-    // m_lift.m_liftController.setIntegratorRange(0, 0);
+    m_lift.m_liftController.setTolerance(Units.degreesToRadians(1));
 
     if (setController) {
 
@@ -83,7 +77,7 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void execute() {
 
-    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE + 5;
+    boolean allowUp = m_lift.getCanCoderPosition() <= LiftArmConstants.MAX_ANGLE;
 
     boolean allowDown = m_lift.getCanCoderPosition() >= LiftArmConstants.MIN_ANGLE;
 
@@ -91,56 +85,38 @@ public class PositionProfileLift extends CommandBase {
 
     pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
-    // double acceleration = (m_lift.m_liftController.getSetpoint().velocity -
-    // lastSpeed)
-
-    // / (Timer.getFPGATimestamp() - lastTime);
-
     m_lift.positionRadians = m_lift.getCanCoderRadians();
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
 
         m_lift.m_liftController.getSetpoint().velocity);
 
-
-    double volts = pidVal  + m_lift.ff;
+    m_lift.volts = pidVal + m_lift.ff;
 
     if (allowUp && allowDown) {
 
-      if (!m_lift.useVel) {
-
-        m_lift.m_motor.setVoltage(volts);
-
-      } else {
-
-        double radpersec = LiftArmConstants.MAX_RAD_PER_SEC * volts / RobotController.getBatteryVoltage();
-
-        m_lift.mVelController.setReference(radpersec, ControlType.kVelocity);
-      }
-
-      lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
-
-      lastTime = Timer.getFPGATimestamp();
+      m_lift.m_motor.setVoltage(m_lift.volts);
 
       inIZone = checkIzone(.1);
 
-      inIZone = checkIzone(.1);
-
-      if ((m_lift.useVel || !inIZone) && m_lift.m_liftController.getI() != 0)
+      if ((!inIZone || m_lift.m_liftController.atSetpoint()) && m_lift.m_liftController.getI() != 0) {
 
         m_lift.m_liftController.setI(0);
 
-      if (!m_lift.useVel && inIZone && m_lift.m_liftController.getI() == 0)
+        m_lift.m_liftController.setIntegratorRange(0, 0);
 
-        m_lift.m_liftController.setI(0.0);
+      }
 
-    }
+      if (inIZone && m_lift.m_liftController.getI() == 0) {
 
-    else {
+        m_lift.m_liftController.setI(0.001);
+
+        m_lift.m_liftController.setIntegratorRange(-.02, .02);
+      }
+
+    } else
 
       m_lift.m_motor.setVoltage(0);
-
-    }
 
   }
 

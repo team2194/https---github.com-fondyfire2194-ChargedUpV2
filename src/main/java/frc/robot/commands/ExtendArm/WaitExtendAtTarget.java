@@ -31,7 +31,7 @@ public class WaitExtendAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_extend.atTargetPosition() && m_startTime == 0) {
+    if (m_extend.controllerAtGoal() && m_startTime == 0) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }

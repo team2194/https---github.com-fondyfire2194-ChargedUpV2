@@ -65,17 +65,7 @@ public class JogWrist extends CommandBase {
 
     if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0) {
 
-      if (!m_wrist.useVel) {
-
-        m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
-
-      } else {
-
-        radspersec = throttle_sl * WristConstants.MAX_RADS_PER_SEC;
-
-        m_wrist.mVelController.setReference(radspersec, ControlType.kVelocity);
-
-      }
+      m_wrist.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 
     }
 

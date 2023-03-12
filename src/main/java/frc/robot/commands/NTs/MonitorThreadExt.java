@@ -29,11 +29,9 @@ public class MonitorThreadExt {
     public DoublePublisher accel;
     public DoublePublisher profpos;
     public DoublePublisher disterr;
-    public DoublePublisher motout;
+    public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
-    
-    
 
     public MonitorThreadExt(ExtendArmSubsystem ext) {
 
@@ -48,7 +46,7 @@ public class MonitorThreadExt {
         accel = extprof.getDoubleTopic("ACCEL").publish();
         profpos = extprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = extprof.getDoubleTopic("DISTERR").publish();
-        motout = extprof.getDoubleTopic("MOTOUT").publish();
+        volts = extprof.getDoubleTopic("VOLTS").publish();
         kvEst = extprof.getDoubleTopic("KVEEST").publish();
         profvel = extprof.getDoubleTopic("PROFVEL").publish();
 
@@ -75,7 +73,7 @@ public class MonitorThreadExt {
                         distance.set(m_ext.getPositionInches());
                         feedforward.set(m_ext.ff);
                         pidval.set(m_ext.pidVal);
-                        motout.set(m_ext.getAppliedOutput());
+                        volts.set(m_ext.volts);
                         kvEst.set((m_ext.getAppliedOutput() - ExtendArmConstants.ksExtArmVolts)
                                 / m_ext.getInchesPerSec());
                         profpos.set(m_ext.m_extController.getSetpoint().position);

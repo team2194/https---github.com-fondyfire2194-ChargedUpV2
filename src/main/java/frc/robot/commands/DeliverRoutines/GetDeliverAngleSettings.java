@@ -70,22 +70,6 @@ public class GetDeliverAngleSettings extends CommandBase {
     if (m_piece == gamePiece.CUBE)
       LightStrip.setColor(ledColors.PURPLE);
 
-    if (m_level == dropOffLevel.GROUND_LEVEL) {
-      done = true;
-      if (m_piece == gamePiece.CUBE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CUBE_GROUND.getAngleRads();
-        m_extDistance = presetExtArmDistances.PLACE_CUBE_GROUND.getDistance();
-        m_wristAngleRads = presetWristAngles.PLACE_CUBE_GROUND.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
-      }
-      if (m_piece == gamePiece.CONE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_GROUND.getAngleRads();
-        m_extDistance = presetExtArmDistances.PLACE_CONE_GROUND.getDistance();
-        m_wristAngleRads = presetWristAngles.PLACE_CONE_GROUND.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
-      }
-    }
-
     if (!done && m_level == dropOffLevel.MID_LEVEL) {
       done = true;
       if (m_piece == gamePiece.CUBE) {
@@ -95,13 +79,7 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
-      if (m_piece == gamePiece.CONE && !m_isPipe) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_SHELF.getAngleRads();
-        m_extDistance = presetExtArmDistances.PLACE_CONE_MID_SHELF.getDistance();
-        m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_SHELF.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
-      }
-      if (m_piece == gamePiece.CONE && m_isPipe) {
+      if (m_piece == gamePiece.CONE) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_PIPE.getAngleRads();
@@ -117,25 +95,15 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
         m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
-      } else {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
-        m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_SHELF.getDistance();
-        m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
 
-      if (m_piece == gamePiece.CONE && !m_isPipe) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
-        m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_SHELF.getDistance();
-        m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_SHELF.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
-      }
-      if (m_piece == gamePiece.CONE && m_isPipe) {
+      if (m_piece == gamePiece.CONE) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
+
     }
 
     m_lift.deliverAngleRads = m_liftAngleRads;

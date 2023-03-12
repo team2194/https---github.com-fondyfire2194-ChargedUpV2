@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
@@ -61,30 +62,17 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.commandIPS = throttle_sl;
 
-  
-    double inpersec;
-    
+    SmartDashboard.putNumber("EXTV", throttle_sl * RobotController.getBatteryVoltage());
 
     if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn) {
 
-      if (m_ext.useVel) {
-
-        m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
-
-      }
-
-      else {
-
-        inpersec = throttle_sl * ExtendArmConstants.MAX_RATE_INCHES_PER_SEC;
-
-        m_ext.mVelController.setReference(inpersec, ControlType.kVelocity);
-      }
+      m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());
 
     } else {
 
       m_ext.m_motor.setVoltage(0);
     }
-    
+
   }
 
   // Called once the command ends or is interrupted.

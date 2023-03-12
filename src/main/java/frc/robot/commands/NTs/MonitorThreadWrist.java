@@ -30,10 +30,9 @@ public class MonitorThreadWrist {
 
     public DoublePublisher profpos;
     public DoublePublisher disterr;
-    public DoublePublisher motout;
+    public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
-    public DoublePublisher gravcalc;
 
     public MonitorThreadWrist(WristSubsystem wrist) {
 
@@ -47,10 +46,9 @@ public class MonitorThreadWrist {
         accel = wristprof.getDoubleTopic("ACCEL").publish();
         profpos = wristprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = wristprof.getDoubleTopic("DISTERR").publish();
-        motout = wristprof.getDoubleTopic("MOTOUT").publish();
+        volts = wristprof.getDoubleTopic("VOLTS").publish();
         kvEst = wristprof.getDoubleTopic("KVEEST").publish();
         profvel = wristprof.getDoubleTopic("PROFVEL").publish();
-        gravcalc = wristprof.getDoubleTopic("GRAVCALC").publish();
 
     }
 
@@ -77,13 +75,13 @@ public class MonitorThreadWrist {
                         distance.set(m_wrist.getAngleRadians());
                         feedforward.set(m_wrist.ff);
                         pidval.set(m_wrist.pidVal);
-                        motout.set(m_wrist.getAppliedOutput());
-                        kvEst.set((m_wrist.getAppliedOutput() - WristConstants.ksVolts)
+                        volts.set(m_wrist.volts);
+                        kvEst.set((m_wrist.volts - WristConstants.ksVolts - WristConstants.kgVolts)
                                 / m_wrist.getRadsPerSec());
                         profpos.set(m_wrist.m_wristController.getSetpoint().position);
                         disterr.set(m_wrist.m_wristController.getPositionError());
                         profvel.set(m_wrist.m_wristController.getSetpoint().velocity);
-                        gravcalc.set(m_wrist.gravCalc);
+
                     }
                     Thread.sleep(100);
                 }

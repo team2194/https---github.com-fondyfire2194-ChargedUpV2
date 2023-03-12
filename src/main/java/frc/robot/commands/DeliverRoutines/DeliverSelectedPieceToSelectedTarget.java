@@ -47,6 +47,8 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new SetExtArmGoal(extend, ExtendArmConstants.deliverConstraints, extend.deliverDistance),
 
+        new WaitExtendAtTarget(extend, .24),
+
         new RunIntake(intake, intake.deliverSpeed)
 
             .until(() -> !intake.selectSensor(ghs.getGamePiecetype()))

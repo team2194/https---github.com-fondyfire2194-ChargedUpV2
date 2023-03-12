@@ -187,13 +187,13 @@ public final class Constants {
 
     public static final double MIN_ANGLE = 31;
 
-    public static final double MAX_ANGLE = 90;
+    public static final double MAX_ANGLE = 95;
 
     public static final double MIN_INCHES = 0;
 
     public static final double MAX_INCHES = 10;
 
-    public static final double MAX_CANCODER = 92;
+    public static final double MAX_CANCODER = 95;
 
     public static final double MIN_CANCODER = 31;
 
