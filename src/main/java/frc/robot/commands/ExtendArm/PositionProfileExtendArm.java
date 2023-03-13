@@ -27,8 +27,6 @@ public class PositionProfileExtendArm extends CommandBase {
 
   private double error;
 
-  private boolean inIZone;
-
   private boolean setController;
 
   double lastSpeed = 0;
@@ -118,9 +116,9 @@ public class PositionProfileExtendArm extends CommandBase {
 
     lastTime = Timer.getFPGATimestamp();
 
-    inIZone = checkIzone(2.0);
+    m_ext.inIZone = checkIzone(2.0);
 
-    if ((m_ext.m_extController.atSetpoint() || !inIZone) && m_ext.m_extController.getI() != 0){
+    if ((m_ext.m_extController.atSetpoint() || !m_ext.inIZone) && m_ext.m_extController.getI() != 0){
 
       m_ext.m_extController.setI(0);
 
@@ -128,7 +126,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     }
 
-    if (inIZone && m_ext.m_extController.getI() == 0){
+    if (m_ext.inIZone && m_ext.m_extController.getI() == 0){
 
       m_ext.m_extController.setI(0.001);
 

@@ -25,8 +25,6 @@ public class PositionProfileWrist extends CommandBase {
 
   private int loopctr;
 
-  private boolean inIZone;
-  
   private boolean setController;
 
   public PositionProfileWrist(WristSubsystem wrist, LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
@@ -86,23 +84,21 @@ public class PositionProfileWrist extends CommandBase {
 
     m_wrist.volts = m_wrist.pidVal + m_wrist.ff;
 
-    if (allowDown && m_wrist.volts<0 ||allowUp && m_wrist.volts>0 ) {
+    if (allowDown && m_wrist.volts < 0 || allowUp && m_wrist.volts > 0) {
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 
-      inIZone = checkIzone(.1);
+      m_wrist.inIZone = checkIzone(.1);
 
-      if ((m_wrist.m_wristController.atSetpoint() || !inIZone) && m_wrist.m_wristController.getI() != 0){
+      if ((m_wrist.m_wristController.atSetpoint() || !m_wrist.inIZone) && m_wrist.m_wristController.getI() != 0) {
 
         m_wrist.m_wristController.setI(0);
 
-
       }
 
-      if (inIZone && m_wrist.m_wristController.getI() == 0){
+      if (m_wrist.inIZone && m_wrist.m_wristController.getI() == 0) {
 
         m_wrist.m_wristController.setI(0.001);
-
 
       }
     }

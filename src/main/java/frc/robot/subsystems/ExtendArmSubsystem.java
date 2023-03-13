@@ -124,6 +124,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public double volts;
 
+    public boolean inIZone;
+
     public ExtendArmSubsystem() {
 
         firstUp = true;

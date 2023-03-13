@@ -172,6 +172,9 @@
         },
         "open": true
       },
+      "extprof1": {
+        "open": true
+      },
       "liftprof": {
         "open": true
       },

@@ -31,11 +31,8 @@ public class MonitorThreadLift {
     public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
-    public DoublePublisher velerr;;
+    public DoublePublisher velerr;
     public DoublePublisher posnerr;
-
-
-
 
     public DoublePublisher inizone;
 
@@ -53,9 +50,9 @@ public class MonitorThreadLift {
         kvEst = liftprof.getDoubleTopic("KVEEST").publish();
         profvel = liftprof.getDoubleTopic("PROFVEL").publish();
         inizone = liftprof.getDoubleTopic("INIZONE").publish();
-        velerr=liftprof.getDoubleTopic("VELERR").publish();
-        posnerr=liftprof.getDoubleTopic("POSNERR").publish();
-  
+        velerr = liftprof.getDoubleTopic("VELERR").publish();
+        posnerr = liftprof.getDoubleTopic("POSNERR").publish();
+
     }
 
     public void startThread() {
@@ -87,7 +84,6 @@ public class MonitorThreadLift {
                         disterr.set(m_lift.m_liftController.getPositionError());
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);
                         inizone.set(m_lift.inIZone ? -1.0 : 1.0);
-                    
                         velerr.set(m_lift.m_liftController.getVelocityError());
 
                     }

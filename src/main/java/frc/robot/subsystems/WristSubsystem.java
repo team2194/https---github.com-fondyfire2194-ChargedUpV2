@@ -118,6 +118,8 @@ public class WristSubsystem extends SubsystemBase {
 
     public double volts;
 
+    public boolean inIZone;
+
     public WristSubsystem() {
 
         useSoftwareLimit = false;
