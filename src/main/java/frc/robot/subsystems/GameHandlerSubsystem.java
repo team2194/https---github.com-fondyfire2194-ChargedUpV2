@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.simulation.SimConstants;
 
@@ -189,8 +190,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         }
 
-
-        public dropOffLevel chosenLevel = dropOffLevel.MID_LEVEL;
+        public dropOffLevel chosenLevel = dropOffLevel.TOP_LEVEL;
 
         public gamePiece gamePieceType = gamePiece.CONE;
 
@@ -263,6 +263,15 @@ public class GameHandlerSubsystem extends SubsystemBase {
         }
 
         public void setActiveDropByNumber(int num) {
+
+                SmartDashboard.putNumber("SELDROP", num);
+
+                dropNumberSet = num;
+                
+                clearDrops();
+
+                drops[num]=true;
+
                 switch (num) {
                         case 0:
                                 break;
@@ -348,8 +357,8 @@ public class GameHandlerSubsystem extends SubsystemBase {
         public void stepDropOffLevel() {
                 boolean levelChanged = false;
                 // if (getDropOffLevel() == dropOffLevel.GROUND_LEVEL) {
-                //         setDropOffLevel(dropOffLevel.MID_LEVEL);
-                //         levelChanged = true;
+                // setDropOffLevel(dropOffLevel.MID_LEVEL);
+                // levelChanged = true;
                 // }
                 if (!levelChanged && getDropOffLevel() == dropOffLevel.MID_LEVEL) {
                         setDropOffLevel(dropOffLevel.TOP_LEVEL);
@@ -357,6 +366,14 @@ public class GameHandlerSubsystem extends SubsystemBase {
                 }
                 if (!levelChanged && getDropOffLevel() == dropOffLevel.TOP_LEVEL)
                         setDropOffLevel(dropOffLevel.MID_LEVEL);
+        }
+
+        public void setDropOffLevelByNumber(int level) {
+                if (level == 0)
+                        setDropOffLevel(dropOffLevel.TOP_LEVEL);
+                else
+                        setDropOffLevel(dropOffLevel.MID_LEVEL);
+
         }
 
         public boolean getAllianceBlue() {
@@ -368,7 +385,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
         }
 
         public void toggleGamePieceType() {
-                
+
                 if (gamePieceType == gamePiece.CONE)
 
                         gamePieceType = gamePiece.CUBE;
@@ -379,7 +396,6 @@ public class GameHandlerSubsystem extends SubsystemBase {
         public gamePiece getGamePiecetype() {
                 return gamePieceType;
         }
-
 
         public int getDropNumber() {
                 return dropNumberSet;

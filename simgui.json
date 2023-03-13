@@ -67,6 +67,9 @@
       "/Shuffleboard/Arms/turnLayout/PositionTurnArm": "Command",
       "/Shuffleboard/Arms/turnLayout/TurnAngleChooser": "String Chooser",
       "/Shuffleboard/Competition/AutoChooser": "String Chooser",
+      "/Shuffleboard/Competition/DropChooser": "String Chooser",
+      "/Shuffleboard/Competition/LevelChooser": "String Chooser",
+      "/Shuffleboard/Competition/PieceChooser": "String Chooser",
       "/Shuffleboard/Competition/TrajectoryChooser": "String Chooser",
       "/Shuffleboard/GameInfo/B/TrajectoryChooser": "String Chooser",
       "/Shuffleboard/Intake/IntakeLayout/RunIntake": "Command",
@@ -161,13 +164,13 @@
         },
         "Vision": {
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
         "Scheduler": {
           "open": true
-        }
+        },
+        "open": true
       },
       "liftprof": {
         "open": true

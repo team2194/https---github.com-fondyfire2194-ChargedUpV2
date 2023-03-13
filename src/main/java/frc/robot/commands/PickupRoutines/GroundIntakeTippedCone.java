@@ -10,7 +10,7 @@ import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
-import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
@@ -51,7 +51,7 @@ public class GroundIntakeTippedCone extends SequentialCommandGroup {
 
                 new WaitExtendAtTarget(extend, .25),
 
-                new RetractExtPositionLiftWrist(lift, extend, wrist, true));
+                new RetractWristExtendLift(lift, extend, wrist, true));
 
     }
 }

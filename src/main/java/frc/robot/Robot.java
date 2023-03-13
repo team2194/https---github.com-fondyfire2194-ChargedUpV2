@@ -140,12 +140,12 @@ public class Robot extends TimedRobot {
     }
 
     // if (firstScan || m_robotContainer.m_ghs.CANOK != lastOKState) {
-    //   if (m_robotContainer.m_ghs.CANOK)
-    //     LightStrip.setColor(ledColors.GREEN);
-    //   else
-    //     LightStrip.setColor(ledColors.RED);
-    //   lastOKState = m_robotContainer.m_ghs.CANOK;
-    //   firstScan = false;
+    // if (m_robotContainer.m_ghs.CANOK)
+    // LightStrip.setColor(ledColors.GREEN);
+    // else
+    // LightStrip.setColor(ledColors.RED);
+    // lastOKState = m_robotContainer.m_ghs.CANOK;
+    // firstScan = false;
     // }
   }
 
@@ -164,7 +164,11 @@ public class Robot extends TimedRobot {
         presetExtArmDistances.RETRACT.getDistance(), false);
 
     // schedule the autonomous command (example)
-    if (m_robotContainer.m_autoFactory.autonomousCommand != null) {
+
+    m_robotContainer.m_autoFactory.autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
+
+    if (m_robotContainer.m_autoFactory != null) {
+
       m_robotContainer.m_autoFactory.autonomousCommand.schedule();
     }
 

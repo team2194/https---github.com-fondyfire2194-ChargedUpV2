@@ -15,7 +15,7 @@ import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
-import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -57,7 +57,7 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
             .andThen(new StopIntake(intake)),
 
-        new RetractExtPositionLiftWrist(lift, extend, wrist, true)
+        new RetractWristExtendLift(lift, extend, wrist, true)
 
     );
   }

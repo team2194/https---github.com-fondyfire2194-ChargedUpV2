@@ -15,10 +15,19 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PPConstants;
 import frc.robot.commands.Auto.DoNothing;
+import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
+import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
+import frc.robot.commands.TeleopRoutines.BalanceRobot;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.GameHandlerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LiftArmSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -30,6 +39,10 @@ public class AutoFactory {
     public Command autonomousCommand = new DoNothing();
 
     public final SendableChooser<Integer> m_autoChooser = new SendableChooser<Integer>();
+
+    public final SendableChooser<Integer> m_startLocationChooser = new SendableChooser<Integer>();
+
+    public final SendableChooser<Integer> m_pieceLevelChooser = new SendableChooser<Integer>();
 
     private boolean skipPathGroup;
 
@@ -48,48 +61,70 @@ public class AutoFactory {
 
     private DriveSubsystem m_drive;
 
-    
+    private GameHandlerSubsystem m_ghs;
 
-    public AutoFactory(DriveSubsystem drive) {
+    private LiftArmSubsystem m_lift;
 
-       // eventMap.put("deliverconehigh", deliverCone(nodeRow.REAR));
-     //   eventMap.put("pickupcube", pickupCube());
+    private ExtendArmSubsystem m_extend;
+
+    private WristSubsystem m_wrist;
+
+    private IntakeSubsystem m_intake;
+
+    public AutoFactory(DriveSubsystem drive, GameHandlerSubsystem ghs, LiftArmSubsystem lift, ExtendArmSubsystem extend,
+            WristSubsystem wrist, IntakeSubsystem intake) {
+
+        // eventMap.put("deliverconehigh", deliverCone(nodeRow.REAR));
+        // eventMap.put("pickupcube", pickupCube());
 
         m_drive = drive;
 
-        // m_turnArm = turnArm;
+        m_ghs = ghs;
 
-        // m_linArm = linArm;
+        m_lift = lift;
 
-        // Create the AutoBuilder. This only needs to be created once when robot code
-        // starts,
-        // not every time you want to create an auto command. A good place to put this
-        // is
-        // in RobotContainer along with your subsystems.
+        m_extend = extend;
 
-        autoBuilder = new SwerveAutoBuilder(
-                m_drive::getEstimatedPosition, // null,
-                m_drive::resetOdometry, // null,
-                DriveConstants.m_kinematics, // null,
+        m_wrist = wrist;
 
-                new PIDConstants(PPConstants.kPXController, PPConstants.kIXController, PPConstants.kDXController),
-
-                new PIDConstants(PPConstants.kPThetaController, PPConstants.kIThetaController,
-                        PPConstants.kDThetaController),
-
-                m_drive::setModuleStates, // Module states consumer used to output to the drive subsystem
-                eventMap,
-                m_drive);
+        m_intake = intake;
 
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
-         m_autoChooser.addOption("Drive Forward", 1);
+        m_autoChooser.addOption("Balance", 1);
 
-         m_autoChooser.addOption("Drive Straight", 2);
+        m_autoChooser.addOption("DriveOverCharge", 2);
+
+        m_autoChooser.addOption("DriveOver+Balance",3);
+
+        m_autoChooser.addOption("Clear Zone", 4);
+
+
+        m_pieceLevelChooser.setDefaultOption("Top", 0);
+
+        m_pieceLevelChooser.addOption("Mid", 1);
+
+        m_startLocationChooser.setDefaultOption("LeftCube", 0);
+        m_startLocationChooser.addOption("LeftPipe", 1);
+        m_startLocationChooser.addOption("CoopLeftPipe", 2);
+        m_startLocationChooser.addOption("CoopCube", 3);
+        m_startLocationChooser.addOption("CoopRightPipe", 4);
+        m_startLocationChooser.addOption("RightPipe", 5);
+        m_startLocationChooser.addOption("RightCube", 6);
+        m_startLocationChooser.addOption("LeftHybridPipe", 7);
+        m_startLocationChooser.addOption("RightHybridPipe", 8);
 
     }
 
     public Command getAutonomousCommand() {
+
+        int sel = m_startLocationChooser.getSelected();
+
+        m_ghs.setActiveDropByNumber(sel + 1);
+
+        int level = m_pieceLevelChooser.getSelected();
+
+        m_ghs.setDropOffLevelByNumber(level);
 
         startTime = Timer.getFPGATimestamp();
 
@@ -101,15 +136,19 @@ public class AutoFactory {
 
                 skipPathGroup = true;
 
-                autonomousCommand = new DoNothing();
+                new DoNothing();
 
                 break;
 
             case 1:
 
-                skipPathGroup = true;
+                new SequentialCommandGroup(
 
-                PathPlannerTrajectory driveForward = PathPlanner.loadPath("DriveForward", 4, 3);
+                        new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, m_ghs),
+
+                        new DeliverSelectedPieceToSelectedTarget(m_lift, m_extend, m_wrist, m_intake, m_ghs),
+
+                        new BalanceRobot(m_drive));
 
                 break;
 
@@ -136,5 +175,4 @@ public class AutoFactory {
 
     }
 
-  
 }

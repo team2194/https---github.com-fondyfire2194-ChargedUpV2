@@ -132,8 +132,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
-        m_motor.setOpenLoopRampRate(1);
-        m_motor.setClosedLoopRampRate(1);
+        m_motor.setOpenLoopRampRate(.1);
+        m_motor.setClosedLoopRampRate(.1);
 
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
@@ -146,8 +146,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
         m_motor.setSmartCurrentLimit(25);
-
-        m_motor.setClosedLoopRampRate(.5);
 
         m_motor.setIdleMode(IdleMode.kBrake);
 

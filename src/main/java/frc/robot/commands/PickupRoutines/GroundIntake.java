@@ -13,7 +13,7 @@ import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
-import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -100,7 +100,7 @@ public class GroundIntake extends SequentialCommandGroup {
                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
                         presetExtArmDistances.HOME.getDistance()),
 
-                new RetractExtPositionLiftWrist(lift, extend, wrist, true));
+                new RetractWristExtendLift(lift, extend, wrist, true));
 
     }
 }

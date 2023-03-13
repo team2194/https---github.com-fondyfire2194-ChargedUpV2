@@ -50,14 +50,22 @@ public class ShuffleboardCompetition {
                                 .withSize(2, 1)
                                 .withPosition(0, 0);
 
-                area1.addString("Current Pipeline", () -> m_llv.getCurrentPipelineName())
+                // area1.addString("Current Pipeline", () -> m_llv.getCurrentPipelineName())
+                // .withSize(1, 1)
+                // .withPosition(2, 0);
+
+                area1.add("LevelChooser", m_af.m_pieceLevelChooser)
                                 .withSize(1, 1)
                                 .withPosition(2, 0);
 
                 area1.addString(" PipelineType", () -> m_llv.getCurrentPipelineTypeName())
                                 .withSize(1, 1).withPosition(3, 0);
 
-                area1.addBoolean("HasTag", () -> m_drive.hasTag)
+                // area1.addBoolean("HasTag", () -> m_drive.hasTag)
+                // .withPosition(0, 1);
+
+                area1.add("DropChooser", m_af.m_startLocationChooser)
+                                .withSize(2, 1)
                                 .withPosition(0, 1);
 
                 area1.addNumber("FidID", () -> m_drive.fiducialID)
@@ -74,8 +82,8 @@ public class ShuffleboardCompetition {
                                 .withPosition(9, 4)
                                 .withProperties(Map.of("colorwhenfalse", "red", "colorwhentrue", "blue"));
 
-                area1.addBoolean("HasTarget", () -> m_drive.hasTarget)
-                                .withPosition(1, 1);
+                // area1.addBoolean("HasTarget", () -> m_drive.hasTarget)
+                // .withPosition(1, 1);
 
                 area1.addNumber("TX Degrees", () -> round2dp(m_drive.tx))
                                 .withPosition(1, 2);

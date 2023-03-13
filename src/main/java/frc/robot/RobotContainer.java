@@ -20,6 +20,7 @@ import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
+import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
 import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.Intake.JogIntake;
@@ -30,9 +31,8 @@ import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
-import frc.robot.commands.TeleopRoutines.RetractExtPositionLiftWrist;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
-import frc.robot.commands.TeleopRoutines.SetSwerveDriveTape;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
@@ -95,7 +95,6 @@ public class RobotContainer {
         public CommandXboxController m_armController = new CommandXboxController(
                         OIConstants.kArmControllerPort);
 
-
         final PowerDistribution m_pdp = new PowerDistribution();
 
         public LimelightVision m_llvis = new LimelightVision();
@@ -143,9 +142,9 @@ public class RobotContainer {
 
                 LiveWindow.disableAllTelemetry();
 
-                m_autoFactory = new AutoFactory(m_drive);
-
                 m_ghs = new GameHandlerSubsystem();
+
+                m_autoFactory = new AutoFactory(m_drive, m_ghs, m_liftArm, m_extendArm, m_wrist, m_intake);
 
                 m_fieldSim = new FieldSim(m_drive, m_ghs);
 
@@ -347,7 +346,6 @@ public class RobotContainer {
 
         }
 
-       
         public Command getDriveCommand() {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),

@@ -142,8 +142,8 @@ public class LiftArmSubsystem extends SubsystemBase {
         mEncoder = m_motor.getEncoder();
         m_motor.restoreFactoryDefaults();
         m_motor.setInverted(true);
-        m_motor.setOpenLoopRampRate(1);
-        m_motor.setClosedLoopRampRate(1);
+        m_motor.setOpenLoopRampRate(.1);
+        m_motor.setClosedLoopRampRate(.1);
 
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
@@ -159,8 +159,6 @@ public class LiftArmSubsystem extends SubsystemBase {
         mEncoder.setVelocityConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV / 60));
 
         m_motor.setSmartCurrentLimit(40);
-
-        m_motor.setClosedLoopRampRate(.25);
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
