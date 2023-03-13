@@ -5,7 +5,6 @@
 package frc.robot.commands.NTs;
 
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -25,6 +24,7 @@ public class MonitorThreadLift {
     public DoublePublisher velocity;
     public DoublePublisher feedforward;
     public DoublePublisher pidval;
+    public DoublePublisher angle;
 
     public DoublePublisher profpos;
     public DoublePublisher disterr;
@@ -34,7 +34,7 @@ public class MonitorThreadLift {
     public DoublePublisher velerr;
     public DoublePublisher posnerr;
 
-    public DoublePublisher inizone;
+    public BooleanPublisher inizone;
 
     public MonitorThreadLift(LiftArmSubsystem lift) {
 
@@ -42,6 +42,7 @@ public class MonitorThreadLift {
 
         goalAngle = liftprof.getDoubleTopic("GOALANGLERADS").publish();
         velocity = liftprof.getDoubleTopic("ACTVEL").publish();
+        angle = liftprof.getDoubleTopic("ACTRADS").publish();
         feedforward = liftprof.getDoubleTopic("FFWD").publish();
         pidval = liftprof.getDoubleTopic("PIDVAL").publish();
         profpos = liftprof.getDoubleTopic("PROFILEPOSN").publish();
@@ -49,7 +50,7 @@ public class MonitorThreadLift {
         volts = liftprof.getDoubleTopic("VOLTS").publish();
         kvEst = liftprof.getDoubleTopic("KVEEST").publish();
         profvel = liftprof.getDoubleTopic("PROFVEL").publish();
-        inizone = liftprof.getDoubleTopic("INIZONE").publish();
+        inizone = liftprof.getBooleanTopic("INIZONE").publish();
         velerr = liftprof.getDoubleTopic("VELERR").publish();
         posnerr = liftprof.getDoubleTopic("POSNERR").publish();
 
@@ -71,10 +72,11 @@ public class MonitorThreadLift {
 
                     m_lift.tstCtr++;
 
-                    if (!m_lift.isStopped()) {
+                    if (true) {
 
                         goalAngle.set(m_lift.goalAngleRadians);
                         velocity.set(m_lift.getCanCoderRateRadsPerSec());
+                        angle.set(m_lift.getCanCoderRadians());
                         feedforward.set(m_lift.ff);
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
                         volts.set(m_lift.volts);
@@ -83,7 +85,7 @@ public class MonitorThreadLift {
                         profpos.set(m_lift.m_liftController.getSetpoint().position);
                         disterr.set(m_lift.m_liftController.getPositionError());
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);
-                        inizone.set(m_lift.inIZone ? -1.0 : 1.0);
+                        inizone.set(m_lift.inIZone);
                         velerr.set(m_lift.m_liftController.getVelocityError());
 
                     }

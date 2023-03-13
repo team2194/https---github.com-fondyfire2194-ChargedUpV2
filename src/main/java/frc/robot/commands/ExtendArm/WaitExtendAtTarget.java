@@ -7,7 +7,6 @@ package frc.robot.commands.ExtendArm;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ExtendArmSubsystem;
-import frc.robot.subsystems.LiftArmSubsystem;
 
 public class WaitExtendAtTarget extends CommandBase {
   /** Creates a new WaitWristAtTarget. */
@@ -17,8 +16,8 @@ public class WaitExtendAtTarget extends CommandBase {
 
   public WaitExtendAtTarget(ExtendArmSubsystem extend, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_extend=extend;
-    m_atTargetTime=atTargetTime;
+    m_extend = extend;
+    m_atTargetTime = atTargetTime;
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +30,7 @@ public class WaitExtendAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_extend.controllerAtGoal() && m_startTime == 0) {
+    if (m_extend.m_extController.atGoal() && m_startTime == 0) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }

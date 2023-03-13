@@ -4,10 +4,10 @@
 
 package frc.robot.commands.NTs;
 
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 
@@ -32,7 +32,7 @@ public class MonitorThreadExt {
     public DoublePublisher volts;
     public DoublePublisher kvEst;
     public DoublePublisher profvel;
-    public DoublePublisher inizone;
+    public BooleanPublisher inizone;
     public DoublePublisher velerr;
 
     public MonitorThreadExt(ExtendArmSubsystem ext) {
@@ -51,7 +51,7 @@ public class MonitorThreadExt {
         volts = extprof.getDoubleTopic("VOLTS").publish();
         kvEst = extprof.getDoubleTopic("KVEEST").publish();
         profvel = extprof.getDoubleTopic("PROFVEL").publish();
-        inizone = extprof.getDoubleTopic("INIZONE").publish();
+        inizone = extprof.getBooleanTopic("INIZONE").publish();
         velerr = extprof.getDoubleTopic("VELERR").publish();
 
     }
@@ -71,7 +71,7 @@ public class MonitorThreadExt {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_ext.tstctr++;
 
-                    if (!m_ext.isStopped()) {
+                    if (true) {
                         goalinches.set(m_ext.goalInches);
                         velocity.set(m_ext.getInchesPerSec());
                         distance.set(m_ext.getPositionInches());
@@ -83,7 +83,7 @@ public class MonitorThreadExt {
                         profpos.set(m_ext.m_extController.getSetpoint().position);
                         disterr.set(m_ext.m_extController.getPositionError());
                         profvel.set(m_ext.m_extController.getSetpoint().velocity);
-                        inizone.set(m_ext.inIZone ? -1.0 : 1.0);                  
+                        inizone.set(m_ext.inIZone);                  
                     }
                     Thread.sleep(100);
                 }

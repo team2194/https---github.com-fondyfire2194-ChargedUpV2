@@ -88,8 +88,8 @@ public class WristSubsystem extends SubsystemBase {
 
     private double positionChangeper20ms;
 
-    public ProfiledPIDController m_wristController = new ProfiledPIDController(0, 0, 0,
-            WristConstants.wristConstraints);
+    public ProfiledPIDController m_wristController = new ProfiledPIDController(0.005, 0, 0,
+            WristConstants.wristConstraints,.02);
 
     public double deliverAngleRads;
 
@@ -119,6 +119,8 @@ public class WristSubsystem extends SubsystemBase {
     public double volts;
 
     public boolean inIZone;
+
+    private boolean runDeliverAngle;
 
     public WristSubsystem() {
 
@@ -153,7 +155,7 @@ public class WristSubsystem extends SubsystemBase {
         enableSoftLimits(useSoftwareLimit);
 
         m_armfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
-                WristConstants.kvWristVoltSecondsPerRadian);
+                WristConstants.kvWristVoltSecondsPerRadian, WristConstants.kaWristVoltSecondsSquaredPerRadian);
 
         // SmartDashboard.putNumber("WRPSM", WristConstants.MAX_RADS_PER_SEC);// 1.04
 
@@ -162,6 +164,14 @@ public class WristSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+
+        if (runDeliverAngle) {
+
+            setController(WristConstants.wristConstraints, deliverAngleRads, false);
+
+            SmartDashboard.putNumber("WDA", deliverAngleRads);
+            runDeliverAngle = false;
+        }
 
         loopctr++;
 
@@ -208,17 +218,17 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setControllerGoal(double angleRadians) {
-
-        goalAngleRadians = angleRadians;
+        m_wristController.setGoal(angleRadians);
+        SmartDashboard.putNumber("GAR", m_wristController.getGoal().position);
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
-        SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
+
         if (isStopped()) {
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
             goalAngleRadians = angleRads;
-
+            SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
             if (initial)
                 m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
             else
@@ -237,9 +247,8 @@ public class WristSubsystem extends SubsystemBase {
         setController(WristConstants.wristConstraints, getAngleRadians(), false);
     }
 
-    public void runDeliverAngle() {
-        setController(WristConstants.wristConstraints, deliverAngleRads, false);
-        SmartDashboard.putNumber("RRRRRRRRRRRRR", 999);
+    public void runDeliverAngle(boolean on) {
+        runDeliverAngle = on;
     }
 
     public void resetAngle() {
@@ -250,10 +259,6 @@ public class WristSubsystem extends SubsystemBase {
         return Math.abs(goalAngleRadians - getAngleDegrees()) < inPositionBandwidth;
     }
 
-    public boolean controllerAtGoal() {
-        return m_wristController.atGoal();
-    }
-
     public double getAngleDegrees() {
 
         if (RobotBase.isReal())
@@ -261,6 +266,7 @@ public class WristSubsystem extends SubsystemBase {
             return Units.radiansToDegrees(mEncoder.getPosition());
 
         else
+
             return m_positionSim;
 
     }
@@ -272,7 +278,8 @@ public class WristSubsystem extends SubsystemBase {
             return mEncoder.getPosition();
 
         else
-            return m_positionSim;
+
+            return Units.degreesToRadians(m_positionSim);
 
     }
 

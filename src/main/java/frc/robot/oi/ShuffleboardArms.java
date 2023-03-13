@@ -6,8 +6,6 @@ package frc.robot.oi;
 
 import java.util.Map;
 
-import javax.lang.model.type.UnionType;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -94,7 +92,8 @@ public class ShuffleboardArms {
                                 .withProperties(Map.of("Label position", "LEFT"));
 
                 wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.getAngleRadians()));
-                wristLayout.addNumber("WristPosdeg", () -> round2dp(m_wrist.getAngleDegrees()));
+                wristLayout.addNumber("WristPosDeg", () -> round2dp(m_wrist.getAngleDegrees()));
+                wristLayout.addNumber("WristGoal", () -> round2dp(m_wrist.goalAngleRadians));
 
                 wristLayout.addNumber("CommandRadPerSec", () -> round2dp(m_wrist.commandRadPerSec));
                 wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));

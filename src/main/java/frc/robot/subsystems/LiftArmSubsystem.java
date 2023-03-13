@@ -14,7 +14,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -76,7 +75,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public final CANCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(0, 0, 0,
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(0.005, 0, 0,
             LiftArmConstants.liftArmConstraints, .02);
 
     private boolean useSoftwareLimit;
@@ -129,12 +128,11 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double gravCalc;
 
-    public double pidval;
+    public double pidVal;
 
     public double volts;
 
     public boolean inIZone;
-
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
@@ -173,7 +171,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         enableSoftLimits(useSoftwareLimit);
 
         m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
-                LiftArmConstants.kvVoltSecondsPerRadian);
+                LiftArmConstants.kvVoltSecondsPerRadian, LiftArmConstants.kAVoltSecondSquaredPerRadian);
 
     }
 
@@ -230,10 +228,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getCanCoderRadians()) < inPositionBandwidth;
-    }
-
-    public boolean controllerAtGoal() {
-        return m_liftController.atGoal();
     }
 
     // will be 0 at horizontal
@@ -334,7 +328,7 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerGoal(double goalRadians) {
-        goalAngleRadians = goalRadians;
+        m_liftController.setGoal(goalRadians);
     }
 
     public void setControllerConstraints(TrapezoidProfile.Constraints constraints) {

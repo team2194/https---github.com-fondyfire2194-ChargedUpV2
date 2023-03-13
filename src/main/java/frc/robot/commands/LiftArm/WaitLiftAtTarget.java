@@ -16,8 +16,8 @@ public class WaitLiftAtTarget extends CommandBase {
 
   public WaitLiftAtTarget(LiftArmSubsystem lift, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_lift=lift;
-    m_atTargetTime=atTargetTime;
+    m_lift = lift;
+    m_atTargetTime = atTargetTime;
   }
 
   // Called when the command is initially scheduled.
@@ -30,7 +30,7 @@ public class WaitLiftAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_lift.controllerAtGoal() && m_startTime == 0) {
+    if (m_lift.m_liftController.atGoal() && m_startTime == 0) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }

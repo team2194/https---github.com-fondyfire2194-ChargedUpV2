@@ -4,7 +4,9 @@
 
 package frc.robot.commands.ExtendArm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ExtendArmConstants;
@@ -29,9 +31,9 @@ public class PositionProfileExtendArm extends CommandBase {
 
   private boolean setController;
 
-  double lastSpeed = 0;
+  private double lastSpeed = 0;
 
-  double lastTime;
+  private double lastTime;
 
   public PositionProfileExtendArm(ExtendArmSubsystem ext, LiftArmSubsystem lift,
       TrapezoidProfile.Constraints constraints, double goalInches) {
@@ -67,7 +69,6 @@ public class PositionProfileExtendArm extends CommandBase {
 
     m_ext.m_extController.setTolerance(1);
 
-
     if (setController) {
 
       m_ext.setControllerConstraints(m_constraints);
@@ -91,7 +92,11 @@ public class PositionProfileExtendArm extends CommandBase {
     loopctr++;
 
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
-        m_ext.goalInches);
+        m_ext.m_extController.getSetpoint().position);
+
+    // double temp = m_ext.pidVal * RobotController.getBatteryVoltage();
+
+    // m_ext.pidVal = MathUtil.clamp(temp, -1, 1);
 
     double acceleration = (m_ext.m_extController.getSetpoint().velocity -
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
@@ -118,7 +123,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     m_ext.inIZone = checkIzone(2.0);
 
-    if ((m_ext.m_extController.atSetpoint() || !m_ext.inIZone) && m_ext.m_extController.getI() != 0){
+    if ((m_ext.m_extController.atGoal() || !m_ext.inIZone) && m_ext.m_extController.getI() != 0) {
 
       m_ext.m_extController.setI(0);
 
@@ -126,7 +131,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     }
 
-    if (m_ext.inIZone && m_ext.m_extController.getI() == 0){
+    if (m_ext.inIZone && m_ext.m_extController.getI() == 0) {
 
       m_ext.m_extController.setI(0.001);
 

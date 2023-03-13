@@ -31,6 +31,7 @@ public class SetLiftGoal extends CommandBase {
     m_lift = lift;
     m_constraints = LiftArmConstants.liftArmConstraints;
     m_goalAngleRadians = goalAngleRadians;
+    m_lift.deliverAngleRads=goalAngleRadians;
   }
 
   // Called when the command is initially scheduled.

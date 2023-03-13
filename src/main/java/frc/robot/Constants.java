@@ -314,7 +314,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
-        new Constraints(Units.degreesToRadians(57), Units.degreesToRadians(114));
+        new Constraints(Units.degreesToRadians(570), Units.degreesToRadians(1140));
 
     public static final double JOG_SLEW_RATE = 10;
 

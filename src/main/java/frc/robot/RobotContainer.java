@@ -5,7 +5,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
@@ -31,7 +29,6 @@ import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
-import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
@@ -329,21 +326,22 @@ public class RobotContainer {
 
                 // m_armController.start()
 
-                // m_armController.a()
+                m_armController.a().onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE));
 
-                // m_armController.y()
+                m_armController.b().onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE));
+
+                m_armController.y().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake));
 
                 // m_armController.x().
 
                 m_armController.povUp()
                                 .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
 
-                m_armController.povRight().onTrue(Commands.runOnce(() -> m_liftArm.runDeliverAngle()).withTimeout(5));
+                m_armController.povRight().onTrue(Commands.run(() -> m_liftArm.runDeliverAngle()).withTimeout(5));
 
-                m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle()).withTimeout(5));
+                m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle(true)));
 
-                // m_armController.povLeft().
-
+                m_armController.povLeft().onTrue(Commands.run(() -> m_extendArm.runDeliverAngle()).withTimeout(5));
         }
 
         public Command getDriveCommand() {

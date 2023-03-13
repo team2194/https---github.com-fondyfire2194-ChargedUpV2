@@ -100,14 +100,14 @@ public class Pref {
     prefDict.put("extKv", .6);//
     prefDict.put("extKa", .0);
 
-    prefDict.put("extKp", .0);
+    prefDict.put("extKp", .005);
 
     // wrist characterization
     prefDict.put("wristKs", .06);
     prefDict.put("wristKg", .16);
     prefDict.put("wristKv", 10.);
 
-    prefDict.put("wristKp", 0.);
+    prefDict.put("wristKp", 0.005);
 
   }
 

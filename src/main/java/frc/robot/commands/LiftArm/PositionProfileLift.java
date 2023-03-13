@@ -4,8 +4,11 @@
 
 package frc.robot.commands.LiftArm;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -29,6 +32,10 @@ public class PositionProfileLift extends CommandBase {
   private boolean directionIsDown;
 
   private boolean setController;
+
+  private double lastSpeed = 0;
+
+  private double lastTime;
 
   public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -57,6 +64,8 @@ public class PositionProfileLift extends CommandBase {
 
     m_lift.m_liftController.setTolerance(Units.degreesToRadians(1));
 
+    lastTime = Timer.getFPGATimestamp();
+
     if (setController) {
 
       m_lift.goalAngleRadians = m_goalAngleRadians;
@@ -81,12 +90,19 @@ public class PositionProfileLift extends CommandBase {
 
     loopctr++;
 
+    m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
 
-    pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
+    // double temp = m_lift.pidVal * RobotController.getBatteryVoltage();
+
+    // m_lift.pidVal = MathUtil.clamp(temp, -1, 1);
+
+    double acceleration = (m_lift.m_liftController.getSetpoint().velocity -
+
+        lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
     m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
 
-        m_lift.m_liftController.getSetpoint().velocity);
+        m_lift.m_liftController.getSetpoint().velocity, acceleration);
 
     m_lift.volts = pidVal + m_lift.ff;
 
@@ -94,9 +110,13 @@ public class PositionProfileLift extends CommandBase {
 
       m_lift.m_motor.setVoltage(m_lift.volts);
 
+      lastSpeed = m_lift.m_liftController.getSetpoint().velocity;
+
+      lastTime = Timer.getFPGATimestamp();
+
       m_lift.inIZone = checkIzone(.1);
 
-      if ((!m_lift.inIZone || m_lift.m_liftController.atSetpoint()) && m_lift.m_liftController.getI() != 0) {
+      if ((!m_lift.inIZone || m_lift.m_liftController.atGoal()) && m_lift.m_liftController.getI() != 0) {
 
         m_lift.m_liftController.setI(0);
 
@@ -111,9 +131,13 @@ public class PositionProfileLift extends CommandBase {
         m_lift.m_liftController.setIntegratorRange(-.02, .02);
       }
 
-    } else
+    } else {
 
       m_lift.m_motor.setVoltage(0);
+
+      lastSpeed = 0;
+
+    }
 
   }
 

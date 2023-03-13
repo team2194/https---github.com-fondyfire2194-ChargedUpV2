@@ -72,7 +72,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
 
-    public ProfiledPIDController m_extController = new ProfiledPIDController(0, 0, 0,
+    public ProfiledPIDController m_extController = new ProfiledPIDController(0.005, 0, 0,
             ExtendArmConstants.extendArmConstraints);
 
     private double inPositionBandwidth = .25;
@@ -116,7 +116,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public double goalInches;
 
     public boolean firstUp;
-
 
     public boolean endComm;
 
@@ -173,7 +172,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        SmartDashboard.putNumber("EXTTST", tstctr);
+
         loopctr++;
 
         if (faultSeen != 0)
@@ -214,7 +213,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerGoal(double position) {
-        goalInches = position;
+        m_extController.setGoal(position);
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double distance, boolean initial) {
@@ -222,6 +221,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
         if (isStopped()) {
 
             setControllerConstraints(constraints);
+            setControllerGoal(distance);
             goalInches = distance;
             if (initial)
                 m_extController.reset(new TrapezoidProfile.State(presetExtArmDistances.HOME.getDistance(), 0));
@@ -239,6 +239,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     }
 
+    public void runDeliverAngle() {
+        setController(ExtendArmConstants.extendArmConstraints, deliverDistance, false);
+    }
+
     public void resetPosition(double position) {
 
         mEncoder.setPosition(position);
@@ -247,10 +251,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean atTargetPosition() {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
-    }
-
-    public boolean controllerAtGoal() {
-        return m_extController.atGoal();
     }
 
     public boolean isStopped() {

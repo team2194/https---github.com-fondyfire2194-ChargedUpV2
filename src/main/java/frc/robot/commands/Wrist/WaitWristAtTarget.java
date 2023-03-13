@@ -30,7 +30,7 @@ public class WaitWristAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_wrist.controllerAtGoal() && m_startTime == 0) {
+    if (m_wrist.m_wristController.atGoal() && m_startTime == 0) {
       
       m_startTime = Timer.getFPGATimestamp();
     }

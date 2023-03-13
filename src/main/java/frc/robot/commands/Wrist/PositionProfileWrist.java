@@ -4,8 +4,12 @@
 
 package frc.robot.commands.Wrist;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -26,6 +30,10 @@ public class PositionProfileWrist extends CommandBase {
   private int loopctr;
 
   private boolean setController;
+
+  private double lastSpeed = 0;
+
+  private double lastTime;
 
   public PositionProfileWrist(WristSubsystem wrist, LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
       double goalAngleRadians) {
@@ -56,6 +64,8 @@ public class PositionProfileWrist extends CommandBase {
 
     m_wrist.m_wristController.setTolerance(Units.degreesToRadians(1));
 
+    lastTime = Timer.getFPGATimestamp();
+
     if (setController) {
 
       m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
@@ -75,12 +85,22 @@ public class PositionProfileWrist extends CommandBase {
 
     loopctr++;
 
-    m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(), m_wrist.goalAngleRadians);
+
+    m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(),
+        m_wrist.goalAngleRadians);
+
+    // double temp = m_wrist.pidVal * RobotController.getBatteryVoltage();
+
+    // m_wrist.pidVal = MathUtil.clamp(temp, -1, 1);
+
+    double acceleration = (m_wrist.m_wristController.getSetpoint().velocity -
+
+        lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
     m_wrist.ff = m_wrist.m_armfeedforward.calculate(
         m_wrist.m_wristController.getSetpoint().position - m_wrist.getAngleRadians() - (Math.PI / 2)
             - m_lift.getCanCoderRadians(),
-        m_wrist.m_wristController.getSetpoint().velocity);
+        m_wrist.m_wristController.getSetpoint().velocity, acceleration);
 
     m_wrist.volts = m_wrist.pidVal + m_wrist.ff;
 
@@ -88,9 +108,13 @@ public class PositionProfileWrist extends CommandBase {
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 
+      lastSpeed = m_wrist.m_wristController.getSetpoint().velocity;
+
+      lastTime = Timer.getFPGATimestamp();
+
       m_wrist.inIZone = checkIzone(.1);
 
-      if ((m_wrist.m_wristController.atSetpoint() || !m_wrist.inIZone) && m_wrist.m_wristController.getI() != 0) {
+      if ((m_wrist.m_wristController.atGoal() || !m_wrist.inIZone) && m_wrist.m_wristController.getI() != 0) {
 
         m_wrist.m_wristController.setI(0);
 

@@ -164,13 +164,13 @@
         },
         "Vision": {
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "Scheduler": {
           "open": true
-        },
-        "open": true
+        }
       },
       "extprof1": {
         "open": true
