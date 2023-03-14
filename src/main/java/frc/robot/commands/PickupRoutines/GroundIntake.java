@@ -95,7 +95,7 @@ public class GroundIntake extends SequentialCommandGroup {
 
                 new WaitExtendAtTarget(extend, .25),
 
-                new GetPieceAtIntake(intake, type),
+                new GetPieceAtIntake(intake),
 
                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
                         presetExtArmDistances.HOME.getDistance()),

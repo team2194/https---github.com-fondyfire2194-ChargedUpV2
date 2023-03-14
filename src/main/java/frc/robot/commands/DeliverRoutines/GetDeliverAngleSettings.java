@@ -5,6 +5,7 @@
 package frc.robot.commands.DeliverRoutines;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Pref;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
@@ -76,14 +77,14 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_liftAngleRads = presetLiftAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_MID_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
+        m_intakeSpeed = Pref.getPref("cubedelspeed");// presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_PIPE.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
+        m_intakeSpeed = Pref.getPref("conedelspeed");// presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
 
     }
@@ -94,14 +95,14 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_liftAngleRads = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
+        m_intakeSpeed = Pref.getPref("cubedelspeed"); // presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE) {
         m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
-        m_intakeSpeed = presetIntakeSpeeds.DELIVER_CONE.getSpeed();
+        m_intakeSpeed = Pref.getPref("conedelspeed");//presetIntakeSpeeds.DELIVER_CONE.getSpeed();
       }
 
     }

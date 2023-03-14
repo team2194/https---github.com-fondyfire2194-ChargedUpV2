@@ -25,6 +25,7 @@ import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLift;
 import frc.robot.commands.NTs.MonitorThreadExt;
+import frc.robot.commands.NTs.MonitorThreadIntake;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GroundIntake;
@@ -103,6 +104,7 @@ public class RobotContainer {
         public MonitorThreadExt mext;
         public MonitorThreadLift mlift;
         public MonitorThreadWrist mwrist;
+        public MonitorThreadIntake mIntake;
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -130,6 +132,10 @@ public class RobotContainer {
                 mwrist = new MonitorThreadWrist(m_wrist);
 
                 mwrist.startThread();
+
+                mIntake = new MonitorThreadIntake(m_intake);
+
+                mIntake.startThread();
 
                 m_llv = new LimelightVision();
 
@@ -216,7 +222,7 @@ public class RobotContainer {
 
                 m_driverController.leftBumper()
                                 .onTrue(getDeliverCommand());
-                                
+
                 // m_driverController.rightBumper()
 
                 m_driverController.leftTrigger().onTrue(new StrafeToGridSlot(m_drive, m_tf,

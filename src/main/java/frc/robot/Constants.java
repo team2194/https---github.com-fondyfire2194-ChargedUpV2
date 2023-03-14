@@ -201,7 +201,7 @@ public final class Constants {
 
     private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
 
-    public static double DEGREES_PER_INCH = ANGLE_RANGE / INCH_RANGE;// 3.7333 DEG PER INCH
+    public static double DEGREES_PER_INCH = 4.28;//ANGLE_RANGE / INCH_RANGE;// 3.7333 DEG PER INCH
 
     public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .225
 

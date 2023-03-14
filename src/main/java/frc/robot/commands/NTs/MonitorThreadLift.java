@@ -34,6 +34,7 @@ public class MonitorThreadLift {
     public DoublePublisher velerr;
     public DoublePublisher posnerr;
     public DoublePublisher amps;
+    public DoublePublisher relenc;
 
     public BooleanPublisher inizone;
 
@@ -55,6 +56,7 @@ public class MonitorThreadLift {
         velerr = liftprof.getDoubleTopic("VELERR").publish();
         posnerr = liftprof.getDoubleTopic("POSNERR").publish();
         amps = liftprof.getDoubleTopic("CURRENT").publish();
+        relenc = liftprof.getDoubleTopic("RELENC").publish();
 
     }
 
@@ -90,6 +92,7 @@ public class MonitorThreadLift {
                         inizone.set(m_lift.inIZone);
                         velerr.set(m_lift.m_liftController.getVelocityError());
                         amps.set(m_lift.getAmps());
+                        relenc.set(m_lift.getPositionRadians());
 
                     }
                     Thread.sleep(100);

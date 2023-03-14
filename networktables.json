@@ -398,5 +398,37 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/cubedelspeed",
+    "type": "double",
+    "value": 0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/conepuspeed",
+    "type": "double",
+    "value": 0.7,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/conedelspeed",
+    "type": "double",
+    "value": -0.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/cubepuspeed",
+    "type": "double",
+    "value": -0.7,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

@@ -59,10 +59,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public int coneSensedDistance;
 
-  public int cubeSenseThreshold = 100;
-
-  public int coneSenseThreshold = 100;
-
   public boolean cubePresent;
 
   public boolean conePresent;
@@ -77,15 +73,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private int normalCubeDistance;
 
-  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
-
-  LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
+  
 
   private int loopctr;
 
   public double deliverSpeed;
 
   public int deliverSensor;
+
+public int tstctr;
 
   public IntakeSubsystem() {
 
@@ -137,15 +133,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
       intakeMotorConnected = checkCANOK();
 
-      cubePresent = cubeSensorFilter.calculate(getCubeSensorDistance()) < cubeSenseThreshold;
 
-      conePresent = coneSensorFilter.calculate(getConeSensorDistance()) < coneSenseThreshold;
+      // coneSensorOK = getConeSensorOK();
 
-      coneSensorOK = getConeSensorOK();
+      // cubeSensorOK = getConeSensorOK();
 
-      cubeSensorOK = getConeSensorOK();
-
-      pieceSensorsOK = coneSensorOK && cubeSensorOK;
+      pieceSensorsOK = true;//coneSensorOK && cubeSensorOK;
 
       loopctr = 0;
 

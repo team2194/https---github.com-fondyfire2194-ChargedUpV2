@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -153,7 +154,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_liftCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
 
         mEncoder.setPositionConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV));
-
+        SmartDashboard.putNumber("LDPER", LiftArmConstants.DEGREES_PER_ENCODER_REV);
         mEncoder.setVelocityConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV / 60));
 
         m_motor.setSmartCurrentLimit(40);
@@ -256,7 +257,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double getPositionRadians() {
         if (RobotBase.isReal())
-            return mEncoder.getPosition();
+            return Units.degreesToRadians(LiftArmConstants.MIN_ANGLE) + mEncoder.getPosition();
         else
             return m_positionSim;
     }

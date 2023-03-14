@@ -164,27 +164,18 @@
         },
         "Vision": {
           "open": true
-        },
-        "open": true
-      },
-      "SmartDashboard": {
-        "Scheduler": {
-          "open": true
         }
       },
-      "extprof1": {
+      "SmartDashboard": {
         "open": true
       },
-      "liftprof": {
+      "intprof": {
         "open": true
       },
       "swerve": {
         "drive": {
           "open": true
         },
-        "open": true
-      },
-      "wristprof": {
         "open": true
       }
     }

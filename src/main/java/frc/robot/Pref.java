@@ -109,6 +109,19 @@ public class Pref {
 
     prefDict.put("wristKp", 0.005);
 
+
+    //intake values
+
+    prefDict.put("conepuspeed", .7);
+    prefDict.put("cubepuspeed", -.7);
+    prefDict.put("conedelspeed", -.5);
+    prefDict.put("cubedelspeed", .5);
+
+
+
+
+
+
   }
 
   public static void ensureRioPrefs() {

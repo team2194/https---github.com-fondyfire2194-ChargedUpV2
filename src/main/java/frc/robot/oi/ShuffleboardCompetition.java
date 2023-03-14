@@ -93,17 +93,13 @@ public class ShuffleboardCompetition {
                 area1.addBoolean("CAN OK", () -> m_gps.CANOK)
                                 .withPosition(1, 4);
 
-                area1.addBoolean("ConeFound", () -> m_drive.coneFound)
-                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(1, 1)
-                                .withPosition(2, 2)
-                                .withProperties(Map.of("colorwhenfalse", "gray", "colorwhentrue", "yellow"));
-                area1.addBoolean("CubeFound", () -> m_drive.cubeFound)
-                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(1, 1)
-                                .withPosition(2, 3)
-                                .withProperties(Map.of("colorwhenfalse", "gray", "colorwhentrue", "purple"));
+                area1.addNumber("ConeDistance", () -> m_intake.getConeSensorDistance())
+                                .withSize(1, 1)
+                                .withPosition(2, 2);
 
-                area1.addBoolean("PieceSensorsOK", () -> m_intake.pieceSensorsOK)
-                                .withPosition(2, 4);
+                area1.addNumber("CubeDistance", () -> m_intake.getCubeSensorDistance())
+                                .withSize(1, 1)
+                                .withPosition(2, 3);
 
                 area1.addBoolean(GridDrop.LEFT_CUBE.name(), () -> m_gps.drops[1])
 
