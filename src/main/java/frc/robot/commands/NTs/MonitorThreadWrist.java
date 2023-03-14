@@ -27,7 +27,6 @@ public class MonitorThreadWrist {
     public DoublePublisher pidval;
     public DoublePublisher lastspeed;
 
-
     public DoublePublisher profpos;
     public DoublePublisher disterr;
     public DoublePublisher volts;
@@ -35,6 +34,7 @@ public class MonitorThreadWrist {
     public DoublePublisher profvel;
     public BooleanPublisher inizone;
     public DoublePublisher velerr;
+    public DoublePublisher amps;
 
     public MonitorThreadWrist(WristSubsystem wrist) {
 
@@ -52,6 +52,7 @@ public class MonitorThreadWrist {
         profvel = wristprof.getDoubleTopic("PROFVEL").publish();
         inizone = wristprof.getBooleanTopic("INIZONE").publish();
         velerr = wristprof.getDoubleTopic("VELERR").publish();
+        amps = wristprof.getDoubleTopic("CURRENT").publish();
 
     }
 
@@ -83,10 +84,10 @@ public class MonitorThreadWrist {
                                 / m_wrist.getRadsPerSec());
                         profpos.set(m_wrist.m_wristController.getSetpoint().position);
                         disterr.set(m_wrist.m_wristController.getPositionError());
-                        velerr.set(m_wrist.m_wristController.getVelocityError());                       
+                        velerr.set(m_wrist.m_wristController.getVelocityError());
                         profvel.set(m_wrist.m_wristController.getSetpoint().velocity);
-                        inizone.set(m_wrist.inIZone);                  
-
+                        inizone.set(m_wrist.inIZone);
+                        amps.set(m_wrist.getAmps());
                     }
                     Thread.sleep(100);
                 }

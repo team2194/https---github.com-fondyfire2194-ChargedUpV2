@@ -193,7 +193,7 @@ public final class Constants {
 
     public static final double MAX_INCHES = 10;
 
-    public static final double MAX_CANCODER = 95;
+    public static final double MAX_CANCODER = 98;
 
     public static final double MIN_CANCODER = 31;
 
@@ -239,7 +239,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmConstraints
 
-        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(50));
+        = new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(20));
 
     public static final double JOG_SLEW_RATE = 10;
 

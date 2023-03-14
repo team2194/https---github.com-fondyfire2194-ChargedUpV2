@@ -215,8 +215,8 @@ public class RobotContainer {
         void configDriverButtons() {
 
                 m_driverController.leftBumper()
-                                .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
-                                                m_intake, m_ghs));
+                                .onTrue(getDeliverCommand());
+                                
                 // m_driverController.rightBumper()
 
                 m_driverController.leftTrigger().onTrue(new StrafeToGridSlot(m_drive, m_tf,
@@ -373,6 +373,10 @@ public class RobotContainer {
 
         public Command getJogIntakeCommand() {
                 return new JogIntake(m_intake, () -> m_armController.getRawAxis(4));
+        }
+
+        public Command getDeliverCommand() {
+                return new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs);
         }
 
         public void simulationPeriodic() {

@@ -25,7 +25,6 @@ public class PositionProfileLift extends CommandBase {
 
   private double m_goalAngleRadians;
 
-  private double pidVal;
 
   private int loopctr;
 
@@ -104,7 +103,7 @@ public class PositionProfileLift extends CommandBase {
 
         m_lift.m_liftController.getSetpoint().velocity, acceleration);
 
-    m_lift.volts = pidVal + m_lift.ff;
+    m_lift.volts = m_lift.pidVal + m_lift.ff;
 
     if (allowUp && m_lift.volts > 0 || allowDown && m_lift.volts < 0) {
 

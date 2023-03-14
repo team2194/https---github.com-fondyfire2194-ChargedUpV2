@@ -34,6 +34,7 @@ public class MonitorThreadExt {
     public DoublePublisher profvel;
     public BooleanPublisher inizone;
     public DoublePublisher velerr;
+    public DoublePublisher amps;
 
     public MonitorThreadExt(ExtendArmSubsystem ext) {
 
@@ -53,6 +54,7 @@ public class MonitorThreadExt {
         profvel = extprof.getDoubleTopic("PROFVEL").publish();
         inizone = extprof.getBooleanTopic("INIZONE").publish();
         velerr = extprof.getDoubleTopic("VELERR").publish();
+        amps = extprof.getDoubleTopic("CURRENT").publish();
 
     }
 
@@ -83,7 +85,8 @@ public class MonitorThreadExt {
                         profpos.set(m_ext.m_extController.getSetpoint().position);
                         disterr.set(m_ext.m_extController.getPositionError());
                         profvel.set(m_ext.m_extController.getSetpoint().velocity);
-                        inizone.set(m_ext.inIZone);                  
+                        inizone.set(m_ext.inIZone);   
+                        amps.set(m_ext.getAmps())  ;             
                     }
                     Thread.sleep(100);
                 }

@@ -41,6 +41,8 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new SetWristGoal(wrist, WristConstants.wristConstraints, wrist.deliverAngleRads),
 
+        new WaitCommand(2),
+
         new WaitLiftAtTarget(lift, .25),
 
         new WaitWristAtTarget(wrist, .24),
