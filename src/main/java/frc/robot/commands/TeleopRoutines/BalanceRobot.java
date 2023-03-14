@@ -11,6 +11,8 @@ public class BalanceRobot extends CommandBase {
   /** Creates a new BalanceRobot. */
   private DriveSubsystem m_drive;
   private boolean autoBalanceYMode;
+
+  
   private boolean autoBalanceXMode;
   static double kOffBalanceThresholdDegrees = 10.0;
   static double kOnBalanceThresholdDegrees = 5.0;
