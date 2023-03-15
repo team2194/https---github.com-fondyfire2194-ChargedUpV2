@@ -4,9 +4,7 @@
 
 package frc.robot.commands.ExtendArm;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ExtendArmConstants;
@@ -91,6 +89,8 @@ public class PositionProfileExtendArm extends CommandBase {
 
     loopctr++;
 
+    m_ext.gravVal = ExtendArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
+
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
         m_ext.goalInches);
 
@@ -104,7 +104,7 @@ public class PositionProfileExtendArm extends CommandBase {
     m_ext.ff = m_ext.m_feedforward.calculate(m_ext.m_extController.getSetpoint().velocity,
         acceleration);
 
-    m_ext.volts = m_ext.ff + m_ext.pidVal;
+    m_ext.volts = m_ext.ff + m_ext.pidVal + m_ext.gravVal;
 
     if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
 

@@ -357,6 +357,11 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     }
 
+    public void redoTarget() {
+        setControllerGoal(m_liftController.getGoal().position);
+    }
+
+
     public void runDeliverPosition() {
         setController(LiftArmConstants.liftArmInchConstraints, 5, false);
     }

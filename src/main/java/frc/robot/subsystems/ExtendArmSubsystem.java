@@ -12,7 +12,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
@@ -126,6 +125,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public boolean inIZone;
 
     private boolean runDeliverAngle;
+
+    public double gravVal;
 
     public ExtendArmSubsystem() {
 
@@ -249,9 +250,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void runDeliverAngle(boolean on) {
-
         runDeliverAngle = on;
+    }
 
+    public void redoTarget() {
+        setControllerGoal(m_extController.getGoal().position);
     }
 
     public void resetPosition(double position) {

@@ -15,6 +15,8 @@ public class GetPieceAtIntake extends CommandBase {
 
   private double m_speed;
 
+  private gamePiece m_type;
+
   private double aveConeDist;
   private double aveCubeDist;
   private double aveAmps;
@@ -37,22 +39,29 @@ public class GetPieceAtIntake extends CommandBase {
 
   boolean coneSeen;
 
-  public GetPieceAtIntake(IntakeSubsystem intake, double speed) {
+  public GetPieceAtIntake(IntakeSubsystem intake, double speed, gamePiece type) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intake;
     m_speed = speed;
+    m_type = type;
+  }
+
+  public GetPieceAtIntake(IntakeSubsystem intake){
+    m_intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (m_type == gamePiece.CONE)
+      m_speed *= -1;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-m_intake.moveManually(m_speed);
+    m_intake.moveManually(m_speed);
 
     aveAmps = ampsFilter.calculate(m_intake.getAmps());
 

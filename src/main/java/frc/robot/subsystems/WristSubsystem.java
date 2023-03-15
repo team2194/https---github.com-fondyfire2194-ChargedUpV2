@@ -247,6 +247,11 @@ public class WristSubsystem extends SubsystemBase {
         setController(WristConstants.wristConstraints, getAngleRadians(), false);
     }
 
+    public void redoTarget() {
+        setControllerGoal(m_wristController.getGoal().position);
+    }
+
+
     public void runDeliverAngle(boolean on) {
         runDeliverAngle = on;
     }

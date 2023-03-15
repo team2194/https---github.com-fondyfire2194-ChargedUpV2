@@ -5,8 +5,8 @@
 package frc.robot.commands.TeleopRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
@@ -43,6 +43,8 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                                                                 presetWristAngles.HOME.getAngleRads()),
                                                 () -> travel),
 
+                                new WaitCommand(1),
+
                                 new WaitWristAtTarget(wrist, .25),
 
                                 new ConditionalCommand(
@@ -58,6 +60,8 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
 
                                 new WaitExtendAtTarget(ext, .25),
 
+                                new WaitCommand(1),
+
                                 new ConditionalCommand(
 
                                                 new SetLiftGoal(lift,
@@ -68,6 +72,8 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                                                                 presetLiftAngles.SAFE_HOME
                                                                                 .getInches()),
                                                 () -> travel),
+
+                                new WaitCommand(1),
 
                                 new WaitLiftAtTarget(lift, .25)
 

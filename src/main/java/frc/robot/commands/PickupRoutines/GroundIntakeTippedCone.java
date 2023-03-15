@@ -43,7 +43,7 @@ public class GroundIntakeTippedCone extends SequentialCommandGroup {
                         presetIntakeSpeeds.PICKUP_CONE
                                 .getSpeed()),
 
-                new GetPieceAtIntake(intake,0),
+                new GetPieceAtIntake(intake),
 
                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
                         presetExtArmDistances.HOME.getDistance()),

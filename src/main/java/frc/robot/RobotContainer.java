@@ -5,7 +5,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -36,7 +33,7 @@ import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.GetPieceAtIntake;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
-import frc.robot.commands.TeleopRoutines.RotateToAngle;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
@@ -231,7 +228,8 @@ public class RobotContainer {
                 m_driverController.leftBumper()
                                 .onTrue(getDeliverCommand());
 
-                // m_driverController.rightBumper()
+                m_driverController.rightBumper()
+                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true));
 
                 m_driverController.leftTrigger().onTrue(new StrafeToGridSlot(m_drive, m_tf,
                                 m_ghs, m_llv, m_intake));
@@ -253,20 +251,20 @@ public class RobotContainer {
                                 .withName("Ground Tipped Cone Pickup")
                                 .withTimeout(1).withTimeout(2));
 
-                m_driverController.povLeft()
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
-                                                new RotateToAngle(m_drive, 0).withTimeout(300),
-                                                new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
-                                                new InstantCommand(() -> m_drive.setIsRotating(true)))
-                                                .withName("RotateToZero").andThen(() -> m_drive.stopModules()));
-                m_driverController.povRight()
-                                .onTrue(new SequentialCommandGroup(
-                                                new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
-                                                new RotateToAngle(m_drive, 180).withTimeout(300).withName("LIFT"),
-                                                new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
-                                                new InstantCommand(() -> m_drive.setIsRotating(true)))
-                                                .withName("RotateTo180").andThen(() -> m_drive.stopModules()));
+                // m_driverController.povLeft()
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
+                // new RotateToAngle(m_drive, 0).withTimeout(300),
+                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
+                // new InstantCommand(() -> m_drive.setIsRotating(true)))
+                // .withName("RotateToZero").andThen(() -> m_drive.stopModules()));
+                // m_driverController.povRight()
+                // .onTrue(new SequentialCommandGroup(
+                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
+                // new RotateToAngle(m_drive, 180).withTimeout(300).withName("LIFT"),
+                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
+                // new InstantCommand(() -> m_drive.setIsRotating(true)))
+                // .withName("RotateTo180").andThen(() -> m_drive.stopModules()));
 
                 // m_driverController.povDown() .
 
@@ -285,7 +283,7 @@ public class RobotContainer {
 
                                 () -> m_tf.createSelectedTrajectory(2, 2, true)));
 
-                m_coDriverController.leftTrigger().onTrue(new GetPieceAtIntake(m_intake, .7));
+                m_coDriverController.leftTrigger().onTrue(new GetPieceAtIntake(m_intake, .7, gamePiece.CONE));
 
                 m_coDriverController.rightTrigger().onTrue(new StopIntake(m_intake));
 

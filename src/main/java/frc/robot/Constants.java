@@ -271,6 +271,7 @@ public final class Constants {
         = new Constraints(5, 10);
 
     public static final double JOG_SLEW_RATE = 10;
+    public static final double kgVolts = 0;
 
   }
 
