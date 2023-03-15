@@ -49,10 +49,9 @@ public class ShuffleboardArms {
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
                 liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionrads));
-                liftLayout.addNumber("CanCoderRads", () -> round2dp(m_lift.getCanCoderRadians()));
-                liftLayout.addNumber("GoalAngleRada", () -> round2dp(m_lift.goalAngleRadians));
+               liftLayout.addNumber("GoalInches", () -> round2dp(m_lift.goalInches));
                 liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.getCanCoderPosition()));
-                liftLayout.addNumber("EncRadsPeSec", () -> round2dp(m_lift.radianspersec));
+                //liftLayout.addNumber("r", () -> round2dp(m_lift.ge
 
                 liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
@@ -124,8 +123,8 @@ public class ShuffleboardArms {
 
                 ShuffleboardTab deliverLayout = Shuffleboard.getTab("Arms");
 
-                deliverLayout.addNumber("LiftDelDeg", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
-                                .withPosition(6, 2).withSize(1, 1);
+                // deliverLayout.addNumber("LiftDelDeg", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
+                //                 .withPosition(6, 2).withSize(1, 1);
                 deliverLayout.addNumber("WristDelDeg", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
                                 .withPosition(6, 3).withSize(1, 1);
 

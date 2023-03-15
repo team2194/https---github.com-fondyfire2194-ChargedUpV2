@@ -37,7 +37,7 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new GetDeliverAngleSettings(lift, extend, wrist, intake, ghs),
 
-        new SetLiftGoal(lift, LiftArmConstants.liftArmConstraints, lift.deliverAngleRads),
+        new SetLiftGoal(lift, LiftArmConstants.liftArmConstraints, lift.deliverInches),
 
         new SetWristGoal(wrist, WristConstants.wristConstraints, wrist.deliverAngleRads),
 

@@ -21,7 +21,7 @@ import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Pref;
 import frc.robot.utils.AngleUtils;
 
-public class LiftArmSubsystem extends SubsystemBase {
+public class LiftArmSubsystemOld extends SubsystemBase {
 
     /**
      * Lift arm angles are defined as 90 degrees horizontal falling to 34.2 base
@@ -31,44 +31,39 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public enum presetLiftAngles {
 
-        SAFE_HOME(34.1,0),
+        SAFE_HOME(34.1),
 
-        TRAVEL(36,1),
+        TRAVEL(36),
 
-        CLEAR_ARMS(38,2),
+        CLEAR_ARMS(38),
 
-        PICKUP_CUBE_GROUND(43.6,3),
+        PICKUP_CUBE_GROUND(43.6),
 
-        PICKUP_CONE_GROUND(43.6,4),
+        PICKUP_CONE_GROUND(43.6),
 
-        PICKUP_TIPPED_CONE_GROUND(56,5),
+        PICKUP_TIPPED_CONE_GROUND(56),
 
-        PICKUP_CUBE_LOAD_STATION(84,6),
+        PICKUP_CUBE_LOAD_STATION(84),
 
-        PICKUP_CONE_LOAD_STATION(89,7),
+        PICKUP_CONE_LOAD_STATION(89),
 
-        PLACE_CUBE_MID_SHELF(72,8),
+        PLACE_CUBE_MID_SHELF(72),
 
-        PLACE_CUBE_TOP_SHELF(87,9),
+        PLACE_CUBE_TOP_SHELF(87),
 
-        PLACE_CONE_MID_PIPE(78.5,10),
+        PLACE_CONE_MID_PIPE(78.5),
 
-        PLACE_CONE_TOP_PIPE(95,11);
+        PLACE_CONE_TOP_PIPE(95);
 
         private double angle;
-        private double inches;
 
-        private presetLiftAngles(double angle, double inches) {
+        private presetLiftAngles(double angle) {
             this.angle = angle;
-            this.inches=inches;
 
         }
 
-        public double getAngle() {
-            return this.angle;
-        }
-        public double getInches() {
-            return this.inches;
+        public double getAngleRads() {
+            return Units.degreesToRadians(this.angle);
         }
 
     }
@@ -106,8 +101,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public ArmFeedforward m_armFeedforward;
 
-
-    public double deliverInches;
+    public double deliverAngleRads;
 
     public double appliedOutput;
 
@@ -131,7 +125,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private double wristAngleAdj;
 
-    public double goalInches;
+    public double goalAngleRadians;
+
     public double gravCalc;
 
     public double pidVal;
@@ -140,7 +135,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean inIZone;
 
-    public LiftArmSubsystem() {
+    public LiftArmSubsystemOld() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
         mEncoder = m_motor.getEncoder();
@@ -158,9 +153,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         m_liftCANcoder.configFactoryDefault();
         m_liftCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
 
-        mEncoder.setPositionConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV);
-        // SmartDashboard.putNumber("LDPER", LiftArmConstants.DEGREES_PER_ENCODER_REV);
-        mEncoder.setVelocityConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV / 60);
+        mEncoder.setPositionConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV));
+        SmartDashboard.putNumber("LDPER", LiftArmConstants.DEGREES_PER_ENCODER_REV);
+        mEncoder.setVelocityConversionFactor(Units.degreesToRadians(LiftArmConstants.DEGREES_PER_ENCODER_REV / 60));
 
         m_motor.setSmartCurrentLimit(40);
 
@@ -197,7 +192,10 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         }
         if (loopctr == 6) {
-        
+            positionrads = getPositionRadians();
+            radianspersec = getRadiansPerSec();
+            liftArmMotorConnected = checkCANOK();
+            loopctr = 0;
         }
 
     }
@@ -229,8 +227,8 @@ public class LiftArmSubsystem extends SubsystemBase {
         wristAngleAdj = adj;
     }
 
-    public boolean atTargetPosition() {
-        return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
+    public boolean atTargetAngle() {
+        return Math.abs(goalAngleRadians - getCanCoderRadians()) < inPositionBandwidth;
     }
 
     // will be 0 at horizontal
@@ -257,9 +255,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         return Math.abs(mEncoder.getVelocity()) < .05;
     }
 
-    public double getPositionInches() {
+    public double getPositionRadians() {
         if (RobotBase.isReal())
-            return mEncoder.getPosition();
+            return Units.degreesToRadians(LiftArmConstants.MIN_ANGLE-1) + mEncoder.getPosition();
         else
             return m_positionSim;
     }
@@ -272,6 +270,9 @@ public class LiftArmSubsystem extends SubsystemBase {
         return m_motor.getOutputCurrent();
     }
 
+    public double getRadiansPerSec() {
+        return mEncoder.getVelocity();
+    }
 
     public String getFirmware() {
         return m_motor.getFirmwareString();
@@ -327,23 +328,23 @@ public class LiftArmSubsystem extends SubsystemBase {
         return m_motor.getFaults();
     }
 
-    public void setControllerGoal(double goalInches) {
-        m_liftController.setGoal(goalInches);
+    public void setControllerGoal(double goalRadians) {
+        m_liftController.setGoal(goalRadians);
     }
 
     public void setControllerConstraints(TrapezoidProfile.Constraints constraints) {
         m_liftController.setConstraints(constraints);
     }
 
-    public void setController(TrapezoidProfile.Constraints constraints, double inches, boolean initial) {
+    public void setController(TrapezoidProfile.Constraints constraints, double anglerads, boolean initial) {
         if (isStopped()) {
             setControllerConstraints(constraints);
-            setControllerGoal(inches);
-            goalInches = inches;
+            setControllerGoal(anglerads);
+            goalAngleRadians = anglerads;
             if (initial)
-                m_liftController.reset(new TrapezoidProfile.State(0, 0));
+                m_liftController.reset(new TrapezoidProfile.State(presetLiftAngles.SAFE_HOME.getAngleRads(), 0));
             else
-                m_liftController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
+                m_liftController.reset(new TrapezoidProfile.State(getCanCoderRadians(), 0));
         }
 
         m_armFeedforward = new ArmFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKg"),
@@ -354,11 +355,11 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerAtPosition() {
-        setController(LiftArmConstants.liftArmInchConstraints, getPositionInches(), false);
+        setController(LiftArmConstants.liftArmConstraints, getCanCoderRadians(), false);
 
     }
 
-    public void runDeliverPosition() {
-        setController(LiftArmConstants.liftArmInchConstraints, 5, false);
+    public void runDeliverAngle() {
+        setController(LiftArmConstants.liftArmConstraints, deliverAngleRads, false);
     }
 }

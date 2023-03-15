@@ -13,7 +13,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.GridDrop;
 import frc.robot.subsystems.GameHandlerSubsystem.dropOffLevel;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
-import frc.robot.subsystems.IntakeSubsystem.presetIntakeSpeeds;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -34,7 +33,7 @@ public class GetDeliverAngleSettings extends CommandBase {
   private GridDrop m_activeDrop;
   private boolean m_isPipe;
 
-  private double m_liftAngleRads;
+  private double m_liftInches;
   private double m_extDistance;
   private double m_wristAngleRads;
   private double m_intakeSpeed;
@@ -74,14 +73,14 @@ public class GetDeliverAngleSettings extends CommandBase {
     if (!done && m_level == dropOffLevel.MID_LEVEL) {
       done = true;
       if (m_piece == gamePiece.CUBE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
+        m_liftInches = presetLiftAngles.PLACE_CUBE_MID_SHELF.getInches();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_MID_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
         m_intakeSpeed = Pref.getPref("cubedelspeed");// presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngleRads();
+        m_liftInches = presetLiftAngles.PLACE_CONE_MID_PIPE.getInches();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_PIPE.getAngleRads();
         m_intakeSpeed = Pref.getPref("conedelspeed");// presetIntakeSpeeds.DELIVER_CONE.getSpeed();
@@ -92,14 +91,14 @@ public class GetDeliverAngleSettings extends CommandBase {
     if (!done && m_level == dropOffLevel.TOP_LEVEL) {
       done = true;
       if (m_piece == gamePiece.CUBE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
+        m_liftInches = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getInches();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
         m_intakeSpeed = Pref.getPref("cubedelspeed"); // presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
       if (m_piece == gamePiece.CONE) {
-        m_liftAngleRads = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
+        m_liftInches = presetLiftAngles.PLACE_CONE_TOP_PIPE.getInches();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_intakeSpeed = Pref.getPref("conedelspeed");//presetIntakeSpeeds.DELIVER_CONE.getSpeed();
@@ -107,7 +106,7 @@ public class GetDeliverAngleSettings extends CommandBase {
 
     }
 
-    m_lift.deliverAngleRads = m_liftAngleRads;
+    m_lift.deliverInches = m_liftInches;
     m_ext.deliverDistance = m_extDistance;
     m_wrist.deliverAngleRads = m_wristAngleRads;
     m_intake.deliverSpeed = m_intakeSpeed;

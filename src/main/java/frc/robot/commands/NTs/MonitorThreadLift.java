@@ -78,9 +78,9 @@ public class MonitorThreadLift {
 
                     if (true) {
 
-                        goalAngle.set(m_lift.goalAngleRadians);
-                        velocity.set(m_lift.getCanCoderRateRadsPerSec());
-                        angle.set(m_lift.getCanCoderRadians());
+                        goalAngle.set(m_lift.goalInches);
+                       // velocity.set(m_lift.getCanCoderRateRadsPerSec());
+                        //angle.set(m_lift.getCanCoderRadians());
                         feedforward.set(m_lift.ff);
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
                         volts.set(m_lift.volts);
@@ -92,7 +92,7 @@ public class MonitorThreadLift {
                         inizone.set(m_lift.inIZone);
                         velerr.set(m_lift.m_liftController.getVelocityError());
                         amps.set(m_lift.getAmps());
-                        relenc.set(m_lift.getPositionRadians());
+                        relenc.set(m_lift.getPositionInches());
 
                     }
                     Thread.sleep(100);

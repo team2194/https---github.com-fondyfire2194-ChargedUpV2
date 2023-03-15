@@ -92,7 +92,7 @@ public class PositionProfileExtendArm extends CommandBase {
     loopctr++;
 
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
-        m_ext.m_extController.getSetpoint().position);
+        m_ext.goalInches);
 
     // double temp = m_ext.pidVal * RobotController.getBatteryVoltage();
 

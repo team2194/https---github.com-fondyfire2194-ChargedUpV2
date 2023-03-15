@@ -125,6 +125,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean inIZone;
 
+    private boolean runDeliverAngle;
+
     public ExtendArmSubsystem() {
 
         firstUp = true;
@@ -172,6 +174,13 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+
+        if (runDeliverAngle) {
+
+            setController(ExtendArmConstants.deliverConstraints, deliverDistance, false);
+
+            runDeliverAngle = false;
+        }
 
         loopctr++;
 
@@ -239,8 +248,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     }
 
-    public void runDeliverAngle() {
-        setController(ExtendArmConstants.extendArmConstraints, deliverDistance, false);
+    public void runDeliverAngle(boolean on) {
+
+        runDeliverAngle = on;
+
     }
 
     public void resetPosition(double position) {

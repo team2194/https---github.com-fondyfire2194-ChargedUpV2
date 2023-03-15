@@ -190,7 +190,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         }
 
-        public dropOffLevel chosenLevel = dropOffLevel.TOP_LEVEL;
+        public dropOffLevel chosenLevel = dropOffLevel.MID_LEVEL;
 
         public gamePiece gamePieceType = gamePiece.CONE;
 

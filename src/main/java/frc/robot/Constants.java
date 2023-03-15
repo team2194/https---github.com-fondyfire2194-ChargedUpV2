@@ -201,7 +201,7 @@ public final class Constants {
 
     private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
 
-    public static double DEGREES_PER_INCH = 4.28;//ANGLE_RANGE / INCH_RANGE;// 3.7333 DEG PER INCH
+    public static double DEGREES_PER_INCH = 4.21;// ANGLE_RANGE / INCH_RANGE;// 3.7333 DEG PER INCH
 
     public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .225
 
@@ -239,7 +239,11 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmConstraints
 
-        = new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(20));
+        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(30));
+
+    public static final TrapezoidProfile.Constraints liftArmInchConstraints
+
+        = new Constraints(5, 5);
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -314,7 +318,7 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints wristConstraints =
 
-        new Constraints(Units.degreesToRadians(570), Units.degreesToRadians(1140));
+        new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
 
     public static final double JOG_SLEW_RATE = 10;
 

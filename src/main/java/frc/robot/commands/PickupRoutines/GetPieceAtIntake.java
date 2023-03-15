@@ -13,15 +13,17 @@ public class GetPieceAtIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
+  private double m_speed;
+
   private double aveConeDist;
   private double aveCubeDist;
   private double aveAmps;
 
-  public int cubeSenseThreshold = 100;
+  public int cubeSenseThreshold = 300;
 
-  public int coneSenseThreshold = 100;
+  public int coneSenseThreshold = 300;
 
-  public double ampsThreshold = 5;
+  public double ampsThreshold = 20;
 
   LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
 
@@ -35,9 +37,10 @@ public class GetPieceAtIntake extends CommandBase {
 
   boolean coneSeen;
 
-  public GetPieceAtIntake(IntakeSubsystem intake) {
+  public GetPieceAtIntake(IntakeSubsystem intake, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intake;
+    m_speed = speed;
   }
 
   // Called when the command is initially scheduled.
@@ -49,15 +52,17 @@ public class GetPieceAtIntake extends CommandBase {
   @Override
   public void execute() {
 
+m_intake.moveManually(m_speed);
+
     aveAmps = ampsFilter.calculate(m_intake.getAmps());
 
     aveConeDist = coneSensorFilter.calculate(m_intake.getConeSensorDistance());
 
     aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
 
-    cubeSeen = aveCubeDist > cubeSenseThreshold;
+    cubeSeen = aveCubeDist < cubeSenseThreshold;
 
-    coneSeen = aveConeDist > coneSenseThreshold;
+    coneSeen = aveConeDist < coneSenseThreshold;
 
     ampsHigh = aveAmps > ampsThreshold;
 

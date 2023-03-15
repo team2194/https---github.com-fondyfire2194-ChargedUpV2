@@ -4,16 +4,13 @@
 
 package frc.robot.commands.LiftArm;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
 
-public class PositionProfileLift extends CommandBase {
+public class PositionProfileLiftInches extends CommandBase {
   /** Creates a new PositionArm. */
   private LiftArmSubsystem m_lift;
 
@@ -23,8 +20,7 @@ public class PositionProfileLift extends CommandBase {
 
   // private TrapezoidProfile.State m_setpoint;
 
-  private double m_goalAngleRadians;
-
+  private double m_goalInches;
 
   private int loopctr;
 
@@ -36,17 +32,18 @@ public class PositionProfileLift extends CommandBase {
 
   private double lastTime;
 
-  public PositionProfileLift(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints, double goalAngleRadians) {
+  public PositionProfileLiftInches(LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
+      double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_lift = lift;
     m_constraints = constraints;
 
-    m_goalAngleRadians = goalAngleRadians;
+    m_goalInches = goalInches;
 
     addRequirements(m_lift);
   }
 
-  public PositionProfileLift(LiftArmSubsystem lift) {
+  public PositionProfileLiftInches(LiftArmSubsystem lift) {
     m_lift = lift;
     addRequirements(m_lift);
   }
@@ -55,25 +52,25 @@ public class PositionProfileLift extends CommandBase {
   @Override
   public void initialize() {
 
-    directionIsDown = m_goalAngleRadians < m_lift.getCanCoderRadians();
+    // directionIsDown = m_goalIn < m_lift.getCanCoderRadians();
 
     loopctr = 0;
 
     m_lift.m_liftController.setI(0.0);
 
-    m_lift.m_liftController.setTolerance(Units.degreesToRadians(1));
+    m_lift.m_liftController.setTolerance(.5);
 
     lastTime = Timer.getFPGATimestamp();
 
     if (setController) {
 
-      m_lift.goalAngleRadians = m_goalAngleRadians;
+      m_lift.goalInches = m_goalInches;
 
-      m_lift.setController(m_constraints, m_goalAngleRadians, false);
+      m_lift.setController(m_constraints, m_goalInches, false);
 
-      m_goal = new TrapezoidProfile.State(m_goalAngleRadians, 0);
+      m_goal = new TrapezoidProfile.State(m_goalInches, 0);
 
-      m_lift.m_liftController.reset(new TrapezoidProfile.State(m_lift.getCanCoderRadians(), 0));// start from present
+      m_lift.m_liftController.reset(new TrapezoidProfile.State(m_lift.getPositionInches(), 0));// start from present
 
     }
 
@@ -89,7 +86,7 @@ public class PositionProfileLift extends CommandBase {
 
     loopctr++;
 
-    m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getCanCoderRadians(), m_lift.goalAngleRadians);
+    m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(), m_lift.goalInches);
 
     // double temp = m_lift.pidVal * RobotController.getBatteryVoltage();
 

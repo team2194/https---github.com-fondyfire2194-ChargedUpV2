@@ -5,6 +5,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
+import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
@@ -22,12 +25,16 @@ import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
 import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.Intake.JogIntake;
+import frc.robot.commands.Intake.RunIntake;
+import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLift;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.NTs.MonitorThreadIntake;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
+import frc.robot.commands.PickupRoutines.GetPieceAtIntake;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
@@ -210,8 +217,10 @@ public class RobotContainer {
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));
 
-                m_liftArm.setDefaultCommand(
-                                new PositionProfileLift(m_liftArm));
+                // m_liftArm.setDefaultCommand(
+                //                 new PositionProfileLift(m_liftArm));
+
+                 m_liftArm.setDefaultCommand(new PositionProfileLiftInches(m_liftArm));
 
                 m_wrist.setDefaultCommand(
                                 new PositionProfileWrist(m_wrist, m_liftArm));
@@ -277,15 +286,15 @@ public class RobotContainer {
 
                                 () -> m_tf.createSelectedTrajectory(2, 2, true)));
 
-                // m_coDriverController.leftTrigger().onTrue
+                m_coDriverController.leftTrigger().onTrue(new GetPieceAtIntake(m_intake, .7));
 
-                // m_coDriverController.rightTrigger().
+                m_coDriverController.rightTrigger().onTrue(new StopIntake(m_intake));
 
                 m_coDriverController.a()
                                 .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
                                                 m_intake, m_ghs).withTimeout(2));
 
-                // m_coDriverController.b().
+                m_coDriverController.b().onTrue(new RunIntake(m_intake, -.4));
                 // m_coDriverController.x().
                 // m_coDriverController.y().
 
@@ -338,16 +347,18 @@ public class RobotContainer {
 
                 m_armController.y().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake));
 
-                // m_armController.x().
+                m_armController.x().onTrue(
+                                Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmConstraints,
+                                                Units.degreesToRadians(40), false)));
 
                 m_armController.povUp()
                                 .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
 
-                m_armController.povRight().onTrue(Commands.run(() -> m_liftArm.runDeliverAngle()).withTimeout(5));
+                m_armController.povRight().onTrue(Commands.runOnce(() -> m_liftArm.runDeliverPosition()).withTimeout(5));
 
                 m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle(true)));
 
-                m_armController.povLeft().onTrue(Commands.run(() -> m_extendArm.runDeliverAngle()).withTimeout(5));
+                m_armController.povLeft().onTrue(Commands.runOnce(() -> m_extendArm.runDeliverAngle(true)));
         }
 
         public Command getDriveCommand() {

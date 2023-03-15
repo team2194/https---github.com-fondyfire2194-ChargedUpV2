@@ -187,7 +187,7 @@ public class ShuffleboardCompetition {
 
                 area1.addNumber("ActiveY", () -> m_gps.getActiveDropPose().getY())
                                 .withPosition(9, 2);
-                area1.addNumber("LiftDlvrAngle", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
+                area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
                                 .withPosition(6, 3);
                 area1.addNumber("ExtDlvrDist", () -> ext.deliverDistance)
                                 .withPosition(7, 3);

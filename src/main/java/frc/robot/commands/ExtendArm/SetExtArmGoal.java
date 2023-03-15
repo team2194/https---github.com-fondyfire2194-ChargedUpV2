@@ -38,7 +38,7 @@ public class SetExtArmGoal extends CommandBase {
   @Override
   public void initialize() {
     m_ext.setController(m_constraints, m_goalDist, false);
-    m_ext.deliverDistance = m_goalDist;
+    m_ext.goalInches = m_goalDist;
   }
 
   @Override
