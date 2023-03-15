@@ -166,12 +166,12 @@ public class ShuffleboardCompetition {
                                 .withPosition(7, 0).withSize(1, 1)
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                area1.addBoolean("RobotHasCone", () -> m_intake.conePresent)
+                area1.addBoolean("IntakeHasCone", () -> m_intake.conePresent)
                                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
                                 .withPosition(4, 0).withSize(1, 1)
                                 .withProperties(Map.of("colorwhenfalse", "gray", "colorwhentrue", "yellow"));
 
-                area1.addBoolean("RobotHasCube", () -> m_intake.cubePresent)
+                area1.addBoolean("intakeHasCube", () -> m_intake.cubePresent)
                                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
                                 .withPosition(5, 0).withSize(1, 1)
                                 .withProperties(Map.of("colorwhenfalse", "gray", "colorwhentrue", "purple"));
@@ -189,6 +189,9 @@ public class ShuffleboardCompetition {
                                 .withPosition(9, 2);
                 area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
                                 .withPosition(6, 3);
+                area1.addNumber("LiftDlvrDegr", () -> round2dp(lift.deliverAngle))
+                                .withPosition(5, 3);
+
                 area1.addNumber("ExtDlvrDist", () -> ext.deliverDistance)
                                 .withPosition(7, 3);
                 area1.addNumber("WristDlvrAngle", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))

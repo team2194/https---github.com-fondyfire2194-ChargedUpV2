@@ -6,6 +6,7 @@ package frc.robot.commands.PickupRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
@@ -68,9 +69,11 @@ public class GetPieceFromLoad extends SequentialCommandGroup {
 
                                                 () -> type == gamePiece.CONE),
 
+                                new WaitCommand(1),
+
                                 new WaitExtendAtTarget(extend, .25),
 
-                                new GetPieceAtIntake(intake, 0, type),
+                                new GetPieceAtIntake(intake,type),
 
                                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
                                                 presetExtArmDistances.HOME.getDistance()),

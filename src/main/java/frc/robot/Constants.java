@@ -264,14 +264,15 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints intakeConstraints
 
-        = new Constraints(5, 10);
+        = new Constraints(7.5, 10);
 
     public static final TrapezoidProfile.Constraints deliverConstraints
 
-        = new Constraints(5, 10);
+        = new Constraints(7.5, 10);
 
     public static final double JOG_SLEW_RATE = 10;
-    public static final double kgVolts = 0;
+
+    public static final double kgVolts = 0.25;
 
   }
 

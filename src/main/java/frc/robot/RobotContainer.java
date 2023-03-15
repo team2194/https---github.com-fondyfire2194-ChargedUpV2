@@ -12,11 +12,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
+import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
 import frc.robot.commands.ExtendArm.JogExtendArm;
@@ -30,10 +33,12 @@ import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.NTs.MonitorThreadIntake;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
+import frc.robot.commands.PickupRoutines.DetectorLoad;
 import frc.robot.commands.PickupRoutines.GetPieceAtIntake;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
+import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
@@ -46,6 +51,7 @@ import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -150,7 +156,7 @@ public class RobotContainer {
 
                 m_ghs = new GameHandlerSubsystem();
 
-                m_autoFactory = new AutoFactory(m_drive, m_ghs, m_liftArm, m_extendArm, m_wrist, m_intake);
+                m_autoFactory = new AutoFactory(m_drive, m_ghs, m_liftArm, m_extendArm, m_wrist, m_intake, m_tf);
 
                 m_fieldSim = new FieldSim(m_drive, m_ghs);
 
@@ -226,13 +232,13 @@ public class RobotContainer {
         void configDriverButtons() {
 
                 m_driverController.leftBumper()
-                                .onTrue(getDeliverCommand());
+                                .whileTrue(getDetectorLoad());
 
                 m_driverController.rightBumper()
                                 .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true));
 
-                m_driverController.leftTrigger().onTrue(new StrafeToGridSlot(m_drive, m_tf,
-                                m_ghs, m_llv, m_intake));
+                m_driverController.leftTrigger().whileTrue((new StrafeToGridSlot(m_drive, m_tf,
+                                m_ghs, m_llv, m_intake)));
 
                 m_driverController.rightTrigger().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
                                 () -> m_driverController.getRawAxis(1)));
@@ -247,26 +253,30 @@ public class RobotContainer {
                                                 .withName("Ground  Cube Pickup")
                                                 .withTimeout(1));
 
+                m_driverController.a().onTrue(getDeliverCommand());
+
                 m_driverController.a().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake)
                                 .withName("Ground Tipped Cone Pickup")
                                 .withTimeout(1).withTimeout(2));
 
-                // m_driverController.povLeft()
-                // .onTrue(new SequentialCommandGroup(
-                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
-                // new RotateToAngle(m_drive, 0).withTimeout(300),
-                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
-                // new InstantCommand(() -> m_drive.setIsRotating(true)))
-                // .withName("RotateToZero").andThen(() -> m_drive.stopModules()));
-                // m_driverController.povRight()
-                // .onTrue(new SequentialCommandGroup(
-                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(true)),
-                // new RotateToAngle(m_drive, 180).withTimeout(300).withName("LIFT"),
-                // new InstantCommand(() -> m_drive.setInhibitVisionCorrection(false)),
-                // new InstantCommand(() -> m_drive.setIsRotating(true)))
-                // .withName("RotateTo180").andThen(() -> m_drive.stopModules()));
+                m_driverController.povLeft()
+                                .onTrue(new SequentialCommandGroup(
+                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(true)),
+                                                new RotateToAngle(m_drive, 0).withTimeout(300),
+                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
+                                                Commands.runOnce(() -> m_drive.setIsRotating(true)))
+                                                .withName("RotateToZero").andThen(() -> m_drive.stopModules()));
+                m_driverController.povRight()
+                                .onTrue(new SequentialCommandGroup(
+                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(true)),
+                                                new RotateToAngle(m_drive, 180).withTimeout(300).withName("LIFT"),
+                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
+                                                Commands.runOnce(() -> m_drive.setIsRotating(true)))
+                                                .withName("RotateTo180").andThen(() -> m_drive.stopModules()));
 
-                // m_driverController.povDown() .
+                m_driverController.povDown().onTrue(Commands.runOnce((() -> m_liftArm.redoTarget())))
+                                .onTrue(Commands.runOnce((() -> m_wrist.redoTarget())))
+                                .onTrue(Commands.runOnce((() -> m_extendArm.redoTarget())));
 
                 // m_driverController.povLeft()
 
@@ -277,31 +287,31 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper().onTrue(new InstantCommand(() -> m_tf.doSelectedTrajectory()));
-
-                m_coDriverController.rightBumper().onTrue(new InstantCommand(
-
-                                () -> m_tf.createSelectedTrajectory(2, 2, true)));
-
-                m_coDriverController.leftTrigger().onTrue(new GetPieceAtIntake(m_intake, .7, gamePiece.CONE));
-
-                m_coDriverController.rightTrigger().onTrue(new StopIntake(m_intake));
-
-                m_coDriverController.a()
+                m_coDriverController.leftBumper()
                                 .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
                                                 m_intake, m_ghs).withTimeout(2));
 
-                m_coDriverController.b().onTrue(new RunIntake(m_intake, -.4));
-                // m_coDriverController.x().
-                // m_coDriverController.y().
+                // m_coDriverController.rightBumper()
 
-                m_coDriverController.povRight().onTrue(new InstantCommand(() -> m_ghs.incDropNumber()));
+                // m_coDriverController.leftTrigger()
 
-                m_coDriverController.povLeft().onTrue(new InstantCommand(() -> m_ghs.decDropNumber()));
+                // m_coDriverController.rightTrigger()
 
-                m_coDriverController.povUp().onTrue(new InstantCommand(() -> m_ghs.stepDropOffLevel()));
+                m_coDriverController.a().onTrue(new EjectPieceFromIntake(m_intake));
 
-                m_coDriverController.povDown().onTrue(new InstantCommand(() -> m_ghs.toggleGamePieceType()));
+                // m_coDriverController.b()
+
+                m_coDriverController.x().onTrue(new GetPieceAtIntake(m_intake, gamePiece.CONE));
+
+                m_coDriverController.y().onTrue(new GetPieceAtIntake(m_intake, gamePiece.CUBE));
+
+                m_coDriverController.povRight().onTrue(Commands.runOnce(() -> m_ghs.incDropNumber()));
+
+                m_coDriverController.povLeft().onTrue(Commands.runOnce(() -> m_ghs.decDropNumber()));
+
+                m_coDriverController.povUp().onTrue(Commands.runOnce(() -> m_ghs.stepDropOffLevel()));
+
+                m_coDriverController.povDown().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
                 // m_coDriverController.start()
 
@@ -391,7 +401,12 @@ public class RobotContainer {
         }
 
         public Command getDeliverCommand() {
-                return new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs);
+                return new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs)
+                                .withTimeout(5);
+        }
+
+        public Command getDetectorLoad() {
+                return new DetectorLoad(m_drive, m_llv, m_ghs, null, false);
         }
 
         public void simulationPeriodic() {

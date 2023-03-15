@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -73,15 +74,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private int normalCubeDistance;
 
-  
-
   private int loopctr;
 
   public double deliverSpeed;
 
   public int deliverSensor;
 
-public int tstctr;
+  public int tstctr;
+
+  public robotPiece piece;
 
   public IntakeSubsystem() {
 
@@ -133,19 +134,25 @@ public int tstctr;
 
       intakeMotorConnected = checkCANOK();
 
+      conePresent = getConeSensorDistance() < 300;
 
-      // coneSensorOK = getConeSensorOK();
+      cubePresent = getCubeSensorDistance() < 300;
 
-      // cubeSensorOK = getConeSensorOK();
+      if (conePresent)
+        piece = robotPiece.CONE;
 
-      pieceSensorsOK = true;//coneSensorOK && cubeSensorOK;
+        if (cubePresent)
+        piece = robotPiece.CUBE;
+
+        if(!conePresent&&!cubePresent)piece=robotPiece.NO_PIECE;
+
+
+
+
+
+      pieceSensorsOK = true;// coneSensorOK && cubeSensorOK;
 
       loopctr = 0;
-
-      // SmartDashboard.putString("CONESENS", getConeSensorStatus());
-      // SmartDashboard.putString("CUBESENS", getCubeSensorStatus());
-
-      // SmartDashboard.putBoolean("INCON", intakeMotorConnected);
 
     }
 

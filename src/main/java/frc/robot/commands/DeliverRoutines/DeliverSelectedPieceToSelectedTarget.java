@@ -51,9 +51,7 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new WaitExtendAtTarget(extend, .24),
 
-        new RunIntake(intake, intake.deliverSpeed)
-
-            .until(() -> !intake.selectSensor(ghs.getGamePiecetype()))
+        new EjectPieceFromIntake(intake)
 
             .andThen(new WaitCommand(.2))
 

@@ -14,6 +14,7 @@ import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
+import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.presetIntakeSpeeds;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -43,7 +44,7 @@ public class GroundIntakeTippedCone extends SequentialCommandGroup {
                         presetIntakeSpeeds.PICKUP_CONE
                                 .getSpeed()),
 
-                new GetPieceAtIntake(intake),
+                new GetPieceAtIntake(intake,gamePiece.CONE),
 
                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmConstraints,
                         presetExtArmDistances.HOME.getDistance()),

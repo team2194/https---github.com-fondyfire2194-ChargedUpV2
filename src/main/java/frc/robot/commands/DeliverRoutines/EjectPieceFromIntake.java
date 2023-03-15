@@ -2,18 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.PickupRoutines;
+package frc.robot.commands.DeliverRoutines;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 
-public class GetPieceAtIntake extends CommandBase {
+public class EjectPieceFromIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
-  private gamePiece m_type;
+  private double m_speed;
+
+  private robotPiece m_type;
 
   private double aveConeDist;
   private double aveCubeDist;
@@ -33,30 +35,29 @@ public class GetPieceAtIntake extends CommandBase {
 
   boolean ampsHigh;
 
-  boolean cubeSeen;
+  boolean noCubeSeen;
 
-  boolean coneSeen;
+  boolean noConeSeen;
 
-  double useSpeed = .6;
-
-  public GetPieceAtIntake(IntakeSubsystem intake, gamePiece type) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public EjectPieceFromIntake(IntakeSubsystem intake) {
     m_intake = intake;
-    m_type = type;
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_type == gamePiece.CONE)
-      useSpeed *= -1;
+
+    if (m_intake.piece == robotPiece.CONE)
+
+      m_speed *= -1;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    m_intake.moveManually(useSpeed);
+    m_intake.moveManually(m_speed);
 
     aveAmps = ampsFilter.calculate(m_intake.getAmps());
 
@@ -64,9 +65,9 @@ public class GetPieceAtIntake extends CommandBase {
 
     aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
 
-    cubeSeen = m_type == gamePiece.CUBE && aveCubeDist < cubeSenseThreshold;
+    noCubeSeen = aveCubeDist > cubeSenseThreshold;
 
-    coneSeen = m_type == gamePiece.CONE && aveConeDist < coneSenseThreshold;
+    noConeSeen = aveConeDist > coneSenseThreshold;
 
     ampsHigh = aveAmps > ampsThreshold;
 
@@ -81,6 +82,6 @@ public class GetPieceAtIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ampsHigh || cubeSeen || coneSeen;
+    return ampsHigh || noCubeSeen && noConeSeen;
   }
 }

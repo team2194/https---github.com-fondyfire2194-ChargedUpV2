@@ -12,7 +12,7 @@ import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.GridDrop;
 import frc.robot.subsystems.GameHandlerSubsystem.dropOffLevel;
-import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -28,16 +28,17 @@ public class GetDeliverAngleSettings extends CommandBase {
   private WristSubsystem m_wrist;
   private IntakeSubsystem m_intake;
 
-  private gamePiece m_piece;
+  private robotPiece m_piece;
   private dropOffLevel m_level;
   private GridDrop m_activeDrop;
   private boolean m_isPipe;
 
   private double m_liftInches;
+  private double m_liftDegrees;
+  
   private double m_extDistance;
   private double m_wristAngleRads;
   private double m_intakeSpeed;
-  private boolean m_intakeSensor;
   private boolean done;
 
   public GetDeliverAngleSettings(LiftArmSubsystem lift, ExtendArmSubsystem ext, WristSubsystem wrist,
@@ -55,7 +56,7 @@ public class GetDeliverAngleSettings extends CommandBase {
   @Override
   public void initialize() {
     done = false;
-    m_piece = m_ghs.getGamePiecetype();
+    m_piece = m_intake.piece;
     m_level = m_ghs.getDropOffLevel();
     m_activeDrop = m_ghs.getActiveDrop();
     m_isPipe = m_activeDrop.getIsPipeBlue() || m_activeDrop.getIsPipeRed();
@@ -64,23 +65,25 @@ public class GetDeliverAngleSettings extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_piece == gamePiece.CONE)
+    if (m_piece == robotPiece.CONE)
       LightStrip.setColor(ledColors.YELLOW);
 
-    if (m_piece == gamePiece.CUBE)
+    if (m_piece == robotPiece.CUBE)
       LightStrip.setColor(ledColors.PURPLE);
 
     if (!done && m_level == dropOffLevel.MID_LEVEL) {
       done = true;
-      if (m_piece == gamePiece.CUBE) {
+      if (m_piece == robotPiece.CUBE) {
         m_liftInches = presetLiftAngles.PLACE_CUBE_MID_SHELF.getInches();
+        m_liftDegrees = presetLiftAngles.PLACE_CUBE_MID_SHELF.getAngle();      
         m_extDistance = presetExtArmDistances.PLACE_CUBE_MID_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_MID_SHELF.getAngleRads();
         m_intakeSpeed = Pref.getPref("cubedelspeed");// presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
-      if (m_piece == gamePiece.CONE) {
+      if (m_piece == robotPiece.CONE) {
         m_liftInches = presetLiftAngles.PLACE_CONE_MID_PIPE.getInches();
+        m_liftDegrees = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_MID_PIPE.getAngleRads();
         m_intakeSpeed = Pref.getPref("conedelspeed");// presetIntakeSpeeds.DELIVER_CONE.getSpeed();
@@ -90,15 +93,17 @@ public class GetDeliverAngleSettings extends CommandBase {
 
     if (!done && m_level == dropOffLevel.TOP_LEVEL) {
       done = true;
-      if (m_piece == gamePiece.CUBE) {
+      if (m_piece == robotPiece.CUBE) {
         m_liftInches = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getInches();
+        m_liftDegrees = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CUBE_TOP_SHELF.getAngleRads();
         m_intakeSpeed = Pref.getPref("cubedelspeed"); // presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
-      if (m_piece == gamePiece.CONE) {
+      if (m_piece == robotPiece.CONE) {
         m_liftInches = presetLiftAngles.PLACE_CONE_TOP_PIPE.getInches();
+        m_liftDegrees = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
         m_wristAngleRads = presetWristAngles.PLACE_CONE_TOP_PIPE.getAngleRads();
         m_intakeSpeed = Pref.getPref("conedelspeed");//presetIntakeSpeeds.DELIVER_CONE.getSpeed();
@@ -107,6 +112,7 @@ public class GetDeliverAngleSettings extends CommandBase {
     }
 
     m_lift.deliverInches = m_liftInches;
+    m_lift.deliverAngle = m_liftDegrees;
     m_ext.deliverDistance = m_extDistance;
     m_wrist.deliverAngleRads = m_wristAngleRads;
     m_intake.deliverSpeed = m_intakeSpeed;

@@ -32,27 +32,27 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         SAFE_HOME(34.1,0),
 
-        TRAVEL(36,1),
+        TRAVEL(36,.8),
 
-        CLEAR_ARMS(38,2),
+        CLEAR_ARMS(38,.85),
 
-        PICKUP_CUBE_GROUND(43.6,3),
+        PICKUP_CUBE_GROUND(43.6,1.9),
 
-        PICKUP_CONE_GROUND(43.6,4),
+        PICKUP_CONE_GROUND(43.6,1.9),
 
-        PICKUP_TIPPED_CONE_GROUND(56,5),
+        PICKUP_TIPPED_CONE_GROUND(56,4.8),
 
-        PICKUP_CUBE_LOAD_STATION(84,6),
+        PICKUP_CUBE_LOAD_STATION(84,11.4),
 
-        PICKUP_CONE_LOAD_STATION(89,7),
+        PICKUP_CONE_LOAD_STATION(89,11.5),
 
-        PLACE_CUBE_MID_SHELF(72,8),
+        PLACE_CUBE_MID_SHELF(72,8.8),
 
-        PLACE_CUBE_TOP_SHELF(87,9),
+        PLACE_CUBE_TOP_SHELF(87,11.45),
 
-        PLACE_CONE_MID_PIPE(78.5,10),
+        PLACE_CONE_MID_PIPE(78.5,8.9),
 
-        PLACE_CONE_TOP_PIPE(95,11);
+        PLACE_CONE_TOP_PIPE(95,14);
 
         private double angle;
         private double inches;
@@ -138,6 +138,8 @@ public class LiftArmSubsystem extends SubsystemBase {
     public double volts;
 
     public boolean inIZone;
+
+    public double deliverAngle;
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;

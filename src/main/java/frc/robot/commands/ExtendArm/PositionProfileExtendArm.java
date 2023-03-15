@@ -87,9 +87,14 @@ public class PositionProfileExtendArm extends CommandBase {
 
     boolean allowIn = m_ext.getPositionInches() >= ExtendArmConstants.MIN_POSITION;
 
+    boolean directionIsOut = m_goalInches > m_ext.getPositionInches();
+
     loopctr++;
 
     m_ext.gravVal = ExtendArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
+
+    if (directionIsOut)
+      m_ext.gravVal *= -1;
 
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
         m_ext.goalInches);

@@ -194,27 +194,11 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean isPipe;
 
-  private Pose2d lastPose;
-
-  private double maxXChange = .1;// 3 mps = 3mm per ms = 60 mm per 20ms
-
-  private double maxYChange = .1;
-
   public Field2d m_Field2d;
-
-  private double inhVisStartTime;
 
   public boolean isRotating;
 
   public boolean trajectoryRunning;
-
-  private int loopctr = 0;
-
-  private double llHeartbeat;
-
-  private double llHeartbeatLast;
-
-  private int samples;
 
   public boolean limelightExists;
 
