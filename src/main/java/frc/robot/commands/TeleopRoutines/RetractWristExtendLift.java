@@ -62,11 +62,11 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
 
                                                 new SetLiftGoal(lift,
                                                                 presetLiftAngles.TRAVEL
-                                                                                .getAngleRads()),
+                                                                                .getInches()),
 
                                                 new SetLiftGoal(lift,
                                                                 presetLiftAngles.SAFE_HOME
-                                                                                .getAngleRads()),
+                                                                                .getInches()),
                                                 () -> travel),
 
                                 new WaitLiftAtTarget(lift, .25)

@@ -150,7 +150,7 @@ public class PositionProfileLiftInches extends CommandBase {
   }
 
   private boolean checkIzone(double izonelimit) {
-    return Math.abs(m_lift.goalAngleRadians - m_lift.getCanCoderRadians()) < izonelimit;
+    return Math.abs(m_lift.goalInches - m_lift.getPositionInches()) < izonelimit;
 
   }
 

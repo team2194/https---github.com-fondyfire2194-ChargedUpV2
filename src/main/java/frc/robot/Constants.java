@@ -201,45 +201,25 @@ public final class Constants {
 
     private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
 
-    public static double DEGREES_PER_INCH = 4.21;// ANGLE_RANGE / INCH_RANGE;// 3.7333 DEG PER INCH
+
 
     public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .225
 
-    public static final double DEGREES_PER_ENCODER_REV = INCHES_PER_ENCODER_REV * DEGREES_PER_INCH;
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 5700) / 60;// 21.4
 
-    public static final double MAX_DEG_PER_SEC = DEGREES_PER_INCH * MAX_RATE_INCHES_PER_SEC;// 80
-
-    public static final double MAX_RAD_PER_SEC = Units.degreesToRadians(MAX_DEG_PER_SEC);
-
-    public static final double MAX_ANGULAR_ACCEL = MAX_DEG_PER_SEC * 3;
 
     public static final double LIFT_CANCODER_OFFSET = -204;
 
-    public static final double CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 13.875;// 87
 
     // if arm driven direct through 21:1 reduction arm speed = 5700/(60*21)= 4.5
     // revs per sec = 1628 deg per sec
     // compare to 80 degrees per sec gives an additional 20:1 ratio
 
-    public static final double DEG_PER_INCH_STROKE = 360 / CIRCLE_CIRCUMFERENCE;// 4.13
     // arm feedforward
     public static final double ksVolts = .6;
 
     public static final double kGVolts = .52;
-
-    public static final double kvVoltSecondsPerRadian = 2.5;
-
-    public static final double kAVoltSecondSquaredPerRadian = 0.0;
-
-    public static final double kMaxVelocityRadPerSecond = 3;
-
-    public static final double kMaxAccelerationRadPerSecSquared = 10;
-
-    public static final TrapezoidProfile.Constraints liftArmConstraints
-
-        = new Constraints(Units.degreesToRadians(25), Units.degreesToRadians(30));
 
     public static final TrapezoidProfile.Constraints liftArmInchConstraints
 

@@ -42,9 +42,9 @@ public class GroundIntake extends SequentialCommandGroup {
 
                         new ConditionalCommand(
 
-                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CONE_GROUND.getAngleRads()),
+                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CONE_GROUND.getInches()),
 
-                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CUBE_GROUND.getAngleRads()),
+                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_CUBE_GROUND.getInches()),
 
                                 () -> type == gamePiece.CONE),
 

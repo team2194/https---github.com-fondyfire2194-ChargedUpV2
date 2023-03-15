@@ -28,7 +28,6 @@ import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.Intake.RunIntake;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
-import frc.robot.commands.LiftArm.PositionProfileLift;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.NTs.MonitorThreadIntake;

@@ -35,11 +35,11 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
 
                                                                 new SetLiftGoal(lift,
                                                                                 presetLiftAngles.PICKUP_CONE_LOAD_STATION
-                                                                                                .getAngleRads()),
+                                                                                                .getInches()),
 
                                                                 new SetLiftGoal(lift,
                                                                                 presetLiftAngles.PICKUP_CUBE_LOAD_STATION
-                                                                                                .getAngleRads()),
+                                                                                                .getInches()),
 
                                                                 () -> type == gamePiece.CONE),
 
