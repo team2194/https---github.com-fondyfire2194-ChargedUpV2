@@ -14,7 +14,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.LiftArmConstants;
@@ -82,7 +81,7 @@ public class LiftArmSubsystem extends SubsystemBase {
     public final CANCoder m_liftCANcoder;
 
     public ProfiledPIDController m_liftController = new ProfiledPIDController(0.005, 0, 0,
-            LiftArmConstants.liftArmConstraints, .02);
+            LiftArmConstants.liftArmInchConstraints, .02);
 
     private boolean useSoftwareLimit;
 
@@ -177,7 +176,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         enableSoftLimits(useSoftwareLimit);
 
         m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
-                LiftArmConstants.kvVoltSecondsPerRadian, LiftArmConstants.kAVoltSecondSquaredPerRadian);
+                LiftArmConstants.kvVoltSecondsPerInch, LiftArmConstants.kAVoltSecondSquaredPerInch);
 
     }
 

@@ -217,9 +217,9 @@ public class RobotContainer {
                                 m_liftArm));
 
                 // m_liftArm.setDefaultCommand(
-                //                 new PositionProfileLift(m_liftArm));
+                // new PositionProfileLift(m_liftArm));
 
-                 m_liftArm.setDefaultCommand(new PositionProfileLiftInches(m_liftArm));
+                m_liftArm.setDefaultCommand(new PositionProfileLiftInches(m_liftArm));
 
                 m_wrist.setDefaultCommand(
                                 new PositionProfileWrist(m_wrist, m_liftArm));
@@ -347,13 +347,14 @@ public class RobotContainer {
                 m_armController.y().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake));
 
                 m_armController.x().onTrue(
-                                Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmConstraints,
-                                                Units.degreesToRadians(40), false)));
+                                Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmInchConstraints,
+                                                0, false)));
 
                 m_armController.povUp()
                                 .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
 
-                m_armController.povRight().onTrue(Commands.runOnce(() -> m_liftArm.runDeliverPosition()).withTimeout(5));
+                m_armController.povRight()
+                                .onTrue(Commands.runOnce(() -> m_liftArm.runDeliverPosition()).withTimeout(5));
 
                 m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle(true)));
 

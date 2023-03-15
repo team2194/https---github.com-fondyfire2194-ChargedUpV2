@@ -20,16 +20,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.commands.swerve.SetSwerveOdometry;
 import frc.robot.simulation.SimConstants;
-import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
-import frc.robot.subsystems.LightStrip.ledColors;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -197,8 +194,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
         m_robotContainer.m_extendArm.getPositionInches(), false);
 
-    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmConstraints,
-        m_robotContainer.m_liftArm.getCanCoderRadians(), false);
+    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmInchConstraints,
+        m_robotContainer.m_liftArm.getPositionInches(), false);
 
     m_robotContainer.m_wrist.setController(WristConstants.wristConstraints,
         m_robotContainer.m_wrist.getAngleRadians(), false);

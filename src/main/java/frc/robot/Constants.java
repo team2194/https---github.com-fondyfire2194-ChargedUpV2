@@ -217,7 +217,7 @@ public final class Constants {
     // compare to 80 degrees per sec gives an additional 20:1 ratio
 
     // arm feedforward
-    public static final double ksVolts = .6;
+    public static final double ksVolts = .6;//
 
     public static final double kGVolts = .52;
 
@@ -228,6 +228,10 @@ public final class Constants {
     public static final double JOG_SLEW_RATE = 10;
 
     public static final double kControllerDeadband = 0.05;
+
+    public static final double kvVoltSecondsPerInch = .4;
+
+    public static final double kAVoltSecondSquaredPerInch = 0;
 
   }
 
