@@ -44,15 +44,15 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         PICKUP_CUBE_LOAD_STATION(84,11.4),
 
-        PICKUP_CONE_LOAD_STATION(89,11.5),
+        PICKUP_CONE_LOAD_STATION(89,12.1),
 
         PLACE_CUBE_MID_SHELF(72,8.8),
 
-        PLACE_CUBE_TOP_SHELF(87,11.45),
+        PLACE_CUBE_TOP_SHELF(87,12.5),
 
         PLACE_CONE_MID_PIPE(78.5,8.9),
 
-        PLACE_CONE_TOP_PIPE(95,14);
+        PLACE_CONE_TOP_PIPE(95,13.5);
 
         private double angle;
         private double inches;
@@ -365,6 +365,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
 
     public void runDeliverPosition() {
-        setController(LiftArmConstants.liftArmInchConstraints, 5, false);
+        setController(LiftArmConstants.liftArmInchConstraints, deliverInches, false);
     }
 }

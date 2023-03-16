@@ -37,7 +37,7 @@ public class SetWristGoal extends CommandBase {
   @Override
   public void initialize() {
     m_wrist.setController(m_constraints, m_goalAngleRadians, false);
-    m_wrist.goalAngleRadians=m_goalAngleRadians;
+    m_wrist.goalAngleRadians = m_goalAngleRadians;
   }
 
   @Override

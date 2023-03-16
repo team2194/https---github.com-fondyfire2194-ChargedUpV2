@@ -17,7 +17,7 @@ public class WaitWristAtTarget extends CommandBase {
   public WaitWristAtTarget(WristSubsystem wrist, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_wrist = wrist;
-    m_atTargetTime=atTargetTime;
+    m_atTargetTime = atTargetTime;
   }
 
   // Called when the command is initially scheduled.
@@ -31,7 +31,7 @@ public class WaitWristAtTarget extends CommandBase {
   public void execute() {
 
     if (m_wrist.m_wristController.atGoal() && m_startTime == 0) {
-      
+
       m_startTime = Timer.getFPGATimestamp();
     }
   }
@@ -44,6 +44,6 @@ public class WaitWristAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Timer.getFPGATimestamp() > m_startTime + m_atTargetTime;
+    return m_wrist.getAngleDegrees() < 60;
   }
 }

@@ -48,7 +48,7 @@ public class ShuffleboardArms {
                                 .withPosition(0, 0)
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
-                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positionrads));
+                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.getPositionInches()));
                liftLayout.addNumber("GoalInches", () -> round2dp(m_lift.goalInches));
                 liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.getCanCoderPosition()));
                 //liftLayout.addNumber("r", () -> round2dp(m_lift.ge

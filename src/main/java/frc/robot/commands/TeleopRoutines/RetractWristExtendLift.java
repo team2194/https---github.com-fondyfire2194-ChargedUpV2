@@ -43,7 +43,7 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                                                                 presetWristAngles.HOME.getAngleRads()),
                                                 () -> travel),
 
-                                new WaitCommand(1),
+                                new WaitCommand(2),
 
                                 new WaitWristAtTarget(wrist, .25),
 
@@ -58,9 +58,9 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                                                                                 .getDistance()),
                                                 () -> travel),
 
-                                new WaitExtendAtTarget(ext, .25),
+                                new WaitCommand(2),
 
-                                new WaitCommand(1),
+                                new WaitExtendAtTarget(ext, .25),
 
                                 new ConditionalCommand(
 
@@ -73,7 +73,7 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                                                                                 .getInches()),
                                                 () -> travel),
 
-                                new WaitCommand(1),
+                                new WaitCommand(2),
 
                                 new WaitLiftAtTarget(lift, .25)
 

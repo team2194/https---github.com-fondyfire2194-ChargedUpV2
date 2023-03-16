@@ -4,12 +4,9 @@
 
 package frc.robot.commands.Wrist;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.WristConstants;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -84,7 +81,6 @@ public class PositionProfileWrist extends CommandBase {
     boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE;
 
     loopctr++;
-
 
     m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(),
         m_wrist.goalAngleRadians);

@@ -64,11 +64,11 @@ public class GetPieceAtIntake extends CommandBase {
 
     aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
 
-    cubeSeen = m_type == gamePiece.CUBE && aveCubeDist < cubeSenseThreshold;
+    cubeSeen = aveCubeDist < cubeSenseThreshold;
 
-    coneSeen = m_type == gamePiece.CONE && aveConeDist < coneSenseThreshold;
+    coneSeen = aveConeDist < coneSenseThreshold;
 
-    ampsHigh = aveAmps > ampsThreshold;
+    ampsHigh = false;// aveAmps > ampsThreshold;
 
   }
 
@@ -81,6 +81,6 @@ public class GetPieceAtIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ampsHigh || cubeSeen || coneSeen;
+    return cubeSeen || coneSeen;
   }
 }

@@ -13,7 +13,7 @@ public class EjectPieceFromIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
-  private double m_speed;
+  private double m_speed = .7;
 
   private robotPiece m_type;
 
@@ -48,7 +48,7 @@ public class EjectPieceFromIntake extends CommandBase {
   @Override
   public void initialize() {
 
-    if (m_intake.piece == robotPiece.CONE)
+    if (m_intake.piece == robotPiece.CUBE)
 
       m_speed *= -1;
   }
@@ -69,7 +69,7 @@ public class EjectPieceFromIntake extends CommandBase {
 
     noConeSeen = aveConeDist > coneSenseThreshold;
 
-    ampsHigh = aveAmps > ampsThreshold;
+    ampsHigh = false;//aveAmps > ampsThreshold;
 
   }
 

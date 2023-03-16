@@ -88,6 +88,10 @@ public class PositionProfileLiftInches extends CommandBase {
 
     m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(), m_lift.goalInches);
 
+    if (m_lift.pidVal > 8)
+      m_lift.pidVal = 8;
+    if (m_lift.pidVal < -8)
+      m_lift.pidVal = -8;
     // double temp = m_lift.pidVal * RobotController.getBatteryVoltage();
 
     // m_lift.pidVal = MathUtil.clamp(temp, -1, 1);
@@ -96,7 +100,7 @@ public class PositionProfileLiftInches extends CommandBase {
 
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
-    m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position - (Math.PI / 2),
+    m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position,
 
         m_lift.m_liftController.getSetpoint().velocity, acceleration);
 

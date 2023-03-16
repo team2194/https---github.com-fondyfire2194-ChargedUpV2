@@ -35,8 +35,10 @@ import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.DetectorLoad;
 import frc.robot.commands.PickupRoutines.GetPieceAtIntake;
+import frc.robot.commands.PickupRoutines.GetPieceFromLoad;
 import frc.robot.commands.PickupRoutines.GroundIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
+import frc.robot.commands.PickupRoutines.LiftWristPresetLoadStation;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.TeleopRoutines.RotateToAngle;
 import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
@@ -231,11 +233,11 @@ public class RobotContainer {
 
         void configDriverButtons() {
 
-                m_driverController.leftBumper()
-                                .whileTrue(getDetectorLoad());
+                // m_driverController.leftBumper()
+                // .whileTrue(getDetectorLoad());
 
                 m_driverController.rightBumper()
-                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true));
+                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, false));
 
                 m_driverController.leftTrigger().whileTrue((new StrafeToGridSlot(m_drive, m_tf,
                                 m_ghs, m_llv, m_intake)));
@@ -291,15 +293,17 @@ public class RobotContainer {
                                 .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
                                                 m_intake, m_ghs).withTimeout(2));
 
-                // m_coDriverController.rightBumper()
+                //m_coDriverController.rightBumper()
+                                
+                 m_coDriverController.leftTrigger().onTrue((new LiftWristPresetLoadStation(m_liftArm, m_wrist,m_intake, gamePiece.CONE)).withTimeout(30));
 
-                // m_coDriverController.leftTrigger()
 
-                // m_coDriverController.rightTrigger()
+                m_coDriverController.rightTrigger().onTrue(
+                                new GetPieceFromLoad(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE).withTimeout(20));
 
                 m_coDriverController.a().onTrue(new EjectPieceFromIntake(m_intake));
 
-                // m_coDriverController.b()
+              //  m_coDriverController.b().
 
                 m_coDriverController.x().onTrue(new GetPieceAtIntake(m_intake, gamePiece.CONE));
 
@@ -356,7 +360,7 @@ public class RobotContainer {
 
                 m_armController.x().onTrue(
                                 Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmInchConstraints,
-                                                0, false)));
+                                                1, false)));
 
                 m_armController.povUp()
                                 .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));

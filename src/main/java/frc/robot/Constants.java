@@ -187,11 +187,11 @@ public final class Constants {
 
     public static final double MIN_ANGLE = 31;
 
-    public static final double MAX_ANGLE = 95;
+    public static final double MAX_ANGLE = 105;
 
     public static final double MIN_INCHES = 0;
 
-    public static final double MAX_INCHES = 10;
+    public static final double MAX_INCHES = 16;
 
     public static final double MAX_CANCODER = 98;
 
@@ -229,7 +229,7 @@ public final class Constants {
 
     public static final double kControllerDeadband = 0.05;
 
-    public static final double kvVoltSecondsPerInch = .4;
+    public static final double kvVoltSecondsPerInch = .5;
 
     public static final double kAVoltSecondSquaredPerInch = 0;
 

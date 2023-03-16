@@ -11,6 +11,7 @@ import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
@@ -245,7 +246,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public void moveManually(double speed) {
-    // SmartDashboard.putNumber("INTSP", speed);
+     SmartDashboard.putNumber("INTSP", speed);
     mIntakeMotor.setVoltage(speed * 12);
   }
 
