@@ -29,10 +29,6 @@ public class GetPieceAtIntake extends CommandBase {
 
   LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
 
-  LinearFilter ampsFilter = LinearFilter.movingAverage(5);
-
-  boolean ampsHigh;
-
   boolean cubeSeen;
 
   boolean coneSeen;
@@ -58,8 +54,6 @@ public class GetPieceAtIntake extends CommandBase {
 
     m_intake.moveManually(useSpeed);
 
-    aveAmps = ampsFilter.calculate(m_intake.getAmps());
-
     aveConeDist = coneSensorFilter.calculate(m_intake.getConeSensorDistance());
 
     aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
@@ -67,8 +61,6 @@ public class GetPieceAtIntake extends CommandBase {
     cubeSeen = aveCubeDist < cubeSenseThreshold;
 
     coneSeen = aveConeDist < coneSenseThreshold;
-
-    ampsHigh = false;// aveAmps > ampsThreshold;
 
   }
 

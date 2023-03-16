@@ -8,9 +8,8 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -30,42 +29,43 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public enum presetLiftAngles {
 
-        SAFE_HOME(34.1,0),
+        SAFE_HOME(34.1, 0),
 
-        TRAVEL(36,.8),
+        TRAVEL(36, .8),
 
-        CLEAR_ARMS(38,.85),
+        CLEAR_ARMS(38, .85),
 
-        PICKUP_CUBE_GROUND(43.6,1.9),
+        PICKUP_CUBE_GROUND(43.6, 1.9),
 
-        PICKUP_CONE_GROUND(43.6,1.9),
+        PICKUP_CONE_GROUND(43.6, 1.9),
 
-        PICKUP_TIPPED_CONE_GROUND(56,4.8),
+        PICKUP_TIPPED_CONE_GROUND(56, 4.8),
 
-        PICKUP_CUBE_LOAD_STATION(84,11.4),
+        PICKUP_CUBE_LOAD_STATION(84, 11.4),
 
-        PICKUP_CONE_LOAD_STATION(89,12.1),
+        PICKUP_CONE_LOAD_STATION(89, 12.1),
 
-        PLACE_CUBE_MID_SHELF(72,8.8),
+        PLACE_CUBE_MID_SHELF(72, 8.8),
 
-        PLACE_CUBE_TOP_SHELF(87,12.5),
+        PLACE_CUBE_TOP_SHELF(87, 12.5),
 
-        PLACE_CONE_MID_PIPE(78.5,8.9),
+        PLACE_CONE_MID_PIPE(78.5, 8.9),
 
-        PLACE_CONE_TOP_PIPE(95,13.5);
+        PLACE_CONE_TOP_PIPE(95, 13.5);
 
         private double angle;
         private double inches;
 
         private presetLiftAngles(double angle, double inches) {
             this.angle = angle;
-            this.inches=inches;
+            this.inches = inches;
 
         }
 
         public double getAngle() {
             return this.angle;
         }
+
         public double getInches() {
             return this.inches;
         }
@@ -103,8 +103,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public int liftAngleSelect;
 
-    public ArmFeedforward m_armFeedforward;
-
+    public SimpleMotorFeedforward m_sff;
 
     public double deliverInches;
 
@@ -126,11 +125,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean resetFF;
 
-    private double extEndAdjust;
-
-    private double wristAngleAdj;
-
     public double goalInches;
+
     public double gravCalc;
 
     public double pidVal;
@@ -140,6 +136,8 @@ public class LiftArmSubsystem extends SubsystemBase {
     public boolean inIZone;
 
     public double deliverAngle;
+
+    public double gravVal;
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
@@ -177,7 +175,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_armFeedforward = new ArmFeedforward(LiftArmConstants.ksVolts, LiftArmConstants.kGVolts,
+        m_sff = new SimpleMotorFeedforward(LiftArmConstants.ksVolts,
                 LiftArmConstants.kvVoltSecondsPerInch, LiftArmConstants.kAVoltSecondSquaredPerInch);
 
     }
@@ -198,7 +196,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         }
         if (loopctr == 6) {
-        
+
         }
 
     }
@@ -218,16 +216,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public void close() {
         m_motor.close();
-    }
-
-    public void setExtAdjust(double adj) {
-
-        extEndAdjust = adj;
-    }
-
-    public void setWristAdjust(double adj) {
-
-        wristAngleAdj = adj;
     }
 
     public boolean atTargetPosition() {
@@ -272,7 +260,6 @@ public class LiftArmSubsystem extends SubsystemBase {
     public double getAmps() {
         return m_motor.getOutputCurrent();
     }
-
 
     public String getFirmware() {
         return m_motor.getFirmwareString();
@@ -347,15 +334,14 @@ public class LiftArmSubsystem extends SubsystemBase {
                 m_liftController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
         }
 
-        m_armFeedforward = new ArmFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKg"),
-                Pref.getPref("liftKv"));
+        m_sff = new SimpleMotorFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKv"));
 
         m_liftController.setP(Pref.getPref("liftKp"));
 
     }
 
     public void setControllerAtPosition() {
-        setController(LiftArmConstants.liftArmInchConstraints, getPositionInches(), false);
+        setControllerGoal(getPositionInches());
 
     }
 
@@ -363,8 +349,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         setControllerGoal(m_liftController.getGoal().position);
     }
 
-
     public void runDeliverPosition() {
-        setController(LiftArmConstants.liftArmInchConstraints, deliverInches, false);
+        setControllerGoal(deliverInches);
     }
 }

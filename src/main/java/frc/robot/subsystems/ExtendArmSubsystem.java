@@ -245,7 +245,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerAtPosition() {
-        setController(ExtendArmConstants.extendArmConstraints, getPositionInches(), false);
+        setControllerGoal( getPositionInches());
 
     }
 

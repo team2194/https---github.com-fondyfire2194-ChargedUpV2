@@ -51,11 +51,7 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new WaitExtendAtTarget(extend, .24),
 
-        new EjectPieceFromIntake(intake)
-
-            .andThen(new WaitCommand(.2))
-
-            .andThen(new StopIntake(intake)),
+        new EjectPieceFromIntake(intake),
 
         new RetractWristExtendLift(lift, extend, wrist, true)
 

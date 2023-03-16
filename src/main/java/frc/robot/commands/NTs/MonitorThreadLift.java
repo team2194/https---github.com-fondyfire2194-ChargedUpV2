@@ -84,7 +84,7 @@ public class MonitorThreadLift {
                         feedforward.set(m_lift.ff);
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
                         volts.set(m_lift.volts);
-                        kvEst.set((m_lift.volts - LiftArmConstants.ksVolts - LiftArmConstants.kGVolts)
+                        kvEst.set((m_lift.volts - LiftArmConstants.ksVolts - LiftArmConstants.kgVolts)
                                 / m_lift.getCanCoderRateRadsPerSec());
                         profpos.set(m_lift.m_liftController.getSetpoint().position);
                         disterr.set(m_lift.m_liftController.getPositionError());

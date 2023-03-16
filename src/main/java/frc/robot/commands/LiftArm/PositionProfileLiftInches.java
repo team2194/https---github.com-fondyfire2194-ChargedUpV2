@@ -86,25 +86,24 @@ public class PositionProfileLiftInches extends CommandBase {
 
     loopctr++;
 
-    m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(), m_lift.goalInches);
+    m_lift.gravVal = LiftArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
 
-    if (m_lift.pidVal > 8)
-      m_lift.pidVal = 8;
-    if (m_lift.pidVal < -8)
-      m_lift.pidVal = -8;
-    // double temp = m_lift.pidVal * RobotController.getBatteryVoltage();
+   
 
-    // m_lift.pidVal = MathUtil.clamp(temp, -1, 1);
+    m_lift.pidVal = m_lift.m_liftController.calculate(m_lift.getPositionInches(),
+        m_lift.goalInches);
+
+    // double temp = m_ext.pidVal * RobotController.getBatteryVoltage();
+
+    // m_ext.pidVal = MathUtil.clamp(temp, -1, 1);
 
     double acceleration = (m_lift.m_liftController.getSetpoint().velocity -
-
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
-    m_lift.ff = m_lift.m_armFeedforward.calculate(m_lift.m_liftController.getSetpoint().position,
+    m_lift.ff = m_lift.m_sff.calculate(m_lift.m_liftController.getSetpoint().velocity,
+        acceleration);
 
-        m_lift.m_liftController.getSetpoint().velocity, acceleration);
-
-    m_lift.volts = m_lift.pidVal + m_lift.ff;
+    m_lift.volts = m_lift.ff + m_lift.pidVal + m_lift.gravVal;
 
     if (allowUp && m_lift.volts > 0 || allowDown && m_lift.volts < 0) {
 

@@ -72,7 +72,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private final RelativeEncoder mEncoder;
 
-    public ArmFeedforward m_armfeedforward;
+    public ArmFeedforward m_wristfeedforward;
 
     private double inPositionBandwidth = 1;
 
@@ -89,7 +89,7 @@ public class WristSubsystem extends SubsystemBase {
     private double positionChangeper20ms;
 
     public ProfiledPIDController m_wristController = new ProfiledPIDController(0.005, 0, 0,
-            WristConstants.wristConstraints,.02);
+            WristConstants.wristConstraints, .02);
 
     public double deliverAngleRads;
 
@@ -121,6 +121,8 @@ public class WristSubsystem extends SubsystemBase {
     public boolean inIZone;
 
     private boolean runDeliverAngle;
+
+    private boolean bypassStopped;
 
     public WristSubsystem() {
 
@@ -154,10 +156,8 @@ public class WristSubsystem extends SubsystemBase {
 
         enableSoftLimits(useSoftwareLimit);
 
-        m_armfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
+        m_wristfeedforward = new ArmFeedforward(WristConstants.ksVolts, WristConstants.kgVolts,
                 WristConstants.kvWristVoltSecondsPerRadian, WristConstants.kaWristVoltSecondsSquaredPerRadian);
-
-        // SmartDashboard.putNumber("WRPSM", WristConstants.MAX_RADS_PER_SEC);// 1.04
 
     }
 
@@ -224,7 +224,8 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
 
-        if (isStopped()) {
+        if (isStopped() || bypassStopped) {
+            bypassStopped = false;
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
             goalAngleRadians = angleRads;
@@ -236,7 +237,7 @@ public class WristSubsystem extends SubsystemBase {
 
         }
 
-        m_armfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
+        m_wristfeedforward = new ArmFeedforward(Pref.getPref("wristKs"), Pref.getPref("wristKg"),
                 Pref.getPref("wristKv"));
 
         m_wristController.setP(Pref.getPref("wristKp"));
@@ -245,12 +246,13 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setControllerAtPosition() {
         setController(WristConstants.wristConstraints, getAngleRadians(), false);
+        bypassStopped = true;
     }
 
     public void redoTarget() {
-        setControllerGoal(m_wristController.getGoal().position);
+        setController(WristConstants.wristConstraints, m_wristController.getGoal().position, false);
+        bypassStopped = true;
     }
-
 
     public void runDeliverAngle(boolean on) {
         runDeliverAngle = on;

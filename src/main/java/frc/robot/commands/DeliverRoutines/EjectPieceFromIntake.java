@@ -27,9 +27,7 @@ public class EjectPieceFromIntake extends CommandBase {
 
   public double ampsThreshold = 20;
 
-  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
-
-  LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
+ LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
 
   LinearFilter ampsFilter = LinearFilter.movingAverage(5);
 
@@ -59,17 +57,11 @@ public class EjectPieceFromIntake extends CommandBase {
 
     m_intake.moveManually(m_speed);
 
-    aveAmps = ampsFilter.calculate(m_intake.getAmps());
-
     aveConeDist = coneSensorFilter.calculate(m_intake.getConeSensorDistance());
-
-    aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
 
     noCubeSeen = aveCubeDist > cubeSenseThreshold;
 
     noConeSeen = aveConeDist > coneSenseThreshold;
-
-    ampsHigh = false;//aveAmps > ampsThreshold;
 
   }
 
@@ -82,6 +74,6 @@ public class EjectPieceFromIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ampsHigh || noCubeSeen && noConeSeen;
+    return noCubeSeen && noConeSeen;
   }
 }

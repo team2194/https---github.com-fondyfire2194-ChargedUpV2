@@ -201,16 +201,11 @@ public final class Constants {
 
     private static final double INCH_RANGE = MAX_INCHES - MIN_INCHES;// 15
 
-
-
     public static final double INCHES_PER_ENCODER_REV = (TOOTH_BELT_PITCH * PULLEY_TEETH) / GEAR_RATIO;// .225
-
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 5700) / 60;// 21.4
 
-
     public static final double LIFT_CANCODER_OFFSET = -204;
-
 
     // if arm driven direct through 21:1 reduction arm speed = 5700/(60*21)= 4.5
     // revs per sec = 1628 deg per sec
@@ -219,11 +214,15 @@ public final class Constants {
     // arm feedforward
     public static final double ksVolts = .6;//
 
-    public static final double kGVolts = .52;
+    public static final double kgVolts = .52;
 
     public static final TrapezoidProfile.Constraints liftArmInchConstraints
 
         = new Constraints(5, 5);
+
+    public static final TrapezoidProfile.Constraints liftArmFastConstraints
+
+        = new Constraints(10, 20);
 
     public static final double JOG_SLEW_RATE = 10;
 
@@ -261,6 +260,10 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints extendArmConstraints
 
         = new Constraints(15, 30);
+
+    public static final TrapezoidProfile.Constraints extendArmFastConstraints
+
+        = new Constraints(25, 40);
 
     public static final TrapezoidProfile.Constraints intakeConstraints
 
@@ -305,6 +308,13 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints wristConstraints =
 
         new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
+
+        public static final TrapezoidProfile.Constraints wristFastConstraints =
+
+        new Constraints(Units.degreesToRadians(40), Units.degreesToRadians(60));
+
+
+
 
     public static final double JOG_SLEW_RATE = 10;
 

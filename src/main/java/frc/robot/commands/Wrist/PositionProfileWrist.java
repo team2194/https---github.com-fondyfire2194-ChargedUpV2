@@ -76,31 +76,27 @@ public class PositionProfileWrist extends CommandBase {
   @Override
   public void execute() {
 
-    boolean allowUp = m_wrist.getAngleDegrees() <= WristConstants.MAX_ANGLE;
+    boolean allowDown = m_wrist.getAngleDegrees() <= WristConstants.MAX_ANGLE;
 
-    boolean allowDown = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE;
+    boolean allowUp = m_wrist.getAngleDegrees() >= WristConstants.MIN_ANGLE;
 
     loopctr++;
 
     m_wrist.pidVal = m_wrist.m_wristController.calculate(m_wrist.getAngleRadians(),
         m_wrist.goalAngleRadians);
 
-    // double temp = m_wrist.pidVal * RobotController.getBatteryVoltage();
-
-    // m_wrist.pidVal = MathUtil.clamp(temp, -1, 1);
-
     double acceleration = (m_wrist.m_wristController.getSetpoint().velocity -
 
         lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
-    m_wrist.ff = m_wrist.m_armfeedforward.calculate(
+    m_wrist.ff = m_wrist.m_wristfeedforward.calculate(
         m_wrist.m_wristController.getSetpoint().position - m_wrist.getAngleRadians() - (Math.PI / 2)
             - m_lift.getCanCoderRadians(),
         m_wrist.m_wristController.getSetpoint().velocity, acceleration);
 
     m_wrist.volts = m_wrist.pidVal + m_wrist.ff;
 
-    if (allowDown && m_wrist.volts < 0 || allowUp && m_wrist.volts > 0) {
+    if (allowDown && m_wrist.volts > 0 || allowUp && m_wrist.volts < 0) {
 
       m_wrist.m_motor.setVoltage(m_wrist.volts);
 

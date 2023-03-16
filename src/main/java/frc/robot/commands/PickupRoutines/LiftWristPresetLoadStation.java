@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.Wrist.SetWristGoal;
@@ -60,11 +61,9 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
 
                                                 () -> type == gamePiece.CONE),
 
-                                new GetPieceAtIntake(intake, type));
+                                new GetPieceAtIntake(intake, type)
 
-                // new WaitCommand(4),
-
-                // new WaitWristAtTarget(wrist, .25));
+                );
 
         }
 }
