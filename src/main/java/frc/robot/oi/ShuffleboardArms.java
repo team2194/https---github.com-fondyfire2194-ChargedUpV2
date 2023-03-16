@@ -48,21 +48,23 @@ public class ShuffleboardArms {
                                 .withPosition(0, 0)
                                 .withSize(2, 4).withProperties(Map.of("Label position", "LEFT"));
 
-                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.getPositionInches()));
-               liftLayout.addNumber("GoalInches", () -> round2dp(m_lift.goalInches));
-                liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.getCanCoderPosition()));
-                //liftLayout.addNumber("r", () -> round2dp(m_lift.ge
+                liftLayout.addNumber("LiftPosition", () -> round2dp(m_lift.positioninches));
+                liftLayout.addNumber("GoalInches", () -> round2dp(m_lift.goalInches));
+                liftLayout.addNumber("CanCoderDeg", () -> round2dp(m_lift.cancoderPosition));
+                liftLayout.addNumber("MotorOut", () -> round2dp(m_lift.appliedOutput));
+                liftLayout.addNumber("Amps", () -> round2dp(m_lift.amps));
 
-                liftLayout.addBoolean("Stopped", () -> m_lift.isStopped())
+                liftLayout.addBoolean("Stopped", () -> m_lift.stopped)
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                liftLayout.addBoolean("AtGoal", () -> m_lift.m_liftController.atSetpoint())
+                liftLayout.addBoolean("AtGoal", () -> m_lift.atGoal)
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                liftLayout.addBoolean("LiftCANOK", () -> m_lift.checkCANOK())
+                liftLayout.addBoolean("LiftCANOK", () -> m_lift.liftArmMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                liftLayout.add("LIPfPID", m_lift.m_liftController).withWidget("Profiled PID Controller");
+                // liftLayout.add("LIPfPID", m_lift.m_liftController).withWidget("Profiled PID
+                // Controller");
 
                 ShuffleboardLayout extLayout = Shuffleboard.getTab("Arms")
                                 .getLayout("ExtLayout", BuiltInLayouts.kList)
@@ -72,17 +74,18 @@ public class ShuffleboardArms {
                 extLayout.addNumber("ExtPositionInch", () -> round2dp(m_ext.positionInches));
                 extLayout.addNumber("ExtAmps", () -> round2dp(m_ext.amps));
                 extLayout.addNumber("GoalInches", () -> round2dp(m_ext.goalInches));
-                extLayout.addNumber("MotorOut", () -> round2dp(m_ext.getAppliedOutput()));
-                extLayout.addNumber("VELIPS", () -> round2dp(m_ext.getInchesPerSec()));
+                extLayout.addNumber("MotorOut", () -> round2dp(m_ext.appliedOutput));
+                extLayout.addNumber("VELIPS", () -> round2dp(m_ext.inchespersec));
                 extLayout.addBoolean("Stopped", () -> m_ext.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
-                extLayout.addBoolean("AtGoal", () -> m_ext.atTargetPosition())
+                extLayout.addBoolean("AtGoal", () -> m_ext.atGoal)
                                 .withWidget(BuiltInWidgets.kTextView);
 
                 extLayout.addBoolean("EXTCANOK", () -> m_ext.extendMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
 
-                extLayout.add("EXPfPID", m_ext.m_extController).withWidget("Profiled PID Controller");
+                // extLayout.add("EXPfPID", m_ext.m_extController).withWidget("Profiled PID
+                // Controller");
 
                 ShuffleboardLayout wristLayout = Shuffleboard.getTab("Arms")
                                 .getLayout("WristLayout", BuiltInLayouts.kList)
@@ -90,21 +93,22 @@ public class ShuffleboardArms {
                                 .withSize(2, 4)
                                 .withProperties(Map.of("Label position", "LEFT"));
 
-                wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.getAngleRadians()));
-                wristLayout.addNumber("WristPosDeg", () -> round2dp(m_wrist.getAngleDegrees()));
+                wristLayout.addNumber("WristPosRads", () -> round2dp(m_wrist.angleRadians));
+                wristLayout.addNumber("WristPosDeg", () -> round2dp(m_wrist.angleDegrees));
                 wristLayout.addNumber("WristGoal", () -> round2dp(m_wrist.goalAngleRadians));
 
-                wristLayout.addNumber("CommandRadPerSec", () -> round2dp(m_wrist.commandRadPerSec));
+                // wristLayout.addNumber("CommandRadPerSec", () -> m_wrist.commandRadPerSec);
                 wristLayout.addNumber("WristAmps", () -> round2dp(m_wrist.amps));
-                wristLayout.addNumber("WristVelRadPS", () -> round2dp(m_wrist.getRadsPerSec()));
+                wristLayout.addNumber("WristVelRadPS", () -> round2dp(m_wrist.radspersec));
 
                 wristLayout.addBoolean("WristCANOK", () -> m_wrist.wristMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
                 wristLayout.addBoolean("Stopped", () -> m_wrist.isStopped())
                                 .withWidget(BuiltInWidgets.kTextView);
-                wristLayout.addBoolean("AtGoal", () -> m_wrist.atTargetAngle())
+                wristLayout.addBoolean("AtGoal", () -> m_wrist.atGoal)
                                 .withWidget(BuiltInWidgets.kTextView);
-                wristLayout.add("WRPfPID", m_wrist.m_wristController).withWidget("Profiled PID Controller");
+                // wristLayout.add("WRPfPID", m_wrist.m_wristController).withWidget("Profiled
+                // PID Controller");
 
                 ShuffleboardLayout intakeLayout = Shuffleboard.getTab("Arms")
                                 .getLayout("IntakeLayout", BuiltInLayouts.kList)
@@ -114,17 +118,15 @@ public class ShuffleboardArms {
 
                 intakeLayout.add("StopIntake", new StopIntake(intake));
 
-                intakeLayout.addNumber("Actual RPM", () -> round2dp(intake.getRPM()));
+                intakeLayout.addNumber("Actual RPM", () -> round2dp(intake.rpm));
 
-                intakeLayout.addNumber("Intake Amps", () -> round2dp(intake.getAmps()));
+                intakeLayout.addNumber("Intake Amps", () -> round2dp(intake.amps));
 
-                intakeLayout.addBoolean("IntakeCANOK", () -> intake.checkCANOK())
+                intakeLayout.addBoolean("IntakeCANOK", () -> intake.intakeMotorConnected)
                                 .withWidget(BuiltInWidgets.kTextView);
 
                 ShuffleboardTab deliverLayout = Shuffleboard.getTab("Arms");
 
-                // deliverLayout.addNumber("LiftDelDeg", () -> round2dp(Units.radiansToDegrees(lift.deliverAngleRads)))
-                //                 .withPosition(6, 2).withSize(1, 1);
                 deliverLayout.addNumber("WristDelDeg", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
                                 .withPosition(6, 3).withSize(1, 1);
 

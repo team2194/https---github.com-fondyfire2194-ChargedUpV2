@@ -75,8 +75,8 @@ public class MonitorThreadWrist {
                     if (true) {
 
                         goalangle.set(m_wrist.goalAngleRadians);
-                        velocity.set(m_wrist.getRadsPerSec());
-                        angle.set(m_wrist.getAngleRadians());
+                        velocity.set(m_wrist.radspersec);
+                        angle.set(m_wrist.angleRadians);
                         feedforward.set(m_wrist.ff);
                         pidval.set(m_wrist.pidVal);
                         volts.set(m_wrist.volts);
@@ -87,7 +87,7 @@ public class MonitorThreadWrist {
                         velerr.set(m_wrist.m_wristController.getVelocityError());
                         profvel.set(m_wrist.m_wristController.getSetpoint().velocity);
                         inizone.set(m_wrist.inIZone);
-                        amps.set(m_wrist.getAmps());
+                        amps.set(m_wrist.amps);
                     }
                     Thread.sleep(100);
                 }

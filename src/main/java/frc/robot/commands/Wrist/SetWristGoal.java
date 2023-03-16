@@ -23,6 +23,7 @@ public class SetWristGoal extends CommandBase {
     m_wrist = wrist;
     m_constraints = constraints;
     m_goalAngleRadians = goalAngleRadians;
+    addRequirements(m_wrist);
   }
 
   public SetWristGoal(WristSubsystem wrist, double goalAngleRadians) {
@@ -31,6 +32,7 @@ public class SetWristGoal extends CommandBase {
     m_wrist = wrist;
     m_constraints = WristConstants.wristConstraints;
     m_goalAngleRadians = goalAngleRadians;
+    addRequirements(m_wrist);
   }
 
   // Called when the command is initially scheduled.
@@ -42,7 +44,7 @@ public class SetWristGoal extends CommandBase {
 
   @Override
   public void execute() {
-    m_wrist.setController(m_constraints, m_goalAngleRadians, false);
+    //m_wrist.setController(m_constraints, m_goalAngleRadians, false);
 
   }
 
@@ -55,6 +57,6 @@ public class SetWristGoal extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_wrist.goalAngleRadians == m_goalAngleRadians;
+    return true;
   }
 }

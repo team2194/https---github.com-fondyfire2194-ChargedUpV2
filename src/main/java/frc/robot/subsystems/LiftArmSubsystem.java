@@ -139,6 +139,13 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public double gravVal;
 
+    public boolean atGoal;
+
+    public double positioninches;
+
+    public boolean stopped;
+
+
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -160,6 +167,10 @@ public class LiftArmSubsystem extends SubsystemBase {
         mEncoder.setPositionConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV);
         // SmartDashboard.putNumber("LDPER", LiftArmConstants.DEGREES_PER_ENCODER_REV);
         mEncoder.setVelocityConversionFactor(LiftArmConstants.INCHES_PER_ENCODER_REV / 60);
+
+        mEncoder.setPosition(0);
+
+        setController(LiftArmConstants.liftArmInchConstraints, 0, false);
 
         m_motor.setSmartCurrentLimit(40);
 
@@ -193,10 +204,14 @@ public class LiftArmSubsystem extends SubsystemBase {
             appliedOutput = getAppliedOutput();
             amps = getAmps();
             cancoderPosition = getCanCoderPosition();
-
+            atGoal = m_liftController.atGoal();
+            liftArmMotorConnected = checkCANOK();
+            stopped = isStopped();
         }
         if (loopctr == 6) {
-
+            positioninches = getPositionInches();
+            
+            loopctr = 0;
         }
 
     }
@@ -341,15 +356,19 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerAtPosition() {
-        setControllerGoal(getPositionInches());
+        goalInches = getPositionInches();
+        setController(LiftArmConstants.liftArmInchConstraints, goalInches, false);
 
     }
 
     public void redoTarget() {
-        setControllerGoal(m_liftController.getGoal().position);
+        setController(LiftArmConstants.liftArmInchConstraints, goalInches, false);
+
     }
 
-    public void runDeliverPosition() {
-        setControllerGoal(deliverInches);
+    public double round2dp(double number) {
+        number = Math.round(number * 100);
+        number /= 100;
+        return number;
     }
 }

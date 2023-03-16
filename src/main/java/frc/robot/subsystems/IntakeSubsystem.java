@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -83,7 +82,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public int tstctr;
 
-  public robotPiece piece;
+  public robotPiece piece = robotPiece.CUBE;
+
+  public gamePiece expectedPieceType = gamePiece.CONE;
+
+  public boolean coneExpected;
+
+  public boolean cubeExpected;
+
+  public double rpm;
+
+  public double amps;
 
   public IntakeSubsystem() {
 
@@ -130,26 +139,43 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
 
     loopctr++;
+    SmartDashboard.putNumber("INLP", loopctr);
+    SmartDashboard.putBoolean("COEXP", coneExpected);
 
-    if (loopctr >= 5) {
+    if (loopctr == 5) {
 
       intakeMotorConnected = checkCANOK();
 
-      conePresent = getConeSensorDistance() < 300;
+      coneSensedDistance = getConeSensorDistance();
 
-      cubePresent = getCubeSensorDistance() < 300;
+      conePresent = coneSensedDistance < 300;
 
-      if (conePresent)
+      cubeSensedDistance = getCubeSensorDistance();
+
+      cubePresent = cubeSensedDistance < 300;
+    }
+
+    if (loopctr == 8) {
+      if (conePresent && !cubePresent)
         piece = robotPiece.CONE;
 
-        if (cubePresent)
+      if (cubePresent && !conePresent)
         piece = robotPiece.CUBE;
 
-        if(!conePresent&&!cubePresent)piece=robotPiece.NO_PIECE;
+      if ((!conePresent && !cubePresent) || (conePresent && cubePresent))
+        piece = robotPiece.NO_PIECE;
 
+    }
+    if (loopctr == 10) {
 
-
-
+      if (expectedPieceType == gamePiece.CONE) {
+        coneExpected = true;
+        cubeExpected = false;
+      }
+      if (expectedPieceType == gamePiece.CUBE) {
+        coneExpected = false;
+        cubeExpected = true;
+      }
 
       pieceSensorsOK = true;// coneSensorOK && cubeSensorOK;
 
@@ -227,6 +253,10 @@ public class IntakeSubsystem extends SubsystemBase {
       return true;
   }
 
+  public void setPieceType(gamePiece type) {
+    expectedPieceType = type;
+  }
+
   public void close() {
     mIntakeMotor.close();
 
@@ -246,7 +276,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public void moveManually(double speed) {
-     SmartDashboard.putNumber("INTSP", speed);
+    SmartDashboard.putNumber("INTSP", speed);
     mIntakeMotor.setVoltage(speed * 12);
   }
 

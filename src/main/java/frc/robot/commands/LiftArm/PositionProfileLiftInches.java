@@ -86,7 +86,7 @@ public class PositionProfileLiftInches extends CommandBase {
 
     loopctr++;
 
-    m_lift.gravVal = LiftArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
+    m_lift.gravVal = 0;//LiftArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
 
    
 

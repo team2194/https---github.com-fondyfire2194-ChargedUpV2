@@ -141,7 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean runTrajectory;
 
-  // private final EventLoop m_drloop = new EventLoop();
+
 
   /**
    * All vision related variables

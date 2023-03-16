@@ -14,6 +14,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.fieldTagsBlue;
 import frc.robot.subsystems.GameHandlerSubsystem.fieldTagsRed;
+import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.LimelightVision;
 
 public class DetectorLoad extends CommandBase {
@@ -23,7 +24,6 @@ public class DetectorLoad extends CommandBase {
   private final GameHandlerSubsystem m_ghs;
   private final SlewRateLimiter m_slewX = new SlewRateLimiter(DriverConstants.kTranslationSlew);
   private final DoubleSupplier m_throttleInput;
-  private final boolean m_cone;
 
   private double throttle;
   double offset = 0;
@@ -43,14 +43,12 @@ public class DetectorLoad extends CommandBase {
       DriveSubsystem drive,
       LimelightVision llv,
       GameHandlerSubsystem ghs,
-      DoubleSupplier throttleInput,
-      boolean cone) {
+      DoubleSupplier throttleInput) {
 
     m_drive = drive;
     m_llv = llv;
     m_ghs = ghs;
     m_throttleInput = throttleInput;
-    m_cone = cone;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_drive);
@@ -73,7 +71,8 @@ public class DetectorLoad extends CommandBase {
       endX = fieldTagsRed.RED_LOAD.getPose().getX();
 
     }
-    if (m_cone) {
+    if (m_ghs.gamePieceType == gamePiece.CONE) {
+      
       m_llv.setConeDetectorPipeline();
 
     } else {

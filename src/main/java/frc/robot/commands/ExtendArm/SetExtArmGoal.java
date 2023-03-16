@@ -24,6 +24,7 @@ public class SetExtArmGoal extends CommandBase {
     m_ext = ext;
     m_constraints = constraints;
     m_goalDist = goalDist;
+    addRequirements(m_ext);
   }
 
   public SetExtArmGoal(ExtendArmSubsystem ext, double goalDist) {
@@ -32,6 +33,7 @@ public class SetExtArmGoal extends CommandBase {
     m_ext = ext;
     m_constraints = ExtendArmConstants.extendArmConstraints;
     m_goalDist = goalDist;
+    addRequirements(m_ext);
   }
 
   // Called when the command is initially scheduled.
@@ -43,7 +45,7 @@ public class SetExtArmGoal extends CommandBase {
 
   @Override
   public void execute() {
-    m_ext.setController(m_constraints, m_goalDist, false);
+   // m_ext.setController(m_constraints, m_goalDist, false);
 
   }
 
@@ -56,7 +58,7 @@ public class SetExtArmGoal extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_ext.goalInches == m_goalDist;
+    return true;
   }
 
 }

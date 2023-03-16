@@ -15,7 +15,6 @@ import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem.GridDrop;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.WristSubsystem;
@@ -50,19 +49,12 @@ public class ShuffleboardCompetition {
                                 .withSize(2, 1)
                                 .withPosition(0, 0);
 
-                // area1.addString("Current Pipeline", () -> m_llv.getCurrentPipelineName())
-                // .withSize(1, 1)
-                // .withPosition(2, 0);
-
                 area1.add("LevelChooser", m_af.m_pieceLevelChooser)
                                 .withSize(1, 1)
                                 .withPosition(2, 0);
 
-                area1.addString(" PipelineType", () -> m_llv.getCurrentPipelineTypeName())
+                area1.addString(" PipelineType", () -> m_llv.limelighttypename)
                                 .withSize(1, 1).withPosition(3, 0);
-
-                // area1.addBoolean("HasTag", () -> m_drive.hasTag)
-                // .withPosition(0, 1);
 
                 area1.add("DropChooser", m_af.m_startLocationChooser)
                                 .withSize(2, 1)
@@ -93,78 +85,17 @@ public class ShuffleboardCompetition {
                 area1.addBoolean("CAN OK", () -> m_gps.CANOK)
                                 .withPosition(1, 4);
 
-                area1.addNumber("ConeDistance", () -> m_intake.getConeSensorDistance())
+                area1.addNumber("ConeDistance", () -> m_intake.coneSensedDistance)
                                 .withSize(1, 1)
                                 .withPosition(2, 2);
 
-                area1.addNumber("CubeDistance", () -> m_intake.getCubeSensorDistance())
+                area1.addNumber("CubeDistance", () -> m_intake.cubeSensedDistance)
                                 .withSize(1, 1)
                                 .withPosition(2, 3);
-
-                area1.addBoolean(GridDrop.LEFT_CUBE.name(), () -> m_gps.drops[1])
-
-                                .withPosition(3, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.LEFT_PIPE.name(), () -> m_gps.drops[2])
-
-                                .withPosition(4, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.COOP_LEFT_PIPE.name(), () -> m_gps.drops[3])
-
-                                .withPosition(5, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.COOP_CUBE.name(), () -> m_gps.drops[4])
-
-                                .withPosition(6, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.COOP_RIGHT_PIPE.name(), () -> m_gps.drops[5])
-
-                                .withPosition(7, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.RIGHT_PIPE.name(), () -> m_gps.drops[6])
-
-                                .withPosition(8, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
-                area1.addBoolean(GridDrop.RIGHT_CUBE.name(), () -> m_gps.drops[7])
-
-                                .withPosition(9, 1).withSize(1, 1)
-
-                                .withWidget(BuiltInWidgets.kBooleanBox)
-
-                                .withProperties(Map.of("colorwhentrue", "green"));
-
                 area1.addBoolean("Next Gamepiece", () -> m_gps.gamePieceType.equals(gamePiece.CONE))
                                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
                                 .withPosition(8, 0)
                                 .withProperties(Map.of("colorwhenfalse", "purple", "colorwhentrue", "yellow"));
-
-                area1.addString("NextLevel", () -> m_gps.getDropOffLevel().name())
-                                .withPosition(7, 0).withSize(1, 1)
-                                .withWidget(BuiltInWidgets.kTextView);
 
                 area1.addBoolean("IntakeHasCone", () -> m_intake.conePresent)
                                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
@@ -176,6 +107,11 @@ public class ShuffleboardCompetition {
                                 .withPosition(5, 0).withSize(1, 1)
                                 .withProperties(Map.of("colorwhenfalse", "gray", "colorwhentrue", "purple"));
 
+                area1.addBoolean("IntakeExpects", () -> m_intake.coneExpected)
+                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
+                                .withPosition(6, 0).withSize(1, 1)
+                                .withProperties(Map.of("colorwhenfalse", "purple", "colorwhentrue", "yellow"));
+
                 area1.addNumber("RobotX", () -> round2dp(m_drive.getX()))
                                 .withPosition(6, 2).withSize(1, 1);
 
@@ -185,7 +121,7 @@ public class ShuffleboardCompetition {
                 area1.addNumber("Heading", () -> round2dp(m_drive.getEstimatedPosition().getRotation().getDegrees()))
                                 .withPosition(8, 2).withSize(1, 1);
 
-                area1.addNumber("ActiveY", () -> m_gps.getActiveDropPose().getY())
+                area1.addNumber("ActiveY", () -> round2dp(m_gps.getActiveDropPose().getY()))
                                 .withPosition(9, 2);
                 area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
                                 .withPosition(6, 3);

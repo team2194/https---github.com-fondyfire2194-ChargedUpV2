@@ -5,6 +5,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,13 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ExtendArmConstants;
-import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
@@ -32,23 +29,20 @@ import frc.robot.commands.NTs.MonitorThreadIntake;
 import frc.robot.commands.NTs.MonitorThreadLift;
 import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.DetectorLoad;
-import frc.robot.commands.PickupRoutines.GetPieceAtIntake;
-import frc.robot.commands.PickupRoutines.GetPieceFromLoad;
-import frc.robot.commands.PickupRoutines.GroundIntake;
-import frc.robot.commands.PickupRoutines.GroundIntakeTippedCone;
+import frc.robot.commands.PickupRoutines.GetPieceExpectedAtIntake;
+import frc.robot.commands.PickupRoutines.GroundIntakePositions;
+import frc.robot.commands.PickupRoutines.GroundIntakeTippedConePositions;
 import frc.robot.commands.PickupRoutines.LiftWristPresetLoadStation;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
-import frc.robot.commands.TeleopRoutines.RotateToAngle;
-import frc.robot.commands.TeleopRoutines.StrafeToGridSlot;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
+import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
 import frc.robot.oi.ShuffleboardCompetition;
 import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
-import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -98,9 +92,6 @@ public class RobotContainer {
         public CommandXboxController m_coDriverController = new CommandXboxController(
                         OIConstants.kCoDriverControllerPort);
 
-        public CommandXboxController m_armController = new CommandXboxController(
-                        OIConstants.kArmControllerPort);
-
         final PowerDistribution m_pdp = new PowerDistribution();
 
         public LimelightVision m_llvis = new LimelightVision();
@@ -129,21 +120,21 @@ public class RobotContainer {
 
                 mlift = new MonitorThreadLift(m_liftArm);
 
-                mlift.startThread();
+                // mlift.startThread();
 
                 m_extendArm = new ExtendArmSubsystem();
 
                 mext = new MonitorThreadExt(m_extendArm);
 
-                mext.startThread();
+                // mext.startThread();
 
                 mwrist = new MonitorThreadWrist(m_wrist);
 
-                mwrist.startThread();
+                // mwrist.startThread();
 
                 mIntake = new MonitorThreadIntake(m_intake);
 
-                mIntake.startThread();
+                // mIntake.startThread();
 
                 m_llv = new LimelightVision();
 
@@ -207,19 +198,14 @@ public class RobotContainer {
 
                 configCodriverButtons();
 
-                configArmControllerButtons();
-
         }
 
         private void setDefaultCommands() {
 
-                m_drive.setDefaultCommand(getDriveCommand());
+                // m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));
-
-                // m_liftArm.setDefaultCommand(
-                // new PositionProfileLift(m_liftArm));
 
                 m_liftArm.setDefaultCommand(new PositionProfileLiftInches(m_liftArm));
 
@@ -230,54 +216,41 @@ public class RobotContainer {
 
         void configDriverButtons() {
 
-                // m_driverController.leftBumper()
-                // .whileTrue(getDetectorLoad());
-
-                m_driverController.rightBumper()
-                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, false));
-
-                m_driverController.leftTrigger().whileTrue((new StrafeToGridSlot(m_drive, m_tf,
-                                m_ghs, m_llv, m_intake)));
+                m_driverController.leftTrigger()
+                                .whileTrue(getDetectorLoad());
 
                 m_driverController.rightTrigger().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
                                 () -> m_driverController.getRawAxis(1)));
 
+                m_driverController.leftBumper()
+                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, false));
+
+                m_driverController.rightBumper().onTrue(redoGoals());
+
+                m_driverController.a().onTrue(getGroundIntake(gamePiece.CONE)
+                                .withTimeout(2));
+
+                m_driverController.b().onTrue(getGroundIntake(gamePiece.CUBE)
+                                .withTimeout(2));
+
                 m_driverController.x()
-                                .onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
-                                                .withName("Ground  Cone Pickup")
-                                                .withTimeout(1));
+                                .onTrue(new RumbleCommand(m_driverController, RumbleType.kLeftRumble, .5, .5)
+                                                .andThen(new GroundIntakeTippedConePositions(m_liftArm, m_wrist,
+                                                                m_extendArm, m_intake)
+                                                                .withName("Ground Tipped Cone Pickup Positions")
+                                                                .withTimeout(2)));
 
-                m_driverController.y()
-                                .onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
-                                                .withName("Ground  Cube Pickup")
-                                                .withTimeout(1));
+                // m_driverController.y()
 
-                m_driverController.a().onTrue(getDeliverCommand());
+                m_driverController.povUp().onTrue(deliverPositionsCommand(true));
 
-                m_driverController.a().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake)
-                                .withName("Ground Tipped Cone Pickup")
-                                .withTimeout(1).withTimeout(2));
+                m_driverController.povDown().onTrue(deliverPositionsCommand(false));
 
                 m_driverController.povLeft()
-                                .onTrue(new SequentialCommandGroup(
-                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(true)),
-                                                new RotateToAngle(m_drive, 0).withTimeout(300),
-                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
-                                                Commands.runOnce(() -> m_drive.setIsRotating(true)))
-                                                .withName("RotateToZero").andThen(() -> m_drive.stopModules()));
+                                .onTrue(getLoadSettings(gamePiece.CUBE).withTimeout(2));
+
                 m_driverController.povRight()
-                                .onTrue(new SequentialCommandGroup(
-                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(true)),
-                                                new RotateToAngle(m_drive, 180).withTimeout(300).withName("LIFT"),
-                                                Commands.runOnce(() -> m_drive.setInhibitVisionCorrection(false)),
-                                                Commands.runOnce(() -> m_drive.setIsRotating(true)))
-                                                .withName("RotateTo180").andThen(() -> m_drive.stopModules()));
-
-                m_driverController.povDown().onTrue(Commands.runOnce((() -> m_liftArm.redoTarget())))
-                                .onTrue(Commands.runOnce((() -> m_wrist.redoTarget())))
-                                .onTrue(Commands.runOnce((() -> m_extendArm.redoTarget())));
-
-                // m_driverController.povLeft()
+                                .onTrue(getLoadSettings(gamePiece.CONE).withTimeout(2));
 
                 // m_driverController.start()
 
@@ -286,88 +259,50 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper()
-                                .onTrue(new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist,
-                                                m_intake, m_ghs).withTimeout(2));
-
-                //m_coDriverController.rightBumper()
-                                
-                 m_coDriverController.leftTrigger().onTrue((new LiftWristPresetLoadStation(m_liftArm, m_wrist,m_intake, gamePiece.CONE)).withTimeout(30));
-
-
-                m_coDriverController.rightTrigger().onTrue(
-                                new GetPieceFromLoad(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE).withTimeout(20));
-
-                m_coDriverController.a().onTrue(new EjectPieceFromIntake(m_intake));
-
-              //  m_coDriverController.b().
-
-                m_coDriverController.x().onTrue(new GetPieceAtIntake(m_intake, gamePiece.CONE));
-
-                m_coDriverController.y().onTrue(new GetPieceAtIntake(m_intake, gamePiece.CUBE));
-
-                m_coDriverController.povRight().onTrue(Commands.runOnce(() -> m_ghs.incDropNumber()));
-
-                m_coDriverController.povLeft().onTrue(Commands.runOnce(() -> m_ghs.decDropNumber()));
-
-                m_coDriverController.povUp().onTrue(Commands.runOnce(() -> m_ghs.stepDropOffLevel()));
-
-                m_coDriverController.povDown().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
-
-                // m_coDriverController.start()
-
-                // m_coDriverController.back()
-
-        }
-
-        public void configArmControllerButtons() {
-
-                m_armController.leftBumper().whileTrue(getJogLiftArmCommand(m_armController))
+                m_coDriverController.leftBumper().whileTrue(getJogLiftArmCommand(m_coDriverController))
 
                                 .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
 
                                                 .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
                                                                 m_liftArm)));
 
-                m_armController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armController))
+                m_coDriverController.leftTrigger().whileTrue(getJogExtendArmCommand(m_coDriverController))
 
                                 .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
 
                                                 .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
                                                                 m_extendArm)));
 
-                m_armController.rightBumper().whileTrue(getJogWristCommand(m_armController))
+                m_coDriverController.rightBumper().whileTrue(getJogWristCommand(m_coDriverController))
 
                                 .onFalse(Commands.waitUntil(() -> m_wrist.isStopped())
 
                                                 .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
                                                                 m_wrist)));
-                // get extend arm off the hook
-                m_armController.rightTrigger().onTrue(Commands.runOnce(
-                                () -> m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
-                                                presetExtArmDistances.RETRACT.getDistance(), false)));
 
-                // m_armController.start()
+             //    m_coDriverController.rightTrigger().onTrue(
 
-                m_armController.a().onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE));
+                m_coDriverController.a().onTrue(new EjectPieceFromIntake(m_intake)));
 
-                m_armController.b().onTrue(new GroundIntake(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE));
+                m_coDriverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake));
 
-                m_armController.y().onTrue(new GroundIntakeTippedCone(m_liftArm, m_wrist, m_extendArm, m_intake));
+                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
-                m_armController.x().onTrue(
-                                Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmInchConstraints,
-                                                1, false)));
+                // m_coDriverController.y().onTrue(
 
-                m_armController.povUp()
-                                .onTrue(new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs));
+                // m_coDriverController.povRight()
 
-                m_armController.povRight()
-                                .onTrue(Commands.runOnce(() -> m_liftArm.runDeliverPosition()).withTimeout(5));
+                // m_coDriverController.povLeft()
 
-                m_armController.povDown().onTrue(Commands.runOnce(() -> m_wrist.runDeliverAngle(true)));
+                // m_coDriverController.povUp().onTrue(
 
-                m_armController.povLeft().onTrue(Commands.runOnce(() -> m_extendArm.runDeliverAngle(true)));
+                // m_coDriverController.povDown().onTrue(
+
+                // m_coDriverController.start()
+
+                // m_coDriverController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
+                // OVERRIDE SOFTWARE LIMITS
+
         }
 
         public Command getDriveCommand() {
@@ -380,12 +315,12 @@ public class RobotContainer {
 
         public Command getJogLiftArmCommand(CommandXboxController m_armController2) {
 
-                return new JogLiftArm(m_liftArm, () -> -m_armController.getRawAxis(1), m_armController2);
+                return new JogLiftArm(m_liftArm, () -> -m_coDriverController.getRawAxis(1), m_armController2);
         }
 
         public Command getJogWristCommand(CommandXboxController m_armController2) {
 
-                return new JogWrist(m_wrist, () -> m_armController.getRawAxis(5), m_armController2);
+                return new JogWrist(m_wrist, () -> m_coDriverController.getRawAxis(5), m_armController2);
         }
 
         public Command getStopDriveCommand() {
@@ -393,21 +328,43 @@ public class RobotContainer {
         }
 
         public Command getJogExtendArmCommand(CommandXboxController m_armController2) {
-                return new JogExtendArm(m_extendArm, () -> -m_armController.getRawAxis(0), m_armController2);
+                return new JogExtendArm(m_extendArm, () -> -m_coDriverController.getRawAxis(0), m_armController2);
 
         }
 
         public Command getJogIntakeCommand() {
-                return new JogIntake(m_intake, () -> m_armController.getRawAxis(4));
+                return new JogIntake(m_intake, () -> m_coDriverController.getRawAxis(4));
         }
 
-        public Command getDeliverCommand() {
-                return new DeliverSelectedPieceToSelectedTarget(m_liftArm, m_extendArm, m_wrist, m_intake, m_ghs)
-                                .withTimeout(5);
+        public Command deliverPositionsCommand(boolean toplevel) {
+
+                return new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake,
+                                toplevel);
+
+        }
+
+        public Command getGroundIntake(gamePiece type) {
+                return new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, type);
+
         }
 
         public Command getDetectorLoad() {
-                return new DetectorLoad(m_drive, m_llv, m_ghs, null, false);
+                return new DetectorLoad(m_drive, m_llv, m_ghs, () -> m_driverController.getRawAxis(1))
+                                .andThen(new RumbleCommand(m_driverController, RumbleType.kLeftRumble, .5, 2));
+        }
+
+        public Command getLoadSettings(gamePiece type) {
+
+                return new LiftWristPresetLoadStation(m_liftArm, m_wrist, m_intake, type);
+
+        }
+
+        public Command redoGoals() {
+
+                return new ParallelCommandGroup(
+                                new InstantCommand(() -> m_liftArm.redoTarget()),
+                                new InstantCommand(() -> m_wrist.redoTarget()),
+                                new InstantCommand(() -> m_extendArm.redoTarget()));
         }
 
         public void simulationPeriodic() {

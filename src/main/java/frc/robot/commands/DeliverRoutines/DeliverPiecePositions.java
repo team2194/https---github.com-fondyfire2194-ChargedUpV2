@@ -11,15 +11,12 @@ import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
-import frc.robot.commands.Intake.RunIntake;
-import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
@@ -27,15 +24,13 @@ import frc.robot.subsystems.WristSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup {
+public class DeliverPiecePositions extends SequentialCommandGroup {
   /** Creates a new DeliverSelectedPieceToSelectedTarget. */
-  public DeliverSelectedPieceToSelectedTarget(LiftArmSubsystem lift, ExtendArmSubsystem extend, WristSubsystem wrist,
-      IntakeSubsystem intake, GameHandlerSubsystem ghs) {
+  public DeliverPiecePositions(LiftArmSubsystem lift, ExtendArmSubsystem extend, WristSubsystem wrist,
+      IntakeSubsystem intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-
-        new GetDeliverAngleSettings(lift, extend, wrist, intake, ghs),
 
         new SetLiftGoal(lift, LiftArmConstants.liftArmInchConstraints, lift.deliverInches),
 
@@ -49,12 +44,9 @@ public class DeliverSelectedPieceToSelectedTarget extends SequentialCommandGroup
 
         new SetExtArmGoal(extend, ExtendArmConstants.deliverConstraints, extend.deliverDistance),
 
-        new WaitExtendAtTarget(extend, .24),
+        new WaitCommand(1),
 
-        new EjectPieceFromIntake(intake),
+        new WaitExtendAtTarget(extend, .24));
 
-        new RetractWristExtendLift(lift, extend, wrist, true)
-
-    );
   }
 }

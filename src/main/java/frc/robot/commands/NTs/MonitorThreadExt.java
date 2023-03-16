@@ -77,18 +77,18 @@ public class MonitorThreadExt {
 
                     if (true) {
                         goalinches.set(m_ext.goalInches);
-                        velocity.set(m_ext.getInchesPerSec());
-                        distance.set(m_ext.getPositionInches());
+                        velocity.set(m_ext.inchespersec);
+                        distance.set(m_ext.positionInches);
                         feedforward.set(m_ext.ff);
                         pidval.set(m_ext.pidVal);
                         volts.set(m_ext.volts);
-                        kvEst.set((m_ext.getAppliedOutput() - ExtendArmConstants.ksExtArmVolts)
+                        kvEst.set((m_ext.appliedOutput - ExtendArmConstants.ksExtArmVolts)
                                 / m_ext.getInchesPerSec());
                         profpos.set(m_ext.m_extController.getSetpoint().position);
                         disterr.set(m_ext.m_extController.getPositionError());
                         profvel.set(m_ext.m_extController.getSetpoint().velocity);
                         inizone.set(m_ext.inIZone);
-                        amps.set(m_ext.getAmps());
+                        amps.set(m_ext.amps);
                         amps.set(m_ext.gravVal);
                         
                     }

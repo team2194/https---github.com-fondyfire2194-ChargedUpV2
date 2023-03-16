@@ -23,6 +23,7 @@ public class SetLiftGoal extends CommandBase {
     m_lift = lift;
     m_constraints = constraints;
     m_goalInches=goalInches;
+    addRequirements(m_lift);
   }
 
   public SetLiftGoal(LiftArmSubsystem lift, double goalInches) {
@@ -31,7 +32,7 @@ public class SetLiftGoal extends CommandBase {
     m_lift = lift;
     m_constraints = LiftArmConstants.liftArmInchConstraints;
     m_goalInches = goalInches;
-    
+    addRequirements(m_lift);
   }
 
   // Called when the command is initially scheduled.
@@ -43,7 +44,7 @@ public class SetLiftGoal extends CommandBase {
 
   @Override
   public void execute() {
-    m_lift.setController(m_constraints, m_goalInches, false);
+   // m_lift.setController(m_constraints, m_goalInches, false);
 
   }
 
@@ -56,6 +57,6 @@ public class SetLiftGoal extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_lift.goalInches == m_goalInches;
+    return true;
   }
 }

@@ -58,6 +58,8 @@ public class LimelightVision extends SubsystemBase {
 
     private pipelinetype type;
 
+    public String pipelineTypeName;
+
     private pipelines(int number, pipelinetype type) {
       this.number = number;
       this.type = type;
@@ -72,6 +74,8 @@ public class LimelightVision extends SubsystemBase {
   private int samples;
 
   public boolean limelightExists;
+
+  public String limelighttypename ="fiducial";
 
   public LimelightVision() {
     currentPipeline = pipelines.DEFAULT;
@@ -109,6 +113,8 @@ public class LimelightVision extends SubsystemBase {
       currentPipeline = pipelines.values[currentPipelineIndex];
 
       currentPipelineType = currentPipeline.type;
+
+       limelighttypename= getCurrentPipelineTypeName();
     }
   }
 

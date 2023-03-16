@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 
-public class GetPieceAtIntake extends CommandBase {
+public class GetPieceExpectedAtIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
@@ -35,16 +35,17 @@ public class GetPieceAtIntake extends CommandBase {
 
   double useSpeed = .6;
 
-  public GetPieceAtIntake(IntakeSubsystem intake, gamePiece type) {
+  public GetPieceExpectedAtIntake(IntakeSubsystem intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intake;
-    m_type = type;
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_type == gamePiece.CONE)
+
+    if (m_intake.expectedPieceType == gamePiece.CONE)
       useSpeed *= -1;
   }
 

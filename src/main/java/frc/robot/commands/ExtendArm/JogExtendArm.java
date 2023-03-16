@@ -6,7 +6,6 @@ package frc.robot.commands.ExtendArm;
 
 import java.util.function.DoubleSupplier;
 
-import com.revrobotics.CANSparkMax.ControlType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
@@ -62,7 +61,6 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.commandIPS = throttle_sl;
 
-    SmartDashboard.putNumber("EXTV", throttle_sl * RobotController.getBatteryVoltage());
 
     if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn) {
 

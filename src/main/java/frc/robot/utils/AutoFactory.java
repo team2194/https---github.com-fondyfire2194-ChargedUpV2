@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Auto.DoNothing;
-import frc.robot.commands.DeliverRoutines.DeliverSelectedPieceToSelectedTarget;
+import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.DriveandBalanceRobot;
 import frc.robot.subsystems.DriveSubsystem;
@@ -236,9 +236,9 @@ public class AutoFactory {
 
         return new SequentialCommandGroup(
 
-                new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, m_ghs),
+                new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, true),
 
-                new DeliverSelectedPieceToSelectedTarget(m_lift, m_extend, m_wrist, m_intake, m_ghs));
+                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake));
 
     }
 

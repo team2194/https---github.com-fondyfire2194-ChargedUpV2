@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.ExtendArmConstants;
@@ -47,7 +46,6 @@ public class Robot extends TimedRobot {
 
   public static int lpctra;
 
-  private final EventLoop m_loop = new EventLoop();
 
   private int loopCtr;
 
@@ -111,6 +109,7 @@ public class Robot extends TimedRobot {
     m_disableStartTime = 0;
     firstScan = true;
     CommandScheduler.getInstance().cancelAll();
+   // Shuffleboard.selectTab("Competition");
   }
 
   @Override
@@ -118,14 +117,14 @@ public class Robot extends TimedRobot {
 
     loopCtr++;
 
-    if (loopCtr < 5) {
+    // if (loopCtr < 5) {
 
-      m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
-          && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
-          && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
+    //   m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
+    //       && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
+    //       && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
 
-      loopCtr = 0;
-    }
+    //   loopCtr = 0;
+    // }
 
     if (!m_robotContainer.m_drive.isbraked()) {
       if (m_disableStartTime == 0)

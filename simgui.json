@@ -164,13 +164,12 @@
         },
         "Vision": {
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
-        "open": true
-      },
-      "intprof": {
+        "Scheduler": {
+          "open": true
+        },
         "open": true
       },
       "swerve": {

@@ -5,13 +5,10 @@
 package frc.robot.commands.PickupRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.LiftArm.SetLiftGoal;
-import frc.robot.commands.LiftArm.WaitLiftAtTarget;
+import frc.robot.commands.LiftArm.WaitLiftClearForWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
@@ -33,6 +30,8 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
                 // assumes start from travel position
                 addCommands(
 
+                                new SetIntakePieceType(intake, type),
+
                                 new ConditionalCommand(
 
                                                 new SetLiftGoal(lift,
@@ -45,9 +44,9 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
 
                                                 () -> type == gamePiece.CONE),
 
-                                new WaitCommand(1),
+                                // new WaitCommand(1),
 
-                                new WaitLiftAtTarget(lift, 2),
+                                // new WaitLiftClearForWrist(lift, 50),
 
                                 new ConditionalCommand(
 
@@ -59,11 +58,11 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
                                                                 presetWristAngles.PICKUP_CUBE_LOAD_STATION
                                                                                 .getAngleRads()),
 
-                                                () -> type == gamePiece.CONE),
+                                                () -> type == gamePiece.CONE));
 
-                                new GetPieceAtIntake(intake, type)
+                // new WaitCommand(1),
 
-                );
+                // new WaitWristAtTarget(wrist, 2));
 
         }
 }

@@ -91,8 +91,8 @@ public class MonitorThreadLift {
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);
                         inizone.set(m_lift.inIZone);
                         velerr.set(m_lift.m_liftController.getVelocityError());
-                        amps.set(m_lift.getAmps());
-                        relenc.set(m_lift.getPositionInches());
+                        amps.set(m_lift.amps);
+                        relenc.set(m_lift.positioninches);
 
                     }
                     Thread.sleep(100);

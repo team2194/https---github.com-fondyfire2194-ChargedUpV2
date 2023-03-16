@@ -97,8 +97,6 @@ public class WristSubsystem extends SubsystemBase {
 
     public double amps;
 
-    public double positionDegrees;
-
     public double radspersec;
 
     private int loopctr;
@@ -120,9 +118,12 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean inIZone;
 
-    private boolean runDeliverAngle;
 
-    private boolean bypassStopped;
+    public double angleRadians;
+
+    public double angleDegrees;
+
+    public boolean atGoal;
 
     public WristSubsystem() {
 
@@ -142,7 +143,7 @@ public class WristSubsystem extends SubsystemBase {
 
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
 
-        SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
+       // SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 
         mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
 
@@ -165,14 +166,6 @@ public class WristSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
 
-        if (runDeliverAngle) {
-
-            setController(WristConstants.wristConstraints, deliverAngleRads, false);
-
-            SmartDashboard.putNumber("WDA", deliverAngleRads);
-            runDeliverAngle = false;
-        }
-
         loopctr++;
 
         if (faultSeen != 0)
@@ -180,15 +173,17 @@ public class WristSubsystem extends SubsystemBase {
 
         if (loopctr == 5) {
 
-            appliedOutput = getAppliedOutput();
-            amps = getAmps();
-            positionDegrees = getAngleDegrees();
+            appliedOutput = round2dp(getAppliedOutput());
+            amps = round2dp(getAmps());
+            angleDegrees = round2dp(getAngleDegrees());
+            angleRadians=round2dp(getAngleRadians());
+            atGoal = m_wristController.atGoal();
 
         }
 
         if (loopctr == 6) {
 
-            radspersec = getRadsPerSec();
+            radspersec = round2dp(getRadsPerSec());
             wristMotorConnected = checkCANOK();
             loopctr = 0;
 
@@ -224,8 +219,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
 
-        if (isStopped() || bypassStopped) {
-            bypassStopped = false;
+        if (isStopped()) {
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
             goalAngleRadians = angleRads;
@@ -245,18 +239,22 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setControllerAtPosition() {
-        setController(WristConstants.wristConstraints, getAngleRadians(), false);
-        bypassStopped = true;
+        goalAngleRadians = getAngleRadians();
+        setController(WristConstants.wristConstraints, goalAngleRadians, false);
+
     }
 
     public void redoTarget() {
-        setController(WristConstants.wristConstraints, m_wristController.getGoal().position, false);
-        bypassStopped = true;
+        setController(WristConstants.wristConstraints, goalAngleRadians, false);
+
     }
 
-    public void runDeliverAngle(boolean on) {
-        runDeliverAngle = on;
-    }
+    // public void runDeliverAngle() {
+
+    //     setController(WristConstants.wristConstraints, deliverAngleRads, false);
+ 
+    //     SmartDashboard.putNumber("WDA", deliverAngleRads);
+    // }
 
     public void resetAngle() {
         mEncoder.setPosition(0);
@@ -362,4 +360,9 @@ public class WristSubsystem extends SubsystemBase {
         return m_motor.getFaults();
     }
 
+    public double round2dp(double number) {
+        number = Math.round(number * 100);
+        number /= 100;
+        return number;
+    }
 }

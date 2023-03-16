@@ -124,9 +124,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean inIZone;
 
-    private boolean runDeliverAngle;
-
     public double gravVal;
+
+    public boolean atGoal;
 
     public ExtendArmSubsystem() {
 
@@ -175,14 +175,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
-        if (runDeliverAngle) {
-
-            setController(ExtendArmConstants.deliverConstraints, deliverDistance, false);
-
-            runDeliverAngle = false;
-        }
-
+   
         loopctr++;
 
         if (faultSeen != 0)
@@ -191,12 +184,17 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         // for Shuffleboard
         if (loopctr >= 5) {
-            appliedOutput = getAppliedOutput();
-            amps = getAmps();
-            positionInches = getPositionInches();
-            inchespersec = getInchesPerSec();
+            appliedOutput = round2dp(getAppliedOutput());
+            amps = round2dp(getAmps());
+            positionInches = round2dp(getPositionInches());
+            inchespersec = round2dp(getInchesPerSec());
+
+
+            
             extendMotorConnected = checkCANOK();
+            atGoal=m_extController.atGoal();
             loopctr = 0;
+
         }
 
     }
@@ -245,16 +243,12 @@ public class ExtendArmSubsystem extends SubsystemBase {
     }
 
     public void setControllerAtPosition() {
-        setControllerGoal( getPositionInches());
-
-    }
-
-    public void runDeliverAngle(boolean on) {
-        runDeliverAngle = on;
+        goalInches = getPositionInches();
+        setController(ExtendArmConstants.extendArmConstraints, goalInches, false);
     }
 
     public void redoTarget() {
-        setControllerGoal(m_extController.getGoal().position);
+        setController(ExtendArmConstants.extendArmConstraints, goalInches, false);
     }
 
     public void resetPosition(double position) {
@@ -347,5 +341,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public int getFaults() {
         return m_motor.getFaults();
     }
+
+    public double round2dp(double number) {
+        number = Math.round(number * 100);
+        number /= 100;
+        return number;
+}
 
 }
