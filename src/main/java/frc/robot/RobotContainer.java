@@ -36,6 +36,7 @@ import frc.robot.commands.PickupRoutines.LiftWristPresetLoadStation;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
+import frc.robot.commands.Wrist.RaiseLowerWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
 import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
@@ -209,8 +210,7 @@ public class RobotContainer {
 
                 m_liftArm.setDefaultCommand(new PositionProfileLiftInches(m_liftArm));
 
-                m_wrist.setDefaultCommand(
-                                new PositionProfileWrist(m_wrist, m_liftArm));
+                m_wrist.setDefaultCommand(new PositionProfileWrist(m_wrist, m_liftArm));
 
         }
 
@@ -227,34 +227,28 @@ public class RobotContainer {
 
                 m_driverController.rightBumper().onTrue(redoGoals());
 
-                m_driverController.a().onTrue(getGroundIntake(gamePiece.CONE)
-                                .withTimeout(2));
+                m_driverController.a().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(5));
 
-                m_driverController.b().onTrue(getGroundIntake(gamePiece.CUBE)
-                                .withTimeout(2));
+                m_driverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
 
-                m_driverController.x()
-                                .onTrue(new RumbleCommand(m_driverController, RumbleType.kLeftRumble, .5, .5)
-                                                .andThen(new GroundIntakeTippedConePositions(m_liftArm, m_wrist,
-                                                                m_extendArm, m_intake)
-                                                                .withName("Ground Tipped Cone Pickup Positions")
-                                                                .withTimeout(2)));
+                m_driverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
                 // m_driverController.y()
-
-                m_driverController.povUp().onTrue(deliverPositionsCommand(true));
-
-                m_driverController.povDown().onTrue(deliverPositionsCommand(false));
-
-                m_driverController.povLeft()
-                                .onTrue(getLoadSettings(gamePiece.CUBE).withTimeout(2));
-
-                m_driverController.povRight()
-                                .onTrue(getLoadSettings(gamePiece.CONE).withTimeout(2));
 
                 // m_driverController.start()
 
                 // m_driverController.back()
+
+                m_driverController.povUp().whileTrue(getMoveWristCommand(-.25))
+                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                                m_liftArm)));
+
+                m_driverController.povDown().whileTrue(getMoveWristCommand(.25))
+                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                                m_liftArm)));
+
         }
 
         private void configCodriverButtons() {
@@ -280,23 +274,28 @@ public class RobotContainer {
                                                 .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
                                                                 m_wrist)));
 
-             //    m_coDriverController.rightTrigger().onTrue(
+                m_coDriverController.a().onTrue(getGroundIntake(gamePiece.CONE)
+                                .withTimeout(2));
 
-                m_coDriverController.a().onTrue(new EjectPieceFromIntake(m_intake)));
+                m_coDriverController.b().onTrue(getGroundIntake(gamePiece.CUBE)
+                                .withTimeout(2));
 
-                m_coDriverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake));
+                m_coDriverController.x().onTrue((new GroundIntakeTippedConePositions(m_liftArm, m_wrist,
+                                m_extendArm, m_intake)
+                                .withName("Ground Tipped Cone Pickup Positions")
+                                .withTimeout(2)));
 
-                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
+                // m_coDriverController.y()
 
-                // m_coDriverController.y().onTrue(
+                m_coDriverController.povUp().onTrue(deliverPositionsCommand(true).withTimeout(2));
 
-                // m_coDriverController.povRight()
+                m_coDriverController.povDown().onTrue(deliverPositionsCommand(false).withTimeout(2));
 
-                // m_coDriverController.povLeft()
+                m_coDriverController.povLeft().onTrue(getLoadSettings().withTimeout(2));
 
-                // m_coDriverController.povUp().onTrue(
+                // m_coDriverController.povRight().onTrue
 
-                // m_coDriverController.povDown().onTrue(
+                // m_coDriverController.rightTrigger().onTrue(
 
                 // m_coDriverController.start()
 
@@ -321,6 +320,11 @@ public class RobotContainer {
         public Command getJogWristCommand(CommandXboxController m_armController2) {
 
                 return new JogWrist(m_wrist, () -> m_coDriverController.getRawAxis(5), m_armController2);
+        }
+
+        public Command getMoveWristCommand(double speed) {
+
+                return new JogWrist(m_wrist, () -> speed, m_driverController);
         }
 
         public Command getStopDriveCommand() {
@@ -353,10 +357,14 @@ public class RobotContainer {
                                 .andThen(new RumbleCommand(m_driverController, RumbleType.kLeftRumble, .5, 2));
         }
 
-        public Command getLoadSettings(gamePiece type) {
+        public Command getLoadSettings() {
 
-                return new LiftWristPresetLoadStation(m_liftArm, m_wrist, m_intake, type);
+                return new LiftWristPresetLoadStation(m_liftArm, m_wrist, m_intake, m_ghs);
 
+        }
+
+        public Command raiseLowerWrist(boolean direction) {
+                return new RaiseLowerWrist(m_wrist, direction);
         }
 
         public Command redoGoals() {

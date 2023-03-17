@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
@@ -148,11 +149,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
       coneSensedDistance = getConeSensorDistance();
 
-      conePresent = coneSensedDistance < 300;
+      conePresent = coneSensedDistance < Pref.getPref("conedist");
 
       cubeSensedDistance = getCubeSensorDistance();
 
-      cubePresent = cubeSensedDistance < 300;
+      cubePresent = cubeSensedDistance < Pref.getPref("cubedist");
     }
 
     if (loopctr == 8) {

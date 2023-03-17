@@ -12,6 +12,7 @@ import frc.robot.commands.LiftArm.WaitLiftClearForWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -23,11 +24,15 @@ import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class LiftWristPresetLoadStation extends SequentialCommandGroup {
         /** Creates a new GroundIntake. */
+        private gamePiece type;
+
         public LiftWristPresetLoadStation(LiftArmSubsystem lift, WristSubsystem wrist, IntakeSubsystem intake,
-                        gamePiece type) {
+                        GameHandlerSubsystem ghs) {
                 // Add your commands in the addCommands() call, e.g.
                 // addCommands(new FooCommand(), new BarCommand() extend, Intake);
                 // assumes start from travel position
+                type = ghs.getGamePiecetype();
+
                 addCommands(
 
                                 new SetIntakePieceType(intake, type),

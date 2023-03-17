@@ -145,6 +145,8 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean stopped;
 
+    public boolean topLevel;
+
 
     public LiftArmSubsystem() {
         useSoftwareLimit = true;

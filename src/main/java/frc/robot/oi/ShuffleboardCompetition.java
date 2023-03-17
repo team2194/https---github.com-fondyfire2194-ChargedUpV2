@@ -112,6 +112,11 @@ public class ShuffleboardCompetition {
                                 .withPosition(6, 0).withSize(1, 1)
                                 .withProperties(Map.of("colorwhenfalse", "purple", "colorwhentrue", "yellow"));
 
+                                area1.addBoolean("TopLevel", () -> lift.topLevel)
+                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
+                                .withPosition(7, 0).withSize(1, 1);
+
+
                 area1.addNumber("RobotX", () -> round2dp(m_drive.getX()))
                                 .withPosition(6, 2).withSize(1, 1);
 

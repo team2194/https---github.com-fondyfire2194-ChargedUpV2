@@ -64,10 +64,12 @@ public class GetDeliverAngleSettings extends CommandBase {
 
     // if (m_piece == robotPiece.CUBE)
     // LightStrip.setColor(ledColors.PURPLE);
-  
+
+    m_lift.topLevel = m_topLevel;
+
     if (!done && !m_topLevel) {
       done = true;
-      if (m_piece == robotPiece.CUBE) {
+      if (m_intake.cubePresent) {
         m_liftInches = presetLiftAngles.PLACE_CUBE_MID_SHELF.getInches();
         m_liftDegrees = presetLiftAngles.PLACE_CUBE_MID_SHELF.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_MID_SHELF.getDistance();
@@ -75,7 +77,7 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_intakeSpeed = Pref.getPref("cubedelspeed");// presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
-      if (m_piece == robotPiece.CONE) {
+      if (m_intake.conePresent) {
         m_liftInches = presetLiftAngles.PLACE_CONE_MID_PIPE.getInches();
         m_liftDegrees = presetLiftAngles.PLACE_CONE_MID_PIPE.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CONE_MID_PIPE.getDistance();
@@ -87,7 +89,7 @@ public class GetDeliverAngleSettings extends CommandBase {
 
     if (!done && m_topLevel) {
       done = true;
-      if (m_piece == robotPiece.CUBE) {
+      if (m_intake.cubePresent) {
         m_liftInches = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getInches();
         m_liftDegrees = presetLiftAngles.PLACE_CUBE_TOP_SHELF.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CUBE_TOP_SHELF.getDistance();
@@ -95,7 +97,7 @@ public class GetDeliverAngleSettings extends CommandBase {
         m_intakeSpeed = Pref.getPref("cubedelspeed"); // presetIntakeSpeeds.DELIVER_CUBE.getSpeed();
       }
 
-      if (m_piece == robotPiece.CONE) {
+      if (m_intake.conePresent) {
         m_liftInches = presetLiftAngles.PLACE_CONE_TOP_PIPE.getInches();
         m_liftDegrees = presetLiftAngles.PLACE_CONE_TOP_PIPE.getAngle();
         m_extDistance = presetExtArmDistances.PLACE_CONE_TOP_PIPE.getDistance();
@@ -122,6 +124,6 @@ public class GetDeliverAngleSettings extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done;
+    return true;
   }
 }

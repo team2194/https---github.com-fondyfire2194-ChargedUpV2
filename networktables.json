@@ -430,5 +430,21 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/conedist",
+    "type": "double",
+    "value": 300.0,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/cubedist",
+    "type": "double",
+    "value": 300.0,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

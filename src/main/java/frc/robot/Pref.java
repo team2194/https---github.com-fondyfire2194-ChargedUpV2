@@ -117,6 +117,11 @@ public class Pref {
     prefDict.put("conedelspeed", -.5);
     prefDict.put("cubedelspeed", .5);
 
+    prefDict.put("conedist", 300.);
+
+    prefDict.put("cubedist", 300.);
+
+
 
 
 
