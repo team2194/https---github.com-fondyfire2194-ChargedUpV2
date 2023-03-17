@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Auto.DoNothing;
@@ -164,6 +165,8 @@ public class AutoFactory {
         if (autoselect == 2)
             tempCommand = getDeliverMid();
 
+        SmartDashboard.putString("traj1name", traj1name);
+
         return tempCommand;
 
     }
@@ -185,6 +188,13 @@ public class AutoFactory {
                 tempCommand = new DriveOnChargeStation();
             }
 
+            if (startLocation == 0 && autoselect1 == 2) {
+
+                traj2name = "BackUpCenter";
+
+                trajReqd = true;
+            }
+
             if (startLocation == 1 && autoselect1 == 2) {
 
                 traj2name = "BackUpLeftCenter";
@@ -198,32 +208,31 @@ public class AutoFactory {
 
                 trajReqd = true;
             }
+        }
+        if (startLocation == 3) {
+            traj2name = "BackUpLeftShelf";
+            trajReqd = true;
+        }
 
-            if (startLocation == 3) {
-                traj2name = "BackUpLeftShelf";
-                trajReqd = true;
-            }
+        if (startLocation == 4) {
+            traj2name = "BackUpRightShelf";
+            trajReqd = true;
+        }
 
-            if (startLocation == 4) {
-                traj2name = "BackUpRightShelf";
-                trajReqd = true;
-            }
+        if (trajReqd) {
 
-            if (trajReqd) {
+            traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
 
-                traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
-    
-                tempCommand = m_tf.followTrajectoryCommand(traj2, true);
-            }
+            tempCommand = m_tf.followTrajectoryCommand(traj2, true);
 
-
+            SmartDashboard.putString("traj2name", traj2name);
         }
 
         return tempCommand;
 
     }
 
-    public void createCommands(){
+    public void createCommands() {
         command1 = getCommand1();
         command2 = getCommand2();
     }

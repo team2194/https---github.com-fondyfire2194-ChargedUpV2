@@ -97,7 +97,27 @@
       "/SmartDashboard/Wrist": "Subsystem"
     },
     "windows": {
+      "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/AutoChooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/AutoChooser1": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Competition/StartPosition": {
         "window": {
           "visible": true
         }
@@ -128,6 +148,17 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
+    "retained": {
+      "Shuffleboard": {
+        "Competition": {
+          "open": true
+        },
+        "open": true
+      }
+    },
     "transitory": {
       "LiveWindow": {
         ".status": {
@@ -216,9 +247,6 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {

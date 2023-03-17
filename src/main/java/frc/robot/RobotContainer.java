@@ -147,13 +147,13 @@ public class RobotContainer {
 
                 m_ghs = new GameHandlerSubsystem();
 
+                m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
+                
                 m_autoFactory = new AutoFactory(m_drive, m_ghs, m_liftArm, m_extendArm, m_wrist, m_intake, m_tf);
 
                 m_fieldSim = new FieldSim(m_drive, m_ghs);
 
                 m_fieldSim.initSim();
-
-                m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
 
                 m_shc = new ShuffleboardCompetition(m_llv, m_drive, m_ghs, m_autoFactory,
                                 m_liftArm, m_extendArm,
@@ -301,10 +301,10 @@ public class RobotContainer {
 
                 m_coDriverController.povUp().whileTrue(getJogLiftArmFixedCommand(-1, m_coDriverController))
 
-                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
+                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
 
-                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
-                                                m_liftArm)));
+                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                                m_liftArm)));
 
                 m_coDriverController.povDown().whileTrue(getJogLiftArmFixedCommand(1, m_coDriverController))
 
@@ -312,7 +312,6 @@ public class RobotContainer {
 
                                                 .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
                                                                 m_liftArm)));
-                
 
                 m_coDriverController.povLeft().whileTrue(new JogExtendArm(m_extendArm, () -> -.4, m_driverController))
                                 .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
@@ -323,7 +322,6 @@ public class RobotContainer {
                                 .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
                                                 .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
                                                                 m_extendArm)));
-
 
                 m_coDriverController.rightTrigger().onTrue(
 
