@@ -67,9 +67,12 @@
       "/Shuffleboard/Arms/turnLayout/PositionTurnArm": "Command",
       "/Shuffleboard/Arms/turnLayout/TurnAngleChooser": "String Chooser",
       "/Shuffleboard/Competition/AutoChooser": "String Chooser",
+      "/Shuffleboard/Competition/AutoChooser1": "String Chooser",
+      "/Shuffleboard/Competition/DelayChooser": "String Chooser",
       "/Shuffleboard/Competition/DropChooser": "String Chooser",
       "/Shuffleboard/Competition/LevelChooser": "String Chooser",
       "/Shuffleboard/Competition/PieceChooser": "String Chooser",
+      "/Shuffleboard/Competition/StartPosition": "String Chooser",
       "/Shuffleboard/Competition/TrajectoryChooser": "String Chooser",
       "/Shuffleboard/GameInfo/B/TrajectoryChooser": "String Chooser",
       "/Shuffleboard/Intake/IntakeLayout/RunIntake": "Command",
@@ -94,6 +97,11 @@
       "/SmartDashboard/Wrist": "Subsystem"
     },
     "windows": {
+      "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Arm Sim": {
         "window": {
           "visible": true
@@ -112,6 +120,7 @@
           "length": 0.4000000059604645,
           "width": 0.30000001192092896
         },
+        "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\Field2d_2023.png",
         "window": {
           "visible": true
         }
@@ -207,6 +216,9 @@
       "open": true
     },
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   },
   "Plot": {
     "Plot <0>": {

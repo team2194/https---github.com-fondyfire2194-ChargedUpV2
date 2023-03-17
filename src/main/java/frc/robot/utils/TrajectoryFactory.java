@@ -76,11 +76,10 @@ public class TrajectoryFactory {
         m_fs = fs;
         m_ghs = ghs;
 
-        ppTrajChooser.setDefaultOption("BackUp", "BackUp");
-        ppTrajChooser.addOption("2PieceAuto", "2PieceAuto");
-        ppTrajChooser.addOption("ConeWithCharge", "ConeWithCharge");
-        ppTrajChooser.addOption("OneConeClose", "OneConeClose");
-        ppTrajChooser.addOption("OneConeFar", "OneConeFar");
+        ppTrajChooser.setDefaultOption("BackUpCenterPath", "BackUpCenter");
+        ppTrajChooser.addOption("PushCubeCenterPath", "PushCubeCenter");
+        ppTrajChooser.addOption("BackUpLeftHybridPath", "BackUpLeftHybrid");
+       
 
         createSelectedTrajectory(2, 2, true);
 
@@ -101,17 +100,17 @@ public class TrajectoryFactory {
         File deployDirectory = Filesystem.getDeployDirectory();
         String pathName = deployDirectory.toString() + "\\" + name + ".path";
 
-    //    SmartDashboard.putString("Name", pathName);
+        // SmartDashboard.putString("Name", pathName);
         File f = new File(pathName);
 
-    //    SmartDashboard.putBoolean("Exists", f.exists());// && !f.isDirectory()));
+        // SmartDashboard.putBoolean("Exists", f.exists());// && !f.isDirectory()));
         return f.exists() && !f.isDirectory();
     }
 
     public void createSelectedTrajectory(double maxvel, double maxaccel, boolean isFirstPath) {
 
         String selectedName = getSelectedTrajectoryName();
-       // SmartDashboard.putString("SELName", selectedName);
+        // SmartDashboard.putString("SELName", selectedName);
         selTraj = getPathPlannerTrajectory(selectedName, maxvel, maxaccel, isFirstPath);
     }
 

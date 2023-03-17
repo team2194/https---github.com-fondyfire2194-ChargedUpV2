@@ -8,20 +8,22 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Auto.DoNothing;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
+import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
-import frc.robot.commands.TeleopRoutines.DriveandBalanceRobot;
+import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
+import frc.robot.commands.swerve.Test.DriveOnChargeStation;
+import frc.robot.commands.swerve.Test.DriveandBalanceRobot;
+import frc.robot.commands.swerve.Test.autoBalance;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
@@ -41,24 +43,11 @@ public class AutoFactory {
 
     public final SendableChooser<Integer> m_autoChooser = new SendableChooser<Integer>();
 
+    public final SendableChooser<Integer> m_autoChooser1 = new SendableChooser<Integer>();
+
     public final SendableChooser<Integer> m_startLocationChooser = new SendableChooser<Integer>();
 
-    public final SendableChooser<Integer> m_pieceLevelChooser = new SendableChooser<Integer>();
-
-    private boolean skipPathGroup;
-
-    private double startTime;
-
-    private enum nodeRow {
-        REAR,
-        MID,
-        FRONT
-    }
-
-    /**
-     * Event map for auto paths
-     */
-    HashMap<String, Command> eventMap = new HashMap<>();
+    public final SendableChooser<Double> m_startDelayChooser = new SendableChooser<Double>();
 
     private DriveSubsystem m_drive;
 
@@ -78,25 +67,20 @@ public class AutoFactory {
 
     private PathPlannerTrajectory traj2;
 
-    private Transform2d center2LeftHybrid = new Transform2d(new Translation2d(0, 1), new Rotation2d());
-
-    private Transform2d center2RightHybrid = new Transform2d();
-
-    private Transform2d leftHybrid2RightHybrid = new Transform2d();
-
-    private Transform2d centerCoopToLeftCoop = new Transform2d();
-
-    private Transform2d centerCoopToRightCoop = new Transform2d();
-
     private Command command1 = new DoNothing();
 
-    private Command command2= new DoNothing();
+    private Command command2 = new DoNothing();
+
+    private Command command3 = new DoNothing();
+
+    public String traj1name = "PushCubeCenter";
+
+    public String traj2name = "BackUpCenter";
+
+    private double startTime;
 
     public AutoFactory(DriveSubsystem drive, GameHandlerSubsystem ghs, LiftArmSubsystem lift, ExtendArmSubsystem extend,
             WristSubsystem wrist, IntakeSubsystem intake, TrajectoryFactory tf) {
-
-        // eventMap.put("deliverconehigh", deliverCone(nodeRow.REAR));
-        // eventMap.put("pickupcube", pickupCube());
 
         m_drive = drive;
 
@@ -112,119 +96,141 @@ public class AutoFactory {
 
         m_tf = tf;
 
+        m_startDelayChooser.setDefaultOption("Zero Seconds", 0.);
+        m_startDelayChooser.addOption("One Second", 1.);
+        m_startDelayChooser.addOption("Two Seconds", 2.);
+        m_startDelayChooser.addOption("Three Second", 3.);
+        m_startDelayChooser.addOption("Four Seconds", 4.);
+        m_startDelayChooser.addOption("Five Seconds", 4.);
+
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
-        m_autoChooser.addOption("PushCubeClearZone", 1);
+        m_autoChooser.addOption("PushCube", 1);
 
-        m_autoChooser.addOption("DeliverClearZone", 2);
+        m_autoChooser.addOption("DeliverMid", 2);
 
-        m_autoChooser.addOption("PushCubeDriveOver", 3);
+        m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
-        m_autoChooser.addOption("DeliverDriveOver", 4);
+        m_autoChooser1.addOption("BalanceCharge", 1);
 
-        m_autoChooser.addOption("PushCubeBalance", 5);
+        m_autoChooser1.addOption("DriveThroughCharge", 2);
 
-        m_autoChooser.addOption("DeliverBalance", 6);
+        m_autoChooser1.addOption("DriveOutZone", 3);
 
-        m_pieceLevelChooser.setDefaultOption("Top", 0);
-        m_pieceLevelChooser.addOption("Mid", 1);
+        m_startLocationChooser.setDefaultOption("CoopShelf", 0);
 
-        m_startLocationChooser.setDefaultOption("CoopLeftPipe", 0);
-        m_startLocationChooser.addOption("CoopCube", 1);
+        m_startLocationChooser.addOption("CoopLeftPipe", 1);
+
         m_startLocationChooser.addOption("CoopRightPipe", 2);
 
-        m_startLocationChooser.addOption("LeftHybridPipe", 3);
-        m_startLocationChooser.addOption("RightHybridPipe", 4);
+        m_startLocationChooser.addOption("LeftShelf", 3);
 
+        m_startLocationChooser.addOption("RightShelf", 4);
+
+    }
+
+    public Command getCommand1() {
+
+        Command tempCommand = new DoNothing();
+
+        boolean trajReqd = false;
+
+        int startLocation = m_startLocationChooser.getSelected();
+
+        int autoselect = m_autoChooser.getSelected();
+
+        if (startLocation == 0 && autoselect == 1) {
+            traj1name = "PushCubeCenter";
+
+            trajReqd = true;
+        }
+
+        if (startLocation == 3 && autoselect == 1) {
+            traj1name = "PushCubeLeftShelf";
+            trajReqd = true;
+        }
+        if (startLocation == 4 && autoselect == 1) {
+            traj1name = "PushCubeRightShelf";
+            trajReqd = true;
+        }
+
+        if (trajReqd) {
+
+            traj1 = m_tf.getPathPlannerTrajectory(traj1name, 2, 1, false);
+
+            tempCommand = m_tf.followTrajectoryCommand(traj1, true);
+        }
+
+        if (autoselect == 2)
+            tempCommand = getDeliverMid();
+
+        return tempCommand;
+
+    }
+
+    public Command getCommand2() {
+
+        Command tempCommand = new DoNothing();
+
+        boolean trajReqd = false;
+
+        int startLocation = m_startLocationChooser.getSelected();
+
+        int autoselect1 = m_autoChooser1.getSelected();
+
+        if (startLocation <= 2) {// any of the coop starts
+
+            if (autoselect1 == 1) {
+
+                tempCommand = new DriveOnChargeStation();
+            }
+
+            if (startLocation == 1 && autoselect1 == 2) {
+
+                traj2name = "BackUpLeftCenter";
+
+                trajReqd = true;
+            }
+
+            if (startLocation == 2 && autoselect1 == 2) {
+
+                traj2name = "BackUpRightCenter";
+
+                trajReqd = true;
+            }
+
+            if (startLocation == 3) {
+                traj2name = "BackUpLeftShelf";
+                trajReqd = true;
+            }
+
+            if (startLocation == 4) {
+                traj2name = "BackUpRightShelf";
+                trajReqd = true;
+            }
+
+            if (trajReqd) {
+
+                traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
+    
+                tempCommand = m_tf.followTrajectoryCommand(traj2, true);
+            }
+
+
+        }
+
+        return tempCommand;
+
+    }
+
+    public void createCommands(){
+        command1 = getCommand1();
+        command2 = getCommand2();
     }
 
     public Command getAutonomousCommand() {
 
-        int sel = m_startLocationChooser.getSelected();
-
-        int ac = m_autoChooser.getSelected();
-
-        if (sel <= 2) {
-
-            m_ghs.setActiveDropByNumber(sel + 1);
-        }
-
-        int level = m_pieceLevelChooser.getSelected();
-
         startTime = Timer.getFPGATimestamp();
-
-        switch (ac) {
-
-            // just sit there
-
-            case 0:
-
-                break;
-
-            // push cube clear zone
-            case 1:
-
-                switch (sel) {
-                    // left hybrid start
-                    case 7:
-
-                        traj1 = m_tf.getPathPlannerTrajectory("PushConeCenter", 3, 3, false);
-                        traj1.transformBy(center2LeftHybrid);
-                        traj2 = m_tf.getPathPlannerTrajectory("BackupLeftHybrid", 3, 3, false);
-
-                        break;
-                    // right hybrid start
-                    case 8:
-
-                        traj1 = m_tf.getPathPlannerTrajectory("PushConeCenter", 3, 3, false);
-                        traj1.transformBy(center2RightHybrid);
-                        traj2 = m_tf.getPathPlannerTrajectory("BackUpLeftHybrid", 3, 3, false);
-                        traj2.transformBy(leftHybrid2RightHybrid);
-
-                        break;
-
-                    default:
-
-                        break;
-                }
-
-                break;
-
-            // deliver clear zone
-
-            case 2:
-
-                command1 = getDeliverValuesAndExecute();
-
-                break;
-
-            case 3:
-
-                break;
-
-            case 4:
-
-                command1 = getDeliverValuesAndExecute();
-
-                break;
-
-            case 5:
-
-                command1 = getDeliverValuesAndExecute();
-
-                break;
-
-            case 6:
-
-                command1 = getDeliverValuesAndExecute();
-
-                break;
-
-            default:
-
-                break;
-
-        }
 
         autonomousCommand = new SequentialCommandGroup(command1, command2);
 
@@ -232,13 +238,25 @@ public class AutoFactory {
 
     }
 
-    private Command getDeliverValuesAndExecute() {
+    private Command getDeliverMid() {
 
         return new SequentialCommandGroup(
 
-                new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, true),
+                new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, false),
 
-                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake));
+                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
+
+                new EjectPieceFromIntake(m_intake),
+
+                new RetractWristExtendLift(m_lift, m_extend, m_wrist, false));
+
+    }
+
+    private PathPlannerTrajectory getTrajectory(String name) {
+
+        PathPlannerTrajectory traj = m_tf.getPathPlannerTrajectory(name, 2, 2, false);
+
+        return traj;
 
     }
 

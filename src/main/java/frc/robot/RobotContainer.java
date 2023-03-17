@@ -233,21 +233,31 @@ public class RobotContainer {
 
                 m_driverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
-                // m_driverController.y()
+                m_driverController.y().onTrue(getLoadSettings().withTimeout(2));
 
                 // m_driverController.start()
 
                 // m_driverController.back()
 
-                m_driverController.povUp().whileTrue(getMoveWristCommand(-.25))
-                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
-                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
-                                                                m_liftArm)));
+                m_driverController.povUp().whileTrue(new JogWrist(m_wrist, () -> -.4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_wrist.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
+                                                                m_wrist)));
 
-                m_driverController.povDown().whileTrue(getMoveWristCommand(.25))
-                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
-                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
-                                                                m_liftArm)));
+                m_driverController.povDown().whileTrue(new JogWrist(m_wrist, () -> .4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_wrist.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
+                                                                m_wrist)));
+
+                m_driverController.povLeft().whileTrue(new JogExtendArm(m_extendArm, () -> -.4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                                m_extendArm)));
+
+                m_driverController.povRight().whileTrue(new JogExtendArm(m_extendArm, () -> -.4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                                m_extendArm)));
 
         }
 
@@ -285,19 +295,41 @@ public class RobotContainer {
                                 .withName("Ground Tipped Cone Pickup Positions")
                                 .withTimeout(2)));
 
-                // m_coDriverController.y()
+                m_coDriverController.y().onTrue(deliverPositionsCommand(true).withTimeout(2));
 
-                m_coDriverController.povUp().onTrue(deliverPositionsCommand(true).withTimeout(2));
+                m_coDriverController.start().onTrue(deliverPositionsCommand(false).withTimeout(2));
 
-                m_coDriverController.povDown().onTrue(deliverPositionsCommand(false).withTimeout(2));
+                m_coDriverController.povUp().whileTrue(getJogLiftArmFixedCommand(-1, m_coDriverController))
 
-                m_coDriverController.povLeft().onTrue(getLoadSettings().withTimeout(2));
+                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
 
-                // m_coDriverController.povRight().onTrue
+                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                m_liftArm)));
 
-                // m_coDriverController.rightTrigger().onTrue(
+                m_coDriverController.povDown().whileTrue(getJogLiftArmFixedCommand(1, m_coDriverController))
 
-                // m_coDriverController.start()
+                                .onFalse(Commands.waitUntil(() -> m_liftArm.isStopped())
+
+                                                .andThen(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
+                                                                m_liftArm)));
+                
+
+                m_coDriverController.povLeft().whileTrue(new JogExtendArm(m_extendArm, () -> -.4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                                m_extendArm)));
+
+                m_coDriverController.povRight().whileTrue(new JogExtendArm(m_extendArm, () -> -.4, m_driverController))
+                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
+                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                                m_extendArm)));
+
+
+                m_coDriverController.rightTrigger().onTrue(
+
+                                new InstantCommand(() -> m_tf.createSelectedTrajectory(2, 2, true)))
+
+                                .onFalse(new InstantCommand(() -> m_tf.doSelectedTrajectory()));
 
                 // m_coDriverController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS
@@ -315,6 +347,11 @@ public class RobotContainer {
         public Command getJogLiftArmCommand(CommandXboxController m_armController2) {
 
                 return new JogLiftArm(m_liftArm, () -> -m_coDriverController.getRawAxis(1), m_armController2);
+        }
+
+        public Command getJogLiftArmFixedCommand(double speed, CommandXboxController m_armController2) {
+
+                return new JogLiftArm(m_liftArm, () -> -speed, m_armController2);
         }
 
         public Command getJogWristCommand(CommandXboxController m_armController2) {

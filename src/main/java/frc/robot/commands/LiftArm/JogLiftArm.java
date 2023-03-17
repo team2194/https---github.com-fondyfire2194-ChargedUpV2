@@ -61,7 +61,7 @@ public class JogLiftArm extends CommandBase {
 
     double volts = throttle_sl * RobotController.getBatteryVoltage();
 
-    SmartDashboard.putNumber("LIFTV", volts);
+    //SmartDashboard.putNumber("LIFTV", volts);
 
     if (throttle_sl > 0 & allowUp || throttle_sl < 0 && allowDown) {
 

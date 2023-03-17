@@ -46,12 +46,15 @@ public class Robot extends TimedRobot {
 
   public static int lpctra;
 
-
   private int loopCtr;
 
   private boolean lastOKState;
 
   private boolean firstScan = true;
+
+  private boolean autoHasRun;
+  private double m_startDelay;
+  private double startTime;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -109,7 +112,7 @@ public class Robot extends TimedRobot {
     m_disableStartTime = 0;
     firstScan = true;
     CommandScheduler.getInstance().cancelAll();
-   // Shuffleboard.selectTab("Competition");
+    // Shuffleboard.selectTab("Competition");
   }
 
   @Override
@@ -119,11 +122,14 @@ public class Robot extends TimedRobot {
 
     // if (loopCtr < 5) {
 
-    //   m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() && m_robotContainer.m_liftArm.checkCANOK()
-    //       && m_robotContainer.m_extendArm.checkCANOK() && m_robotContainer.m_wrist.checkCANOK()
-    //       && m_robotContainer.m_intake.checkCANOK() && m_robotContainer.m_intake.pieceSensorsOK;
+    // m_robotContainer.m_ghs.CANOK = m_robotContainer.m_drive.checkCANOK() &&
+    // m_robotContainer.m_liftArm.checkCANOK()
+    // && m_robotContainer.m_extendArm.checkCANOK() &&
+    // m_robotContainer.m_wrist.checkCANOK()
+    // && m_robotContainer.m_intake.checkCANOK() &&
+    // m_robotContainer.m_intake.pieceSensorsOK;
 
-    //   loopCtr = 0;
+    // loopCtr = 0;
     // }
 
     if (!m_robotContainer.m_drive.isbraked()) {
@@ -152,14 +158,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // m_autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
 
     m_robotContainer.m_drive.setIdleMode(true);
 
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
 
-    // schedule the autonomous command (example)
+    m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
+
+    startTime = Timer.getFPGATimestamp();
+
+    m_robotContainer.m_autoFactory.createCommands();
 
     m_robotContainer.m_autoFactory.autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
 
@@ -175,6 +184,13 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     if (RobotBase.isSimulation())
       m_robotContainer.m_fieldSim.periodic();
+
+    if (!autoHasRun && Timer.getFPGATimestamp() > startTime + m_startDelay
+        && m_robotContainer.m_autoFactory.autonomousCommand != null) {
+      m_robotContainer.m_autoFactory.autonomousCommand.schedule();
+      autoHasRun = true;
+    }
+
   }
 
   @Override
