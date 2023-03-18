@@ -85,7 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public robotPiece piece = robotPiece.CUBE;
 
-  public gamePiece expectedPieceType = gamePiece.CONE;
+  public gamePiece expectedPieceType = gamePiece.CUBE;
 
   public boolean coneExpected;
 

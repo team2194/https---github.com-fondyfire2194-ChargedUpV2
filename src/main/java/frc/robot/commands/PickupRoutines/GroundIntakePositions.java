@@ -6,16 +6,21 @@ package frc.robot.commands.PickupRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
+import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -35,52 +40,61 @@ public class GroundIntakePositions extends SequentialCommandGroup {
                 // assumes start from travel position
                 addCommands(
 
-                                new SetIntakePieceType(intake, type),
+                                new ParallelRaceGroup(
+                                                new ParallelCommandGroup(
 
-                                new ParallelCommandGroup(
+                                                                new ConditionalCommand(
 
-                                                new ConditionalCommand(
+                                                                                new SetLiftGoal(lift,
+                                                                                                presetLiftAngles.PICKUP_CONE_GROUND
+                                                                                                                .getInches()),
 
-                                                                new SetLiftGoal(lift,
-                                                                                presetLiftAngles.PICKUP_CONE_GROUND
-                                                                                                .getInches()),
+                                                                                new SetLiftGoal(lift,
+                                                                                                presetLiftAngles.PICKUP_CUBE_GROUND
+                                                                                                                .getInches()),
 
-                                                                new SetLiftGoal(lift,
-                                                                                presetLiftAngles.PICKUP_CUBE_GROUND
-                                                                                                .getInches()),
+                                                                                () -> type == gamePiece.CONE),
 
-                                                                () -> type == gamePiece.CONE),
+                                                                new PositionProfileWrist(wrist, lift),
+                                                                new PositionProfileExtendArm(extend, lift),
+                                                                new PositionProfileLiftInches(lift)),
 
-                                                new ConditionalCommand(
+                                                new SequentialCommandGroup(
 
-                                                                new SetWristGoal(wrist,
-                                                                                presetWristAngles.PICKUP_CONE_GROUND
-                                                                                                .getAngleRads()),
+                                                                new SetIntakePieceType(intake, type),
 
-                                                                new SetWristGoal(wrist,
-                                                                                presetWristAngles.PICKUP_CUBE_GROUND
-                                                                                                .getAngleRads()),
+                                                                new WaitCommand(.1),
 
-                                                                () -> type == gamePiece.CONE)),
+                                                                new WaitLiftAtTarget(lift, .25),
 
-                                new WaitCommand(2),
+                                                                new ConditionalCommand(
 
-                                new WaitLiftAtTarget(lift, .25),
+                                                                                new SetWristGoal(wrist,
+                                                                                                presetWristAngles.PICKUP_CONE_GROUND
+                                                                                                                .getAngleRads()),
 
-                                new WaitWristAtTarget(wrist, .25),
+                                                                                new SetWristGoal(wrist,
+                                                                                                presetWristAngles.PICKUP_CUBE_GROUND
+                                                                                                                .getAngleRads()),
 
-                                new ConditionalCommand(
-                                                new SetExtArmGoal(extend,
-                                                                presetExtArmDistances.PICKUP_CONE_GROUND.getDistance()),
+                                                                                () -> type == gamePiece.CONE),
 
-                                                new SetExtArmGoal(extend,
-                                                                presetExtArmDistances.PICKUP_CUBE_GROUND.getDistance()),
+                                                                new WaitWristAtTarget(wrist, .25),
 
-                                                () -> type == gamePiece.CONE),
+                                                                new ConditionalCommand(
+                                                                                new SetExtArmGoal(extend,
+                                                                                                presetExtArmDistances.PICKUP_CONE_GROUND
+                                                                                                                .getDistance()),
 
-                                new WaitCommand(2),
+                                                                                new SetExtArmGoal(extend,
+                                                                                                presetExtArmDistances.PICKUP_CUBE_GROUND
+                                                                                                                .getDistance()),
 
-                                new WaitLiftAtTarget(lift, .25));
+                                                                                () -> type == gamePiece.CONE),
+
+                                                                new WaitCommand(2),
+
+                                                                new WaitLiftAtTarget(lift, .25))));
 
         }
 }

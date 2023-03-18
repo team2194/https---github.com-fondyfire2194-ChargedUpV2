@@ -130,6 +130,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean atGoal;
 
+    private double nextTarget;
+
     public ExtendArmSubsystem() {
 
         firstUp = true;
@@ -253,10 +255,27 @@ public class ExtendArmSubsystem extends SubsystemBase {
         setController(ExtendArmConstants.extendArmConstraints, goalInches, false);
     }
 
+    
+    public void incGoal(double val) {
+
+        double temp = getPositionInches() + val;
+
+        setController(ExtendArmConstants.extendArmConstraints, temp, false);
+
+    }
+
     public void resetPosition(double position) {
 
         mEncoder.setPosition(position);
 
+    }
+
+    public void setNextTarget(double value){
+        nextTarget=value;
+    }
+
+    public double getNextTarget(){
+        return nextTarget;
     }
 
     public boolean atTargetPosition() {

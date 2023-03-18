@@ -35,15 +35,15 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         CLEAR_ARMS(38, .85),
 
-        PICKUP_CUBE_GROUND(43.6, 1.9),
+        PICKUP_CUBE_GROUND(43.6, 2.7),
 
-        PICKUP_CONE_GROUND(43.6, 1.9),
+        PICKUP_CONE_GROUND(43.6, 2.7),
 
         PICKUP_TIPPED_CONE_GROUND(56, 4.8),
 
         PICKUP_CUBE_LOAD_STATION(84, 11.4),
 
-        PICKUP_CONE_LOAD_STATION(89, 12.1),
+        PICKUP_CONE_LOAD_STATION(89, 11.9),
 
         PLACE_CUBE_MID_SHELF(72, 8.8),
 
@@ -51,7 +51,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         PLACE_CONE_MID_PIPE(78.5, 8.9),
 
-        PLACE_CONE_TOP_PIPE(95, 13.5);
+        PLACE_CONE_TOP_PIPE(95, 12.);
 
         private double angle;
         private double inches;
@@ -80,14 +80,14 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public final CANCoder m_liftCANcoder;
 
-    public ProfiledPIDController m_liftController = new ProfiledPIDController(0.005, 0, 0,
-            LiftArmConstants.liftArmInchConstraints, .02);
+    public ProfiledPIDController m_liftController = new ProfiledPIDController(0.25, 0, 0,
+            LiftArmConstants.liftArmFastConstraints, .02);
 
     private boolean useSoftwareLimit;
 
-    private double inPositionBandwidth = .5;
-   
-    private double inRangeBandwidth = 1;
+    private double inPositionBandwidth = .25;
+
+    private double inRangeBandwidth = .5;
 
     public boolean liftArmMotorConnected;
 
@@ -149,7 +149,6 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean topLevel;
 
-
     public LiftArmSubsystem() {
         useSoftwareLimit = true;
         m_motor = new CANSparkMax(CanConstants.LIFT_ARM_MOTOR, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -174,7 +173,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
         mEncoder.setPosition(0);
 
-        setController(LiftArmConstants.liftArmInchConstraints, 0, false);
+        setController(LiftArmConstants.liftArmFastConstraints, 0, false);
 
         m_motor.setSmartCurrentLimit(40);
 
@@ -214,7 +213,7 @@ public class LiftArmSubsystem extends SubsystemBase {
         }
         if (loopctr == 6) {
             positioninches = getPositionInches();
-            
+
             loopctr = 0;
         }
 
@@ -240,7 +239,8 @@ public class LiftArmSubsystem extends SubsystemBase {
     public boolean atTargetPosition() {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
-    public boolean inRange(){
+
+    public boolean inRange() {
         return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
     }
 
@@ -364,12 +364,20 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public void setControllerAtPosition() {
         goalInches = getPositionInches();
-        setController(LiftArmConstants.liftArmInchConstraints, goalInches, false);
+        setController(LiftArmConstants.liftArmFastConstraints, goalInches, false);
 
     }
 
     public void redoTarget() {
-        setController(LiftArmConstants.liftArmInchConstraints, goalInches, false);
+        setController(LiftArmConstants.liftArmFastConstraints, goalInches, false);
+
+    }
+
+    public void incGoal(double val) {
+
+        double temp = getPositionInches() + val;
+
+        setController(LiftArmConstants.liftArmFastConstraints, temp, false);
 
     }
 

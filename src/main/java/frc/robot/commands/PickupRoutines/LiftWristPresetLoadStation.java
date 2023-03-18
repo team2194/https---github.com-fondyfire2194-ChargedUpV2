@@ -5,13 +5,20 @@
 package frc.robot.commands.PickupRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
+import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.LiftArm.WaitLiftClearForWrist;
+import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -34,40 +41,45 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
                 type = ghs.getGamePiecetype();
 
                 addCommands(
+                                new ParallelRaceGroup(
+                                                new ParallelCommandGroup(
 
-                                new SetIntakePieceType(intake, type),
+                                                                new ConditionalCommand(
 
-                                new ConditionalCommand(
+                                                                                new SetLiftGoal(lift,
+                                                                                                presetLiftAngles.PICKUP_CONE_LOAD_STATION
+                                                                                                                .getInches()),
 
-                                                new SetLiftGoal(lift,
-                                                                presetLiftAngles.PICKUP_CONE_LOAD_STATION
-                                                                                .getInches()),
+                                                                                new SetLiftGoal(lift,
+                                                                                                presetLiftAngles.PICKUP_CUBE_LOAD_STATION
+                                                                                                                .getInches()),
 
-                                                new SetLiftGoal(lift,
-                                                                presetLiftAngles.PICKUP_CUBE_LOAD_STATION
-                                                                                .getInches()),
+                                                                                () -> type == gamePiece.CONE),
 
-                                                () -> type == gamePiece.CONE),
+                                                                new ConditionalCommand(
 
-                                // new WaitCommand(1),
+                                                                                new SetWristGoal(wrist,
+                                                                                                presetWristAngles.PICKUP_CONE_LOAD_STATION
+                                                                                                                .getAngleRads()),
 
-                                // new WaitLiftClearForWrist(lift, 50),
+                                                                                new SetWristGoal(wrist,
+                                                                                                presetWristAngles.PICKUP_CUBE_LOAD_STATION
+                                                                                                                .getAngleRads()),
 
-                                new ConditionalCommand(
+                                                                                () -> type == gamePiece.CONE)),
 
-                                                new SetWristGoal(wrist,
-                                                                presetWristAngles.PICKUP_CONE_LOAD_STATION
-                                                                                .getAngleRads()),
+                                                new PositionProfileWrist(wrist, lift),
+                                                new PositionProfileLiftInches(lift)),
 
-                                                new SetWristGoal(wrist,
-                                                                presetWristAngles.PICKUP_CUBE_LOAD_STATION
-                                                                                .getAngleRads()),
+                                new SequentialCommandGroup(
 
-                                                () -> type == gamePiece.CONE));
+                                                new SetIntakePieceType(intake, type),
 
-                // new WaitCommand(1),
+                                                // new WaitCommand(1),
 
-                // new WaitWristAtTarget(wrist, 2));
+                                                // new WaitCommand(1),
+                                                new WaitLiftAtTarget(lift, 2),
+                                                new WaitWristAtTarget(wrist, 2)));
 
         }
 }

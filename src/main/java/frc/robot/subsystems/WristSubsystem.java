@@ -36,9 +36,9 @@ public class WristSubsystem extends SubsystemBase {
 
         SAFE_TRAVEL(58),
 
-        PICKUP_CUBE_GROUND(106),
+        PICKUP_CUBE_GROUND(110),
 
-        PICKUP_CONE_GROUND(105),
+        PICKUP_CONE_GROUND(110),
 
         PICKUP_TIPPED_CONE_GROUND(219),
 
@@ -251,6 +251,14 @@ public class WristSubsystem extends SubsystemBase {
 
     }
 
+    public void incGoal(double val) {
+
+        double temp = getAngleRadians() + val;
+
+        setController(WristConstants.wristConstraints, temp, false);
+
+    }
+
     public void resetAngle() {
         mEncoder.setPosition(0);
     }
@@ -260,7 +268,7 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean inRange() {
-        return Math.abs(goalAngleRadians - getAngleDegrees())<inRangeBandwidth;
+        return Math.abs(goalAngleRadians - getAngleRadians())<inRangeBandwidth;
     }
 
     public double getAngleDegrees() {

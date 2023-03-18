@@ -189,7 +189,7 @@ public final class Constants {
 
     public static final double MAX_ANGLE = 105;
 
-    public static final double MIN_INCHES = 0;
+    public static final double MIN_INCHES = -0.5;
 
     public static final double MAX_INCHES = 16;
 
@@ -222,13 +222,13 @@ public final class Constants {
 
     public static final TrapezoidProfile.Constraints liftArmFastConstraints
 
-        = new Constraints(10, 20);
+        = new Constraints(10, 10);
 
     public static final double JOG_SLEW_RATE = 10;
 
     public static final double kControllerDeadband = 0.05;
 
-    public static final double kvVoltSecondsPerInch = .5;
+    public static final double kvVoltSecondsPerInch = .385;
 
     public static final double kAVoltSecondSquaredPerInch = 0;
 
@@ -238,7 +238,7 @@ public final class Constants {
   public static final class ExtendArmConstants {
 
     public static double GEAR_RATIO = 49;
-    public static double PULLEY_TEETH = 24;
+    public static double PULLEY_TEETH = 30;
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 
     public static final double MIN_POSITION = -1;

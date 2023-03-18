@@ -4,11 +4,16 @@
 
 package frc.robot.commands.PickupRoutines;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
+import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -31,25 +36,37 @@ public class GroundIntakeTippedConePositions extends SequentialCommandGroup {
                 // addCommands(new FooCommand(), new BarCommand() extend, Intake);
                 // assumes start from travel position
                 addCommands(
+                                new ParallelRaceGroup(
+                                                new ParallelCommandGroup(
+                                                        
+                                                        new SetLiftGoal(lift,
+                                                                presetLiftAngles.PICKUP_TIPPED_CONE_GROUND
+                                                                                .getInches()),
 
-                                new SetIntakePieceType(intake, gamePiece.CONE),
+                                                                new SetWristGoal(wrist,
+                                                                                presetWristAngles.PICKUP_TIPPED_CONE_GROUND
+                                                                                                .getAngleRads()),
+                                                                new PositionProfileWrist(wrist, lift),
+                                                                new PositionProfileExtendArm(extend, lift),
+                                                                new PositionProfileLiftInches(lift)),
 
-                                new SetLiftGoal(lift, presetLiftAngles.PICKUP_TIPPED_CONE_GROUND.getInches()),
+                                                new SequentialCommandGroup(
 
-                                new SetWristGoal(wrist, presetWristAngles.PICKUP_TIPPED_CONE_GROUND.getAngleRads()),
+                                                                new SetIntakePieceType(intake, gamePiece.CONE),
 
-                                new WaitCommand(2),
+                                                                new WaitCommand(2),
 
-                                new WaitLiftAtTarget(lift, .25),
+                                                                new WaitLiftAtTarget(lift, .25),
 
-                                new WaitWristAtTarget(wrist, .25),
+                                                                new WaitWristAtTarget(wrist, .25),
 
-                                new SetExtArmGoal(extend,
-                                                presetExtArmDistances.PICKUP_TIPPED_CONE_GROUND.getDistance()),
+                                                                new SetExtArmGoal(extend,
+                                                                                presetExtArmDistances.PICKUP_TIPPED_CONE_GROUND
+                                                                                                .getDistance()),
 
-                                new WaitCommand(2),
+                                                                new WaitCommand(2),
 
-                                new WaitLiftAtTarget(lift, .25));
+                                                                new WaitLiftAtTarget(lift, .25))));
 
         }
 }

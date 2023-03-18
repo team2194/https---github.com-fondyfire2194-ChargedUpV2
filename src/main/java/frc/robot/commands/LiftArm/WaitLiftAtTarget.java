@@ -43,6 +43,6 @@ public class WaitLiftAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_lift.m_liftController.atGoal() && Timer.getFPGATimestamp() > m_startTime + m_atTargetTime;
+    return m_lift.atTargetPosition() || Timer.getFPGATimestamp() > m_startTime + 2;
   }
 }

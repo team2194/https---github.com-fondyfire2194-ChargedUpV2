@@ -90,10 +90,10 @@ public class Pref {
 
     // lift characterization
     prefDict.put("liftKs", 0.6);
-    prefDict.put("liftKg", 0.52);
-    prefDict.put("liftKv", .4);
+    prefDict.put("liftKg", 0.5);
+    prefDict.put("liftKv", .385);
 
-    prefDict.put("liftKp", .005);
+    prefDict.put("liftKp", .25);
 
     // ext characterization
     prefDict.put("extKs", .1);

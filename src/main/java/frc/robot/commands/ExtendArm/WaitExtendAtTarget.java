@@ -30,7 +30,7 @@ public class WaitExtendAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_extend.m_extController.atGoal() && m_startTime == 0) {
+    if (m_extend.inRAnge() && m_startTime == 0) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }
@@ -43,6 +43,6 @@ public class WaitExtendAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_extend.inRAnge();
+    return m_extend.atTargetPosition() || Timer.getFPGATimestamp() > m_startTime + 2;
   }
 }

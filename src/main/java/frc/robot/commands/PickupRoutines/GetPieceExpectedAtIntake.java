@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 
 public class GetPieceExpectedAtIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
@@ -33,7 +34,7 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
   boolean coneSeen;
 
-  double useSpeed = .6;
+  double useSpeed;
 
   public GetPieceExpectedAtIntake(IntakeSubsystem intake) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -44,8 +45,9 @@ public class GetPieceExpectedAtIntake extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    useSpeed = .6;
     if (m_intake.expectedPieceType == gamePiece.CONE)
+
       useSpeed *= -1;
   }
 

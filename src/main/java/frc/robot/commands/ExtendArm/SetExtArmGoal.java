@@ -24,7 +24,7 @@ public class SetExtArmGoal extends CommandBase {
     m_ext = ext;
     m_constraints = constraints;
     m_goalDist = goalDist;
-    addRequirements(m_ext);
+    
   }
 
   public SetExtArmGoal(ExtendArmSubsystem ext, double goalDist) {
@@ -33,7 +33,7 @@ public class SetExtArmGoal extends CommandBase {
     m_ext = ext;
     m_constraints = ExtendArmConstants.extendArmConstraints;
     m_goalDist = goalDist;
-    addRequirements(m_ext);
+   // addRequirements(m_ext);
   }
 
   // Called when the command is initially scheduled.

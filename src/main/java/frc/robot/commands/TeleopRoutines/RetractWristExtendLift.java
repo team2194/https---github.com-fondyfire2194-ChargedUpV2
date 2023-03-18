@@ -5,13 +5,18 @@
 package frc.robot.commands.TeleopRoutines;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
+import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -32,52 +37,39 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                 // Add your commands in the addCommands() call, e.g.
                 // addCommands(new FooCommand(), new BarCommand());
                 addCommands(
+                                new ParallelRaceGroup(
+                                                new ParallelCommandGroup(
+                                                                new SetWristGoal(wrist, WristConstants.wristConstraints,
+                                                                                presetWristAngles.SAFE_TRAVEL
+                                                                                                .getAngleRads()),
 
-                                new ConditionalCommand(
+                                                                new SetExtArmGoal(ext,
+                                                                                presetExtArmDistances.HOME
+                                                                                                .getDistance()),
 
-                                                new SetWristGoal(wrist, WristConstants.wristConstraints,
-                                                                presetWristAngles.SAFE_TRAVEL
-                                                                                .getAngleRads()),
+                                                                new PositionProfileWrist(wrist, lift),
+                                                                new PositionProfileExtendArm(ext, lift),
+                                                                new PositionProfileLiftInches(lift)),
 
-                                                new SetWristGoal(wrist,
-                                                                presetWristAngles.HOME.getAngleRads()),
-                                                () -> travel),
+                                                new SequentialCommandGroup(
 
-                                new WaitCommand(2),
+                                                                // new SetWristGoal(wrist,
+                                                                // presetWristAngles.HOME.getAngleRads()),
 
-                                new WaitWristAtTarget(wrist, .25),
+                                                                new WaitCommand(.2),
 
-                                new ConditionalCommand(
+                                                                new WaitWristAtTarget(wrist, .25),
 
-                                                new SetExtArmGoal(ext,
-                                                                presetExtArmDistances.SAFE_TRAVEL
-                                                                                .getDistance()),
+                                                                new WaitExtendAtTarget(ext, .25),
 
-                                                new SetExtArmGoal(ext,
-                                                                presetExtArmDistances.HOME
-                                                                                .getDistance()),
-                                                () -> travel),
+                                                                new SetLiftGoal(lift,
+                                                                                presetLiftAngles.SAFE_HOME
+                                                                                                .getInches()),
+                                                                new WaitCommand(.2),
 
-                                new WaitCommand(2),
+                                                                new WaitLiftAtTarget(lift, .25)
 
-                                new WaitExtendAtTarget(ext, .25),
-
-                                new ConditionalCommand(
-
-                                                new SetLiftGoal(lift,
-                                                                presetLiftAngles.TRAVEL
-                                                                                .getInches()),
-
-                                                new SetLiftGoal(lift,
-                                                                presetLiftAngles.SAFE_HOME
-                                                                                .getInches()),
-                                                () -> travel),
-
-                                new WaitCommand(2),
-
-                                new WaitLiftAtTarget(lift, .25)
-
-                );
+                                                )));
 
         }
 }

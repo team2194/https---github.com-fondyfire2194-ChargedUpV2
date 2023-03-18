@@ -23,16 +23,16 @@ public class SetLiftGoal extends CommandBase {
     m_lift = lift;
     m_constraints = constraints;
     m_goalInches=goalInches;
-    addRequirements(m_lift);
+    
   }
 
   public SetLiftGoal(LiftArmSubsystem lift, double goalInches) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_lift = lift;
-    m_constraints = LiftArmConstants.liftArmInchConstraints;
+    m_constraints = LiftArmConstants.liftArmFastConstraints;
     m_goalInches = goalInches;
-    addRequirements(m_lift);
+    //addRequirements(m_lift);
   }
 
   // Called when the command is initially scheduled.

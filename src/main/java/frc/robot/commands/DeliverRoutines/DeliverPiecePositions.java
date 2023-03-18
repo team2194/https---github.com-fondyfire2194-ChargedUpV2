@@ -4,16 +4,21 @@
 
 package frc.robot.commands.DeliverRoutines;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.ExtendArm.SetExtArmGoal;
 import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
+import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
+import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -32,9 +37,21 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
 
-        new SetLiftGoal(lift, LiftArmConstants.liftArmInchConstraints, lift.deliverInches),
+    new ParallelRaceGroup(
+      
+      new ParallelCommandGroup(
+
+                    
+        new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
 
         new SetWristGoal(wrist, WristConstants.wristConstraints, wrist.deliverAngleRads),
+
+                      new PositionProfileWrist(wrist, lift),
+                      new PositionProfileExtendArm(extend, lift),
+                      new PositionProfileLiftInches(lift)),
+
+      new SequentialCommandGroup(
+
 
         new WaitCommand(2),
 
@@ -46,7 +63,7 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
 
         new WaitCommand(1),
 
-        new WaitExtendAtTarget(extend, .24));
+        new WaitExtendAtTarget(extend, .24))));
 
   }
 }

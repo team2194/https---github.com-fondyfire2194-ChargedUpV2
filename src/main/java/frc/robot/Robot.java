@@ -203,7 +203,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
         m_robotContainer.m_extendArm.getPositionInches(), false);
 
-    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmInchConstraints,
+    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,
         m_robotContainer.m_liftArm.getPositionInches(), false);
 
     m_robotContainer.m_wrist.setController(WristConstants.wristConstraints,

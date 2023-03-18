@@ -23,7 +23,7 @@ public class SetWristGoal extends CommandBase {
     m_wrist = wrist;
     m_constraints = constraints;
     m_goalAngleRadians = goalAngleRadians;
-    addRequirements(m_wrist);
+    
   }
 
   public SetWristGoal(WristSubsystem wrist, double goalAngleRadians) {
@@ -32,7 +32,7 @@ public class SetWristGoal extends CommandBase {
     m_wrist = wrist;
     m_constraints = WristConstants.wristConstraints;
     m_goalAngleRadians = goalAngleRadians;
-    addRequirements(m_wrist);
+    //addRequirements(m_wrist);
   }
 
   // Called when the command is initially scheduled.

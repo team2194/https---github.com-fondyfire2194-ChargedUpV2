@@ -29,7 +29,10 @@ public class WaitWristAtTarget extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (m_startTime == 0 && m_wrist.inRange()) {
 
+      m_startTime = Timer.getFPGATimestamp();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -40,6 +43,7 @@ public class WaitWristAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_wrist.inRange();
+    return m_wrist.atTargetAngle() || Timer.getFPGATimestamp() > m_startTime + 2;
+    
   }
 }
