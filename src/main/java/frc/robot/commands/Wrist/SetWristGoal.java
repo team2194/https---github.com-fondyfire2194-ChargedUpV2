@@ -30,7 +30,7 @@ public class SetWristGoal extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_wrist = wrist;
-    m_constraints = WristConstants.wristConstraints;
+    m_constraints = WristConstants.wristFastConstraints;
     m_goalAngleRadians = goalAngleRadians;
     //addRequirements(m_wrist);
   }

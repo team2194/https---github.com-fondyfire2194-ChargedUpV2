@@ -39,7 +39,7 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
                 addCommands(
                                 new ParallelRaceGroup(
                                                 new ParallelCommandGroup(
-                                                                new SetWristGoal(wrist, WristConstants.wristConstraints,
+                                                                new SetWristGoal(wrist, WristConstants.wristFastConstraints,
                                                                                 presetWristAngles.SAFE_TRAVEL
                                                                                                 .getAngleRads()),
 

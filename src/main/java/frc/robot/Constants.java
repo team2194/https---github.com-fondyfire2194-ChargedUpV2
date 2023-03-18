@@ -305,9 +305,9 @@ public final class Constants {
 
     public static final double MAX_ANGLE = 250;
 
-    public static final TrapezoidProfile.Constraints wristConstraints =
+    // public static final TrapezoidProfile.Constraints wristConstraints =
 
-        new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
+    //     new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
 
         public static final TrapezoidProfile.Constraints wristFastConstraints =
 

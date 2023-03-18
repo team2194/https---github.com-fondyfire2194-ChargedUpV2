@@ -91,7 +91,7 @@ public class WristSubsystem extends SubsystemBase {
     private double positionChangeper20ms;
 
     public ProfiledPIDController m_wristController = new ProfiledPIDController(0.005, 0, 0,
-            WristConstants.wristConstraints, .02);
+            WristConstants.wristFastConstraints, .02);
 
     public double deliverAngleRads;
 
@@ -149,7 +149,7 @@ public class WristSubsystem extends SubsystemBase {
 
         mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
 
-        setController(WristConstants.wristConstraints, presetWristAngles.HOME.getAngleRads(), false);
+        setController(WristConstants.wristFastConstraints, presetWristAngles.HOME.getAngleRads(), false);
 
         m_motor.setSmartCurrentLimit(20);
 
@@ -242,12 +242,12 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setControllerAtPosition() {
         goalAngleRadians = getAngleRadians();
-        setController(WristConstants.wristConstraints, goalAngleRadians, false);
+        setController(WristConstants.wristFastConstraints, goalAngleRadians, false);
 
     }
 
     public void redoTarget() {
-        setController(WristConstants.wristConstraints, goalAngleRadians, false);
+        setController(WristConstants.wristFastConstraints, goalAngleRadians, false);
 
     }
 
@@ -255,7 +255,7 @@ public class WristSubsystem extends SubsystemBase {
 
         double temp = getAngleRadians() + val;
 
-        setController(WristConstants.wristConstraints, temp, false);
+        setController(WristConstants.wristFastConstraints, temp, false);
 
     }
 

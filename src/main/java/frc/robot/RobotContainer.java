@@ -246,7 +246,7 @@ public class RobotContainer {
                                                 LiftArmConstants.liftArmFastConstraints,
                                                 presetLiftAngles.PICKUP_CONE_LOAD_STATION.getInches(), false)))
 
-                                .onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristConstraints,
+                                .onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints,
                                                 presetWristAngles.PICKUP_CONE_LOAD_STATION.getAngleRads(), false)))
 
                                 .onTrue(Commands.runOnce(() -> m_extendArm.setNextTarget(
@@ -256,7 +256,7 @@ public class RobotContainer {
                                 LiftArmConstants.liftArmFastConstraints,
                                 presetLiftAngles.PICKUP_CUBE_LOAD_STATION.getInches(), false)))
 
-                                .onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristConstraints,
+                                .onTrue(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints,
                                                 presetWristAngles.PICKUP_CUBE_LOAD_STATION.getAngleRads(), false)))
 
                                 .onTrue(Commands.runOnce(() -> m_extendArm.setNextTarget(
@@ -352,10 +352,10 @@ public class RobotContainer {
                 // wrist
 
                 m_armsController.start().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristConstraints, 1, false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
 
                 m_armsController.povUp().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristConstraints, 3, false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 3, false)));
 
                 // ext arm
 
@@ -444,13 +444,13 @@ public class RobotContainer {
 
                 return Commands.runOnce(() -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,
                                 m_liftArm.deliverInches, false))
-                                .andThen(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristConstraints,
+                                .andThen(Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints,
                                                 m_wrist.deliverAngleRads, false)));
         }
 
         public Command getMoveWristCommand() {
 
-                return Commands.runOnce(() -> m_wrist.setController(WristConstants.wristConstraints,
+                return Commands.runOnce(() -> m_wrist.setController(WristConstants.wristFastConstraints,
                                 m_wrist.deliverAngleRads, false));
 
         }

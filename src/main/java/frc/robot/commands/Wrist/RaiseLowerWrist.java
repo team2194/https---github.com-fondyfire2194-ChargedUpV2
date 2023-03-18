@@ -28,7 +28,7 @@ public class RaiseLowerWrist extends InstantCommand {
     if (!m_direction)
       inc *= -1;
     double temp = m_wrist.goalAngleRadians + inc;
-    m_wrist.setController(WristConstants.wristConstraints, temp, false);
+    m_wrist.setController(WristConstants.wristFastConstraints, temp, false);
 
   }
 }

@@ -44,7 +44,7 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
                     
         new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
 
-        new SetWristGoal(wrist, WristConstants.wristConstraints, wrist.deliverAngleRads),
+        new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads),
 
                       new PositionProfileWrist(wrist, lift),
                       new PositionProfileExtendArm(extend, lift),
