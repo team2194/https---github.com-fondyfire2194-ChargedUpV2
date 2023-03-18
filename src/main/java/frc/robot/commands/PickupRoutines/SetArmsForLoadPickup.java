@@ -9,17 +9,20 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
+import frc.robot.commands.ExtendArm.SetExtArmGoal;
+import frc.robot.commands.ExtendArm.WaitExtendAtTarget;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
 import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
-import frc.robot.commands.LiftArm.WaitLiftClearForWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
-import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
-import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
+import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem;
+import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -29,11 +32,12 @@ import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class LiftWristPresetLoadStation extends SequentialCommandGroup {
+public class SetArmsForLoadPickup extends SequentialCommandGroup {
         /** Creates a new GroundIntake. */
         private gamePiece type;
 
-        public LiftWristPresetLoadStation(LiftArmSubsystem lift, WristSubsystem wrist, IntakeSubsystem intake,
+        public SetArmsForLoadPickup(LiftArmSubsystem lift, WristSubsystem wrist, ExtendArmSubsystem extend,
+                        IntakeSubsystem intake,
                         GameHandlerSubsystem ghs) {
                 // Add your commands in the addCommands() call, e.g.
                 // addCommands(new FooCommand(), new BarCommand() extend, Intake);
@@ -42,6 +46,7 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
 
                 addCommands(
                                 new ParallelRaceGroup(
+
                                                 new ParallelCommandGroup(
 
                                                                 new ConditionalCommand(
@@ -66,20 +71,33 @@ public class LiftWristPresetLoadStation extends SequentialCommandGroup {
                                                                                                 presetWristAngles.PICKUP_CUBE_LOAD_STATION
                                                                                                                 .getAngleRads()),
 
-                                                                                () -> type == gamePiece.CONE)),
+                                                                                () -> type == gamePiece.CONE),
 
-                                                new PositionProfileWrist(wrist, lift),
-                                                new PositionProfileLiftInches(lift)),
+                                                                new PositionProfileWrist(wrist, lift),
 
-                                new SequentialCommandGroup(
+                                                                new PositionProfileLiftInches(lift),
 
-                                                new SetIntakePieceType(intake, type),
+                                                                new PositionProfileExtendArm(extend, lift)),
 
-                                                // new WaitCommand(1),
+                                                new SequentialCommandGroup(
 
-                                                // new WaitCommand(1),
-                                                new WaitLiftAtTarget(lift, 2),
-                                                new WaitWristAtTarget(wrist, 2)));
+                                                                new SetIntakePieceType(intake, type),
+
+                                                                // new WaitCommand(1),
+
+                                                                // new WaitCommand(1),
+                                                                new WaitLiftAtTarget(lift, 2),
+
+                                                                new WaitWristAtTarget(wrist, 2),
+
+                                                                new SetExtArmGoal(extend,
+                                                                                ExtendArmConstants.deliverConstraints,
+                                                                                presetExtArmDistances.PICKUP_CONE_LOAD_STATION
+                                                                                                .getDistance()),
+
+                                                                new WaitCommand(.2),
+                                                                
+                                                                new WaitExtendAtTarget(extend, 0.24))));
 
         }
 }

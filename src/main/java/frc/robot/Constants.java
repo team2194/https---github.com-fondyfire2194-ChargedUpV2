@@ -257,9 +257,9 @@ public final class Constants {
 
     public static double kControllerDeadband = 0.05;
 
-    public static final TrapezoidProfile.Constraints extendArmConstraints
+    // public static final TrapezoidProfile.Constraints extendArmConstraints
 
-        = new Constraints(15, 30);
+    //     = new Constraints(15, 30);
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 

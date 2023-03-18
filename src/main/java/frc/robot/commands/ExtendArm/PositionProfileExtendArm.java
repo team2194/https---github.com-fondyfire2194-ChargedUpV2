@@ -111,14 +111,14 @@ public class PositionProfileExtendArm extends CommandBase {
 
     m_ext.volts = m_ext.ff + m_ext.pidVal + m_ext.gravVal;
 
-    if (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0) {
+    if (!m_ext.atDepth && (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0)) {
 
       m_ext.m_motor.setVoltage(m_ext.volts);
 
     } else
 
     {
-
+      m_ext.setControllerAtPosition();
       m_ext.m_motor.setVoltage(0);
     }
 
@@ -148,13 +148,13 @@ public class PositionProfileExtendArm extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_ext.endComm = false;
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_ext.endComm;
+    return false;
   }
 
   private boolean checkIzone(double izonelimit) {

@@ -204,13 +204,13 @@
         },
         "Vision": {
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "Scheduler": {
           "open": true
-        },
-        "open": true
+        }
       },
       "swerve": {
         "drive": {

@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_drive.setIdleMode(true);
 
-    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
 
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
       m_robotContainer.m_autoFactory.autonomousCommand.cancel();
 
     }
-    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
+    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         m_robotContainer.m_extendArm.getPositionInches(), false);
 
     m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,

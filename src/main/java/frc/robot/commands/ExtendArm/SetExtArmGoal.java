@@ -31,7 +31,7 @@ public class SetExtArmGoal extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_ext = ext;
-    m_constraints = ExtendArmConstants.extendArmConstraints;
+    m_constraints = ExtendArmConstants.extendArmFastConstraints;
     m_goalDist = goalDist;
    // addRequirements(m_ext);
   }

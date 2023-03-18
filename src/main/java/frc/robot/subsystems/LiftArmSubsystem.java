@@ -346,15 +346,13 @@ public class LiftArmSubsystem extends SubsystemBase {
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double inches, boolean initial) {
-        if (isStopped()) {
-            setControllerConstraints(constraints);
-            setControllerGoal(inches);
-            goalInches = inches;
-            if (initial)
-                m_liftController.reset(new TrapezoidProfile.State(0, 0));
-            else
-                m_liftController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
-        }
+        setControllerConstraints(constraints);
+        setControllerGoal(inches);
+        goalInches = inches;
+        if (initial)
+            m_liftController.reset(new TrapezoidProfile.State(0, 0));
+        else
+            m_liftController.reset(new TrapezoidProfile.State(getPositionInches(), getCanCoderRateRadsPerSec()));
 
         m_sff = new SimpleMotorFeedforward(Pref.getPref("liftKs"), Pref.getPref("liftKv"));
 

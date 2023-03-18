@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -71,8 +72,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
             CANSparkMaxLowLevel.MotorType.kBrushless);
     private final RelativeEncoder mEncoder = m_motor.getEncoder();
 
+    public SparkMaxPIDController m_posnController;
+
     public ProfiledPIDController m_extController = new ProfiledPIDController(0.005, 0, 0,
-            ExtendArmConstants.extendArmConstraints);
+            ExtendArmConstants.extendArmFastConstraints);
 
     private double inPositionBandwidth = .25;
 
@@ -118,7 +121,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean firstUp;
 
-    public boolean endComm;
+    //public boolean endComm;
 
     public double pidVal;
 
@@ -131,6 +134,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public boolean atGoal;
 
     private double nextTarget;
+
+    public double positionTarget;
+
+    public boolean atDepth;
 
     public ExtendArmSubsystem() {
 
@@ -147,6 +154,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
         m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
 
+        m_posnController = m_motor.getPIDController();
+
+        m_posnController.setP(.01);
+
         mEncoder.setPositionConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV);
 
         mEncoder.setVelocityConversionFactor(ExtendArmConstants.INCHES_PER_ENCODER_REV / 60);
@@ -159,7 +170,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
-        setController(ExtendArmConstants.extendArmConstraints, presetExtArmDistances.HOME.getDistance(), true);
+        setController(ExtendArmConstants.extendArmFastConstraints, presetExtArmDistances.HOME.getDistance(), true);
 
         if (RobotBase.isSimulation()) {
 
@@ -179,7 +190,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-   
+
         loopctr++;
 
         if (faultSeen != 0)
@@ -193,10 +204,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
             positionInches = round2dp(getPositionInches());
             inchespersec = round2dp(getInchesPerSec());
 
-
-            
             extendMotorConnected = checkCANOK();
-            atGoal=m_extController.atGoal();
+            atGoal = m_extController.atGoal();
             loopctr = 0;
 
         }
@@ -231,14 +240,13 @@ public class ExtendArmSubsystem extends SubsystemBase {
     public void setController(TrapezoidProfile.Constraints constraints, double distance, boolean initial) {
 
         if (isStopped()) {
-
             setControllerConstraints(constraints);
             setControllerGoal(distance);
             goalInches = distance;
             if (initial)
                 m_extController.reset(new TrapezoidProfile.State(presetExtArmDistances.HOME.getDistance(), 0));
             else
-                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
+                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), getInchesPerSec()));
 
         }
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));
@@ -248,19 +256,18 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public void setControllerAtPosition() {
         goalInches = getPositionInches();
-        setController(ExtendArmConstants.extendArmConstraints, goalInches, false);
+        setController(ExtendArmConstants.extendArmFastConstraints, goalInches, false);
     }
 
     public void redoTarget() {
-        setController(ExtendArmConstants.extendArmConstraints, goalInches, false);
+        setController(ExtendArmConstants.extendArmFastConstraints, goalInches, false);
     }
 
-    
     public void incGoal(double val) {
 
         double temp = getPositionInches() + val;
 
-        setController(ExtendArmConstants.extendArmConstraints, temp, false);
+        setController(ExtendArmConstants.extendArmFastConstraints, temp, false);
 
     }
 
@@ -270,11 +277,11 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     }
 
-    public void setNextTarget(double value){
-        nextTarget=value;
+    public void setNextTarget(double value) {
+        nextTarget = value;
     }
 
-    public double getNextTarget(){
+    public double getNextTarget() {
         return nextTarget;
     }
 
@@ -371,6 +378,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         number = Math.round(number * 100);
         number /= 100;
         return number;
-}
+    }
 
 }
