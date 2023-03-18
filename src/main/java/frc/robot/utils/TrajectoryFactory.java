@@ -77,8 +77,16 @@ public class TrajectoryFactory {
         m_ghs = ghs;
 
         ppTrajChooser.setDefaultOption("BackUpCenterPath", "BackUpCenter");
+        ppTrajChooser.addOption("BackUpLeftCenterPath", "BackUpLeftCenter");
+        ppTrajChooser.addOption("BackUpLeftShelfPath", "BackUpLeftShelf");
+        ppTrajChooser.addOption("BackUpRightCenterPath", "BackUpRightCenter");
+        ppTrajChooser.addOption("BackUpRightShelfPath", "BackUpRightShelf");
+
         ppTrajChooser.addOption("PushCubeCenterPath", "PushCubeCenter");
-        ppTrajChooser.addOption("BackUpLeftHybridPath", "BackUpLeftHybrid");
+        ppTrajChooser.addOption("PushCubeLeftShelfPath", "PushCubeLeftShelf");
+        ppTrajChooser.addOption("PushCubeRighShelfPath", "PushCubeRightShelf");
+
+
        
 
         createSelectedTrajectory(2, 2, true);
