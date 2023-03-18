@@ -30,10 +30,6 @@ public class WaitWristAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_wrist.m_wristController.atGoal() && m_startTime == 0) {
-
-      m_startTime = Timer.getFPGATimestamp();
-    }
   }
 
   // Called once the command ends or is interrupted.
@@ -44,6 +40,6 @@ public class WaitWristAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_wrist.getAngleDegrees() < 60;
+    return m_wrist.inRange();
   }
 }

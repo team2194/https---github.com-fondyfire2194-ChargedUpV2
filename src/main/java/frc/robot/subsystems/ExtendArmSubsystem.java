@@ -76,6 +76,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     private double inPositionBandwidth = .25;
 
+    private double inRangeBandwidth = 2;
+
     public boolean extendMotorConnected;
 
     public int faultSeen;
@@ -259,6 +261,10 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean atTargetPosition() {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
+    }
+
+    public boolean inRAnge() {
+        return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
     }
 
     public boolean isStopped() {

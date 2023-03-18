@@ -74,7 +74,9 @@ public class WristSubsystem extends SubsystemBase {
 
     public ArmFeedforward m_wristfeedforward;
 
-    private double inPositionBandwidth = 1;
+    private double inPositionBandwidth = .1;
+
+    private double inRangeBandwidth = .2;
 
     public boolean wristMotorConnected;
 
@@ -249,19 +251,16 @@ public class WristSubsystem extends SubsystemBase {
 
     }
 
-    // public void runDeliverAngle() {
-
-    //     setController(WristConstants.wristConstraints, deliverAngleRads, false);
- 
-    //     SmartDashboard.putNumber("WDA", deliverAngleRads);
-    // }
-
     public void resetAngle() {
         mEncoder.setPosition(0);
     }
 
     public boolean atTargetAngle() {
         return Math.abs(goalAngleRadians - getAngleDegrees()) < inPositionBandwidth;
+    }
+
+    public boolean inRange() {
+        return Math.abs(goalAngleRadians - getAngleDegrees())<inRangeBandwidth;
     }
 
     public double getAngleDegrees() {

@@ -132,6 +132,55 @@ public class autoBalance {
         return 0;
     }
 
+
+     // routine for automatically driving onto and engaging the charge station.
+    // returns a value from -1.0 to 1.0, which left and right motors should be set
+    // to.
+    public double autoBalanceRoutineNavx() {
+        switch (state) {
+            // drive forwards to approach station, exit when tilt is detected
+            case 0:
+                if (getTilt() > onChargeStationDegree) {
+                    debounceCount++;
+                }
+                if (debounceCount > secondsToTicks(debounceTime)) {
+                    state = 1;
+                    debounceCount = 0;
+                    return robotSpeedSlow;
+                }
+                return robotSpeedFast;
+            // driving up charge station, drive slower, stopping when level
+            case 1:
+                if (getTilt() < levelDegree) {
+                    debounceCount++;
+                }
+                if (debounceCount > secondsToTicks(debounceTime)) {
+                    state = 2;
+                    debounceCount = 0;
+                    return 0;
+                }
+                return robotSpeedSlow;
+            // on charge station, stop motors and wait for end of auto
+            case 2:
+                if (Math.abs(getTilt()) <= levelDegree / 2) {
+                    debounceCount++;
+                }
+                if (debounceCount > secondsToTicks(debounceTime)) {
+                    state = 4;
+                    debounceCount = 0;
+                    return 0;
+                }
+                if (getTilt() >= levelDegree) {
+                    return 0.1;
+                } else if (getTilt() <= -levelDegree) {
+                    return -0.1;
+                }
+            case 3:
+                return 0;
+        }
+        return 0;
+    }
+
     // Same as auto balance above, but starts auto period by scoring
     // a game piece on the back bumper of the robot
     public double scoreAndBalance() {

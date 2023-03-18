@@ -158,7 +158,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-
     m_robotContainer.m_drive.setIdleMode(true);
 
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmConstraints,
@@ -171,11 +170,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_autoFactory.createCommands();
 
     m_robotContainer.m_autoFactory.autonomousCommand = m_robotContainer.m_autoFactory.getAutonomousCommand();
-
-    if (m_robotContainer.m_autoFactory != null) {
-
-      m_robotContainer.m_autoFactory.autonomousCommand.schedule();
-    }
 
   }
 

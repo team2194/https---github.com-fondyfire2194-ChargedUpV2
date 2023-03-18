@@ -110,6 +110,7 @@ public class AutoFactory {
 
         m_autoChooser.addOption("DeliverMid", 2);
 
+
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser1.addOption("BalanceCharge", 1);
@@ -165,7 +166,6 @@ public class AutoFactory {
         if (autoselect == 2)
             tempCommand = getDeliverMid();
 
-        SmartDashboard.putString("traj1name", traj1name);
 
         return tempCommand;
 
@@ -185,7 +185,7 @@ public class AutoFactory {
 
             if (autoselect1 == 1) {
 
-                tempCommand = new DriveOnChargeStation();
+                tempCommand = new DriveOnChargeStation(m_drive,1.3);
             }
 
             if (startLocation == 0 && autoselect1 == 2) {
@@ -225,7 +225,6 @@ public class AutoFactory {
 
             tempCommand = m_tf.followTrajectoryCommand(traj2, true);
 
-            SmartDashboard.putString("traj2name", traj2name);
         }
 
         return tempCommand;

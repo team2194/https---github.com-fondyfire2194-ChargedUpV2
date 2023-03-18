@@ -85,7 +85,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private boolean useSoftwareLimit;
 
-    private double inPositionBandwidth = .02;
+    private double inPositionBandwidth = .5;
+   
+    private double inRangeBandwidth = 1;
 
     public boolean liftArmMotorConnected;
 
@@ -237,6 +239,9 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     public boolean atTargetPosition() {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
+    }
+    public boolean inRange(){
+        return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
     }
 
     // will be 0 at horizontal
