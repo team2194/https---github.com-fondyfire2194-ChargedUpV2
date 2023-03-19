@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
-import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
-import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.subsystems.DriveSubsystem;
@@ -203,12 +201,16 @@ public class AutoFactory {
             }
         }
         if (startLocation == 3) {
+
             traj2name = "BackUpLeftShelf";
+
             trajReqd = true;
         }
 
         if (startLocation == 4) {
+
             traj2name = "BackUpRightShelf";
+
             trajReqd = true;
         }
 
@@ -224,9 +226,15 @@ public class AutoFactory {
 
     }
 
+    public Command getCommand3() {
+
+        return new RetractWristExtendLift(m_lift, m_extend, m_wrist, false);
+
+    }
+
     public void createCommands() {
         command1 = getCommand1();
-        command2 = new DoNothing();// getCommand2();
+        command2 = getCommand2();
     }
 
     public Command getAutonomousCommand() {
@@ -245,15 +253,9 @@ public class AutoFactory {
 
                 new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, false),
 
-                // new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
+                new WaitCommand(1)
 
-
-                new WaitCommand(1),
-
-                Commands.runOnce(() -> m_extend.setControllerGoal(0)),
-                Commands.runOnce(() -> m_wrist.setControllerGoal(presetWristAngles.HOME.getAngleRads())),
-                new WaitCommand(2),
-                Commands.runOnce((() -> m_lift.setControllerGoal(0))));
+        );
 
     }
 

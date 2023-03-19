@@ -154,7 +154,7 @@ public class IntakeSubsystem extends SubsystemBase {
       cubePresent = cubeSensedDistance < Pref.getPref("cubedist");
     }
 
-    if (loopctr == 8) {
+    if (loopctr == 18) {
       if (conePresent && !cubePresent)
         piece = robotPiece.CONE;
 
@@ -164,8 +164,10 @@ public class IntakeSubsystem extends SubsystemBase {
       if ((!conePresent && !cubePresent) || (conePresent && cubePresent))
         piece = robotPiece.NO_PIECE;
 
+        rpm = getRPM();
+
     }
-    if (loopctr == 10) {
+    if (loopctr == 34) {
 
       if (expectedPieceType == gamePiece.CONE) {
         coneExpected = true;
@@ -175,6 +177,8 @@ public class IntakeSubsystem extends SubsystemBase {
         coneExpected = false;
         cubeExpected = true;
       }
+
+      amps=getAmps();
 
       pieceSensorsOK = true;// coneSensorOK && cubeSensorOK;
 

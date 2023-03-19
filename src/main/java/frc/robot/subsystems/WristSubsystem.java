@@ -74,9 +74,9 @@ public class WristSubsystem extends SubsystemBase {
 
     public ArmFeedforward m_wristfeedforward;
 
-    private double inPositionBandwidth = .1;
+    private double inPositionBandwidth = .1;//5 degrees
 
-    private double inRangeBandwidth = .2;
+    private double inRangeBandwidth = .2;//rads 10 degrees
 
     public boolean wristMotorConnected;
 
@@ -177,7 +177,7 @@ public class WristSubsystem extends SubsystemBase {
             // appliedOutput = round2dp(getAppliedOutput());
             // amps = round2dp(getAmps());
             angleDegrees = round2dp(getAngleDegrees());
-            angleRadians = round2dp(Units.degreesToRadians(angleDegrees);)
+            angleRadians = round2dp(Units.degreesToRadians(angleDegrees));
             // atGoal = m_wristController.atGoal();
 
         }

@@ -51,10 +51,10 @@ public class MonitorThreadIntake {
                     m_intake.tstctr++;
 
                     if (true) {
-                        rpm.set(m_intake.getRPM());
+                        rpm.set(m_intake.rpm);
                         cube.set(m_intake.getCubeSensorDistance());
                         cone.set(m_intake.getConeSensorDistance());
-                        amps.set(m_intake.getAmps());
+                        amps.set(m_intake.amps);
                                   
                     }
                     Thread.sleep(100);

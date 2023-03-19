@@ -81,7 +81,7 @@ public class MonitorThreadWrist {
                         pidval.set(m_wrist.pidVal);
                         volts.set(m_wrist.volts);
                         kvEst.set((m_wrist.volts - WristConstants.ksVolts - WristConstants.kgVolts)
-                                / m_wrist.getRadsPerSec());
+                                / m_wrist.radspersec);
                         profpos.set(m_wrist.m_wristController.getSetpoint().position);
                         disterr.set(m_wrist.m_wristController.getPositionError());
                         velerr.set(m_wrist.m_wristController.getVelocityError());
