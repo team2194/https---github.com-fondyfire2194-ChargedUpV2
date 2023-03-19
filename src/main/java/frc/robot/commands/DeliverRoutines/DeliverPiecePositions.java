@@ -37,33 +37,31 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
 
-    new ParallelRaceGroup(
-      
-      new ParallelCommandGroup(
+        new ParallelRaceGroup(
 
-                    
-        new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
+            new ParallelCommandGroup(
 
-        new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads),
+                new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
 
-                      new PositionProfileWrist(wrist, lift),
-                      new PositionProfileExtendArm(extend, lift),
-                      new PositionProfileLiftInches(lift)),
+                new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads),
 
-      new SequentialCommandGroup(
+                new PositionProfileWrist(wrist, lift),
+                new PositionProfileExtendArm(extend, lift),
+                new PositionProfileLiftInches(lift)),
 
+            new SequentialCommandGroup(
 
-        new WaitCommand(2),
+                
 
-        new WaitLiftAtTarget(lift, .25),
+                new WaitLiftAtTarget(lift, 2),
 
-        new WaitWristAtTarget(wrist, .24),
+                new WaitWristAtTarget(wrist, .24),
 
-        new SetExtArmGoal(extend, ExtendArmConstants.deliverConstraints, extend.deliverDistance),
+                new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints, extend.deliverDistance),
 
-        new WaitCommand(1),
+                new WaitExtendAtTarget(extend, .24),
 
-        new WaitExtendAtTarget(extend, .24))));
+                new EjectPieceFromIntake(intake))));
 
   }
 }

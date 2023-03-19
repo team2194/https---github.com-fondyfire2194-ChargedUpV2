@@ -8,7 +8,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.LiftArmConstants;
@@ -20,7 +19,7 @@ public class JogLiftArm extends CommandBase {
   private CommandXboxController m_controller;
   private DoubleSupplier m_speed;
   private double throttle;
-  private double throttleMultiplier = .25;
+  private double throttleMultiplier = .5;
 
   // private final SlewRateLimiter m_slewLift = new
   // SlewRateLimiter(LiftArmConstants.JOG_SLEW_RATE, -10000, 0);

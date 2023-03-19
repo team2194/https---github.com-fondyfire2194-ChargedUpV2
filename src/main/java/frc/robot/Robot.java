@@ -4,14 +4,10 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -66,7 +62,9 @@ public class Robot extends TimedRobot {
     if (RobotBase.isReal())
       DataLogManager.start();
     // Instantiate our RobotContainer.
-
+    // Record both DS control and joystick data
+    DriverStation.startDataLog(DataLogManager.getLog());
+    
     m_robotContainer = new RobotContainer();
   }
 
@@ -96,7 +94,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_disableStartTime = 0;
     firstScan = true;
-    CommandScheduler.getInstance().cancelAll();
+    // CommandScheduler.getInstance().cancelAll();
     // Shuffleboard.selectTab("Competition");
   }
 
@@ -179,10 +177,8 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
-
 
     m_robotContainer.m_drive.setIdleMode(true);
 
@@ -190,8 +186,8 @@ public class Robot extends TimedRobot {
       m_robotContainer.m_autoFactory.autonomousCommand.cancel();
 
     }
-    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
-        m_robotContainer.m_extendArm.getPositionInches(), false);
+    // m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
+    // m_robotContainer.m_extendArm.getPositionInches(), false);
 
     m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,
         m_robotContainer.m_liftArm.getPositionInches(), false);

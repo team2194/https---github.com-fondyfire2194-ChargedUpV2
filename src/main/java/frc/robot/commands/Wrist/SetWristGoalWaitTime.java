@@ -8,41 +8,40 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.WristConstants;
-import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class SetWristGoalWaitLift extends CommandBase {
+public class SetWristGoalWaitTime extends CommandBase {
   private WristSubsystem m_wrist;
-  private LiftArmSubsystem m_lift;
+
   private TrapezoidProfile.Constraints m_constraints;
   private double m_goalAngleRadians;
-  private double m_liftCanCoderAngle;
+
   private boolean goalset;
   private double m_startTime;
+  private double m_time;
 
-  public SetWristGoalWaitLift(WristSubsystem wrist, LiftArmSubsystem lift, TrapezoidProfile.Constraints constraints,
-      double goalAngleRadians, double liftCanCoderAngle) {
+  public SetWristGoalWaitTime(WristSubsystem wrist, TrapezoidProfile.Constraints constraints,
+      double goalAngleRadians, double time) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_wrist = wrist;
-    m_lift = lift;
+
     m_constraints = constraints;
     m_goalAngleRadians = goalAngleRadians;
-    m_liftCanCoderAngle = liftCanCoderAngle;
+    m_time = time;
   }
 
-  public SetWristGoalWaitLift(WristSubsystem wrist, LiftArmSubsystem lift, double goalAngleRadians,
-      double liftCanCoderAngle) {
+  public SetWristGoalWaitTime(WristSubsystem wrist, double goalAngleRadians,
+      double time) {
     // Use addRequirements() here to declare subsystem dependencies.
 
     m_wrist = wrist;
-    m_lift = lift;
     m_constraints = WristConstants.wristFastConstraints;
     m_goalAngleRadians = goalAngleRadians;
-    m_liftCanCoderAngle = liftCanCoderAngle;
+    m_time = time;
 
   }
 
@@ -55,7 +54,7 @@ public class SetWristGoalWaitLift extends CommandBase {
 
   @Override
   public void execute() {
-    if (m_lift.getCanCoderPosition() > m_liftCanCoderAngle) {
+    if (Timer.getFPGATimestamp() > m_startTime + m_time) {
       m_wrist.setController(m_constraints, m_goalAngleRadians, false);
       m_wrist.goalAngleRadians = m_goalAngleRadians;
       goalset = true;
@@ -71,6 +70,6 @@ public class SetWristGoalWaitLift extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return goalset || Timer.getFPGATimestamp() > m_startTime + 6;
+    return goalset;
   }
 }

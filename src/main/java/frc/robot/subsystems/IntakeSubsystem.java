@@ -140,12 +140,10 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
 
     loopctr++;
-    SmartDashboard.putNumber("INLP", loopctr);
-    SmartDashboard.putBoolean("COEXP", coneExpected);
+  
+    if (loopctr == 15) {
 
-    if (loopctr == 5) {
-
-      intakeMotorConnected = checkCANOK();
+     // intakeMotorConnected = checkCANOK();
 
       coneSensedDistance = getConeSensorDistance();
 

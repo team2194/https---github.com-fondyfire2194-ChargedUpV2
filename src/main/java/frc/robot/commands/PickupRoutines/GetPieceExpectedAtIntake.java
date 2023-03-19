@@ -5,6 +5,7 @@
 package frc.robot.commands.PickupRoutines;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
@@ -36,6 +37,9 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
   double useSpeed;
 
+  private double m_startTimeCone;
+  private double m_startTimeCube;
+
   public GetPieceExpectedAtIntake(IntakeSubsystem intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intake;
@@ -45,6 +49,9 @@ public class GetPieceExpectedAtIntake extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    m_startTimeCone = 0;
+    m_startTimeCube = 0;
     useSpeed = .6;
     if (m_intake.expectedPieceType == gamePiece.CONE)
 
@@ -65,6 +72,20 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
     coneSeen = aveConeDist < coneSenseThreshold;
 
+    if (!cubeSeen)
+      m_startTimeCube = 0;
+
+    if (cubeSeen && m_startTimeCube == 0) {
+      m_startTimeCube = Timer.getFPGATimestamp();
+    }
+
+    if (!coneSeen)
+      m_startTimeCone = 0;
+
+    if (coneSeen && m_startTimeCone == 0) {
+      m_startTimeCone = Timer.getFPGATimestamp();
+    }
+
   }
 
   // Called once the command ends or is interrupted.
@@ -76,6 +97,8 @@ public class GetPieceExpectedAtIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return cubeSeen || coneSeen;
+    return cubeSeen && m_startTimeCube != 0 && Timer.getFPGATimestamp() > m_startTimeCube + 1
+
+        || coneSeen && m_startTimeCone != 0 && Timer.getFPGATimestamp() > m_startTimeCone + 1;
   }
 }

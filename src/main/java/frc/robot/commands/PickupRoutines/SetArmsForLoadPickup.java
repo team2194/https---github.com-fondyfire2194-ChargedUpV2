@@ -100,7 +100,7 @@ public class SetArmsForLoadPickup extends SequentialCommandGroup {
                                                                 new WaitWristAtTarget(wrist, .2),
 
                                                                 new SetExtArmGoal(extend,
-                                                                                ExtendArmConstants.deliverConstraints,
+                                                                                ExtendArmConstants.extendArmFastConstraints,
                                                                                 presetExtArmDistances.PICKUP_CONE_LOAD_STATION
                                                                                                 .getDistance()),
 

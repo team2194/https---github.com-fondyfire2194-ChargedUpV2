@@ -52,7 +52,7 @@ public class WristSubsystem extends SubsystemBase {
 
         PLACE_CONE_MID_PIPE(146),
 
-        PLACE_CONE_TOP_PIPE(163);
+        PLACE_CONE_TOP_PIPE(153);
 
         private double angle;
 
@@ -120,7 +120,6 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean inIZone;
 
-
     public double angleRadians;
 
     public double angleDegrees;
@@ -145,7 +144,7 @@ public class WristSubsystem extends SubsystemBase {
 
         mEncoder.setVelocityConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV / 60);
 
-       // SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
+        // SmartDashboard.putNumber("WRDPR", WristConstants.RADIANS_PER_ENCODER_REV);
 
         mEncoder.setPosition(presetWristAngles.HOME.getAngleRads());
 
@@ -173,20 +172,20 @@ public class WristSubsystem extends SubsystemBase {
         if (faultSeen != 0)
             faultSeen = getFaults();
 
-        if (loopctr == 5) {
+        if (loopctr == 25) {
 
-            appliedOutput = round2dp(getAppliedOutput());
-            amps = round2dp(getAmps());
+            // appliedOutput = round2dp(getAppliedOutput());
+            // amps = round2dp(getAmps());
             angleDegrees = round2dp(getAngleDegrees());
-            angleRadians=round2dp(getAngleRadians());
-            atGoal = m_wristController.atGoal();
+            angleRadians = round2dp(Units.degreesToRadians(angleDegrees);)
+            // atGoal = m_wristController.atGoal();
 
         }
 
-        if (loopctr == 6) {
+        if (loopctr == 36) {
 
             radspersec = round2dp(getRadsPerSec());
-            wristMotorConnected = checkCANOK();
+            // wristMotorConnected = checkCANOK();
             loopctr = 0;
 
         }
@@ -268,7 +267,7 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean inRange() {
-        return Math.abs(goalAngleRadians - getAngleRadians())<inRangeBandwidth;
+        return Math.abs(goalAngleRadians - getAngleRadians()) < inRangeBandwidth;
     }
 
     public double getAngleDegrees() {

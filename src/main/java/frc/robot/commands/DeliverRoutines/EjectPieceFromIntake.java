@@ -5,6 +5,7 @@
 package frc.robot.commands.DeliverRoutines;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
@@ -13,7 +14,7 @@ public class EjectPieceFromIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
-  private double m_speed = .7;
+  private double m_speed = .9;
 
   private robotPiece m_type;
 
@@ -21,13 +22,15 @@ public class EjectPieceFromIntake extends CommandBase {
   private double aveCubeDist;
   private double aveAmps;
 
+  private double m_startTime;
+
   public int cubeSenseThreshold = 300;
 
   public int coneSenseThreshold = 300;
 
   public double ampsThreshold = 20;
 
- LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
+  LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
 
   LinearFilter ampsFilter = LinearFilter.movingAverage(5);
 
@@ -45,6 +48,8 @@ public class EjectPieceFromIntake extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+    m_startTime = Timer.getFPGATimestamp();
 
     if (m_intake.piece == robotPiece.CUBE)
 
@@ -74,6 +79,6 @@ public class EjectPieceFromIntake extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return noCubeSeen && noConeSeen;
+    return noCubeSeen && noConeSeen || Timer.getFPGATimestamp() > m_startTime + 2;
   }
 }

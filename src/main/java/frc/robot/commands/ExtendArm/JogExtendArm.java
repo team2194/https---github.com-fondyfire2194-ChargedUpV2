@@ -41,7 +41,7 @@ public class JogExtendArm extends CommandBase {
   @Override
   public void execute() {
 
-    double throttleMultiplier = .1;
+    double throttleMultiplier = .5;
 
     throttle = MathUtil.applyDeadband(Math.abs(m_speed.getAsDouble()),
         ExtendArmConstants.kControllerDeadband)

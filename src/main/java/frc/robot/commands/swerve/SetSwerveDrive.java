@@ -64,8 +64,8 @@ public class SetSwerveDrive extends CommandBase {
     strafe = Math.signum(strafe) * Math.pow(strafe, 2);
     rotation = Math.signum(rotation) * Math.pow(rotation, 2);
 
-    throttle *= -DriveConstants.kMaxSpeedMetersPerSecond / 3;
-    strafe *= -DriveConstants.kMaxSpeedMetersPerSecond / 3;
+    throttle *= -DriveConstants.kMaxSpeedMetersPerSecond;
+    strafe *= -DriveConstants.kMaxSpeedMetersPerSecond;
     rotation *= DriveConstants.kMaxRotationRadiansPerSecond;
 
     // SmartDashboard.putNumber("DRTH", throttle);

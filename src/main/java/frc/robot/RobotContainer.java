@@ -19,6 +19,7 @@ import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.Constants.LiftArmConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
@@ -107,10 +108,10 @@ public class RobotContainer {
 
         public LightStrip m_ls = new LightStrip(9, 60);
 
-        public MonitorThreadExt mext;
-        public MonitorThreadLift mlift;
-        public MonitorThreadWrist mwrist;
-        public MonitorThreadIntake mIntake;
+        // public MonitorThreadExt mext;
+        // public MonitorThreadLift mlift;
+        // public MonitorThreadWrist mwrist;
+        // public MonitorThreadIntake mIntake;
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -125,21 +126,21 @@ public class RobotContainer {
 
                 m_liftArm = new LiftArmSubsystem();
 
-                mlift = new MonitorThreadLift(m_liftArm);
-
-                mlift.startThread();
-
                 m_extendArm = new ExtendArmSubsystem();
 
-                mext = new MonitorThreadExt(m_extendArm);
+                // mlift = new MonitorThreadLift(m_liftArm);
 
-                mext.startThread();
+                // mlift.startThread();   
 
-                mwrist = new MonitorThreadWrist(m_wrist);
+                // mext = new MonitorThreadExt(m_extendArm);
 
-                mwrist.startThread();
+                // mext.startThread();
 
-                mIntake = new MonitorThreadIntake(m_intake);
+                // mwrist = new MonitorThreadWrist(m_wrist);
+
+                // mwrist.startThread();
+
+                // mIntake = new MonitorThreadIntake(m_intake);
 
                 // mIntake.startThread();
 
@@ -205,13 +206,13 @@ public class RobotContainer {
 
                 configCodriverButtons();
 
-                // configArmsButtons();
+                configArmsButtons();
 
         }
 
         private void setDefaultCommands() {
 
-                //m_drive.setDefaultCommand(getDriveCommand());
+                m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));
@@ -227,16 +228,16 @@ public class RobotContainer {
                 m_driverController.leftTrigger()
                                 .whileTrue(getDetectorLoad());
 
-                m_driverController.rightTrigger().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
+                m_driverController.leftBumper().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
                                 () -> m_driverController.getRawAxis(1)));
 
-                m_driverController.leftBumper()
-                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, false)
+                m_driverController.rightTrigger()
+                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true)
                                                 .withTimeout(8));
 
-                // m_driverController.rightBumper().
+                 m_driverController.rightBumper().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
-                m_driverController.a().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(5));
+                m_driverController.a().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(1));
 
                 m_driverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
 
@@ -246,7 +247,7 @@ public class RobotContainer {
                                 .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
                                                 .withTimeout(10));
 
-                // m_driverController.start().
+            //    m_driverController.start()
 
                 m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
 
@@ -308,10 +309,8 @@ public class RobotContainer {
 
                 m_armsController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armsController))
 
-                                .onFalse(Commands.waitUntil(() -> m_extendArm.isStopped())
-
-                                                .andThen(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
-                                                                m_extendArm)));
+                                .onFalse(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
+                                                m_extendArm));
 
                 m_armsController.rightBumper().whileTrue(getJogWristCommand(m_armsController))
 
@@ -321,14 +320,13 @@ public class RobotContainer {
                                                                 m_wrist)));
 
                 m_armsController.a().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 2, false)));
 
                 m_armsController.b().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 5, false)));
-                ;
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 3, false)));
 
                 m_armsController.x().onTrue(Commands.runOnce(
-                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 9, false)));
+                                () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 0, false)));
 
                 m_armsController.y().onTrue(Commands.runOnce(
                                 () -> m_liftArm.setController(LiftArmConstants.liftArmFastConstraints, 12, false)));
@@ -339,7 +337,7 @@ public class RobotContainer {
                                 () -> m_wrist.setController(WristConstants.wristFastConstraints, 1, false)));
 
                 m_armsController.povUp().onTrue(Commands.runOnce(
-                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 3, false)));
+                                () -> m_wrist.setController(WristConstants.wristFastConstraints, 2.5, false)));
 
                 // ext arm
 
@@ -355,11 +353,10 @@ public class RobotContainer {
                                 () -> m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints, 15,
                                                 false)));
 
-                m_armsController.rightTrigger().onTrue(
-
-                                new InstantCommand(() -> m_tf.createSelectedTrajectory(2, 2, true)))
-
-                                .onFalse(new InstantCommand(() -> m_tf.doSelectedTrajectory()));
+                m_armsController.rightTrigger()
+                                .onTrue(Commands.runOnce(() -> m_extendArm.setController(
+                                                ExtendArmConstants.extendArmFastConstraints, 0,
+                                                false)));
 
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS
@@ -377,11 +374,6 @@ public class RobotContainer {
         public Command getJogLiftArmCommand(CommandXboxController m_armController2) {
 
                 return new JogLiftArm(m_liftArm, () -> -m_armsController.getRawAxis(1), m_armController2);
-        }
-
-        public Command getJogLiftArmFixedCommand(double speed, CommandXboxController m_armController2) {
-
-                return new JogLiftArm(m_liftArm, () -> -speed, m_armController2);
         }
 
         public Command getJogWristCommand(CommandXboxController m_armController2) {
@@ -411,6 +403,13 @@ public class RobotContainer {
 
                 return new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake,
                                 toplevel);
+                                
+
+        }
+
+        public Command positionToDeliverCommand() {
+
+                return new DeliverPiecePositions(m_liftArm, m_extendArm, m_wrist, m_intake);
 
         }
 

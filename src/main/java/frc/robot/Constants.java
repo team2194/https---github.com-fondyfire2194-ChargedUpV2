@@ -237,8 +237,8 @@ public final class Constants {
   //
   public static final class ExtendArmConstants {
 
-    public static double GEAR_RATIO = 49;
-    public static double PULLEY_TEETH = 30;
+    public static double GEAR_RATIO = 70;
+    public static double PULLEY_TEETH = 24;// 30
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 
     public static final double MIN_POSITION = -1;
@@ -249,9 +249,9 @@ public final class Constants {
 
     public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 18
 
-    public static double ksExtArmVolts = .1;
+    public static double ksExtArmVolts = .05;
 
-    public static double kvExtArmVoltSecondsPerInch = .6;// .68 max .34 gave just over 50% try .5
+    public static double kvExtArmVoltSecondsPerInch = .65;// .68 max .34 gave just over 50% try .5
 
     public static double kaExtArmVoltSecondsSquaredPerInch = 0;
 
@@ -259,11 +259,11 @@ public final class Constants {
 
     // public static final TrapezoidProfile.Constraints extendArmConstraints
 
-    //     = new Constraints(15, 30);
+    // = new Constraints(15, 30);
 
     public static final TrapezoidProfile.Constraints extendArmFastConstraints
 
-        = new Constraints(25, 40);
+        = new Constraints(11, 20);
 
     public static final TrapezoidProfile.Constraints intakeConstraints
 
@@ -307,14 +307,11 @@ public final class Constants {
 
     // public static final TrapezoidProfile.Constraints wristConstraints =
 
-    //     new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
+    // new Constraints(Units.degreesToRadians(20), Units.degreesToRadians(40));
 
-        public static final TrapezoidProfile.Constraints wristFastConstraints =
+    public static final TrapezoidProfile.Constraints wristFastConstraints =
 
         new Constraints(Units.degreesToRadians(40), Units.degreesToRadians(60));
-
-
-
 
     public static final double JOG_SLEW_RATE = 10;
 

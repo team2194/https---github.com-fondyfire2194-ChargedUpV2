@@ -92,10 +92,10 @@ public class PositionProfileExtendArm extends CommandBase {
 
     loopctr++;
 
-    m_ext.gravVal = Pref.getPref("extKg") * Math.sin(m_lift.getCanCoderRadians());
+    m_ext.gravVal = Pref.getPref("extKg") * Math.cos(m_lift.getCanCoderRadians());
 
-    if (directionIsOut)
-      m_ext.gravVal *= -1;
+    // if (directionIsOut)
+    //   m_ext.gravVal *= -1;
 
     m_ext.pidVal = m_ext.m_extController.calculate(m_ext.getPositionInches(),
         m_ext.goalInches);
@@ -112,14 +112,14 @@ public class PositionProfileExtendArm extends CommandBase {
 
     m_ext.volts = m_ext.ff + m_ext.pidVal + m_ext.gravVal;
 
-    if (!m_ext.atDepth && (allowIn && m_ext.ff < 0 || allowOut && m_ext.ff > 0)) {
+    if (allowIn && m_ext.volts < 0 || allowOut && m_ext.volts > 0) {
 
       m_ext.m_motor.setVoltage(m_ext.volts);
 
     } else
 
     {
-      m_ext.setControllerAtPosition();
+
       m_ext.m_motor.setVoltage(0);
     }
 
@@ -127,23 +127,24 @@ public class PositionProfileExtendArm extends CommandBase {
 
     lastTime = Timer.getFPGATimestamp();
 
-    m_ext.inIZone = checkIzone(2.0);
+    // m_ext.inIZone = checkIzone(2.0);
 
-    if ((m_ext.m_extController.atGoal() || !m_ext.inIZone) && m_ext.m_extController.getI() != 0) {
+    // if ((m_ext.m_extController.atGoal() || !m_ext.inIZone) &&
+    // m_ext.m_extController.getI() != 0) {
 
-      m_ext.m_extController.setI(0);
+    // m_ext.m_extController.setI(0);
 
-      m_ext.m_extController.setIntegratorRange(0, 0);
+    // m_ext.m_extController.setIntegratorRange(0, 0);
 
-    }
+    // }
 
-    if (m_ext.inIZone && m_ext.m_extController.getI() == 0) {
+    // if (m_ext.inIZone && m_ext.m_extController.getI() == 0) {
 
-      m_ext.m_extController.setI(0.001);
+    // m_ext.m_extController.setI(0.001);
 
-      m_ext.m_extController.setIntegratorRange(-.02, .02);
+    // m_ext.m_extController.setIntegratorRange(-.02, .02);
 
-    }
+    // }
   }
 
   // Called once the command ends or is interrupted.

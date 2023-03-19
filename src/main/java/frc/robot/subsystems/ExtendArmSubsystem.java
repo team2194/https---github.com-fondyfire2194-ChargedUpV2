@@ -43,7 +43,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         PICKUP_TIPPED_CONE_GROUND(118.2),
 
-        PLACE_CUBE_MID_SHELF(4.9),
+        PLACE_CUBE_MID_SHELF(1),
 
         PLACE_CUBE_TOP_SHELF(22.7),
 
@@ -53,7 +53,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         PLACE_CONE_MID_PIPE(5.3),
 
-        PLACE_CONE_TOP_PIPE(26);
+        PLACE_CONE_TOP_PIPE(17);
 
         private double distance;
 
@@ -199,12 +199,12 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         // for Shuffleboard
         if (loopctr >= 5) {
-            appliedOutput = round2dp(getAppliedOutput());
-            amps = round2dp(getAmps());
+            //appliedOutput = round2dp(getAppliedOutput());
+            //amps = round2dp(getAmps());
             positionInches = round2dp(getPositionInches());
             inchespersec = round2dp(getInchesPerSec());
 
-            extendMotorConnected = checkCANOK();
+            //extendMotorConnected = checkCANOK();
             atGoal = m_extController.atGoal();
             loopctr = 0;
 
@@ -246,7 +246,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
             if (initial)
                 m_extController.reset(new TrapezoidProfile.State(presetExtArmDistances.HOME.getDistance(), 0));
             else
-                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), getInchesPerSec()));
+                m_extController.reset(new TrapezoidProfile.State(getPositionInches(), 0));
 
         }
         m_feedforward = new SimpleMotorFeedforward(Pref.getPref("extKs"), Pref.getPref("extKv"));

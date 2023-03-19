@@ -87,7 +87,7 @@ public class LiftArmSubsystem extends SubsystemBase {
 
     private double inPositionBandwidth = .25;
 
-    private double inRangeBandwidth = .5;
+    private double inRangeBandwidth = 1;
 
     public boolean liftArmMotorConnected;
 
@@ -203,15 +203,15 @@ public class LiftArmSubsystem extends SubsystemBase {
         if (faultSeen != 0)
             faultSeen = getFaults();
 
-        if (loopctr == 5) {
-            appliedOutput = getAppliedOutput();
+        if (loopctr == 25) {
+          //  appliedOutput = getAppliedOutput();
             amps = getAmps();
             cancoderPosition = getCanCoderPosition();
-            atGoal = m_liftController.atGoal();
-            liftArmMotorConnected = checkCANOK();
+          //  atGoal = m_liftController.atGoal();
+           // liftArmMotorConnected = checkCANOK();
             stopped = isStopped();
         }
-        if (loopctr == 6) {
+        if (loopctr == 36) {
             positioninches = getPositionInches();
 
             loopctr = 0;

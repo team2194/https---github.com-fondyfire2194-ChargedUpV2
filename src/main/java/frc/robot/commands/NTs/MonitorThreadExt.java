@@ -89,7 +89,7 @@ public class MonitorThreadExt {
                         profvel.set(m_ext.m_extController.getSetpoint().velocity);
                         inizone.set(m_ext.inIZone);
                         amps.set(m_ext.amps);
-                        amps.set(m_ext.gravVal);
+                        gravval.set(m_ext.gravVal);
                         
                     }
                     Thread.sleep(100);

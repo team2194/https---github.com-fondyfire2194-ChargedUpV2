@@ -117,6 +117,7 @@ public class GetDeliverAngleSettings extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    new DeliverPiecePositions(m_lift, m_ext, m_wrist, m_intake).schedule();
 
   }
 

@@ -11,7 +11,9 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
@@ -23,6 +25,7 @@ import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -102,7 +105,6 @@ public class AutoFactory {
 
         m_autoChooser.addOption("DeliverMid", 2);
 
-
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser1.addOption("BalanceCharge", 1);
@@ -157,7 +159,6 @@ public class AutoFactory {
 
         if (autoselect == 2)
             tempCommand = getDeliverMid();
-
 
         return tempCommand;
 
@@ -225,7 +226,7 @@ public class AutoFactory {
 
     public void createCommands() {
         command1 = getCommand1();
-        command2 = getCommand2();
+        command2 = new DoNothing();// getCommand2();
     }
 
     public Command getAutonomousCommand() {
@@ -244,11 +245,15 @@ public class AutoFactory {
 
                 new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, false),
 
-                new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
+                // new DeliverPiecePositions(m_lift, m_extend, m_wrist, m_intake),
 
-                new EjectPieceFromIntake(m_intake),
 
-                new RetractWristExtendLift(m_lift, m_extend, m_wrist, false));
+                new WaitCommand(1),
+
+                Commands.runOnce(() -> m_extend.setControllerGoal(0)),
+                Commands.runOnce(() -> m_wrist.setControllerGoal(presetWristAngles.HOME.getAngleRads())),
+                new WaitCommand(2),
+                Commands.runOnce((() -> m_lift.setControllerGoal(0))));
 
     }
 
