@@ -47,7 +47,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         PLACE_CUBE_TOP_SHELF(22.7),
 
-        PICKUP_CONE_LOAD_STATION(1.),
+        PICKUP_CONE_LOAD_STATION(4),
 
         PICKUP_CUBE_LOAD_STATION(4.2),
 
@@ -289,7 +289,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
 
-    public boolean inRAnge() {
+    public boolean inRange() {
         return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
     }
 

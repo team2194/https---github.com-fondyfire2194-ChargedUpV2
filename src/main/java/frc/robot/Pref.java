@@ -99,6 +99,8 @@ public class Pref {
     prefDict.put("extKs", .1);
     prefDict.put("extKv", .6);//
     prefDict.put("extKa", .0);
+    prefDict.put("extKg", .25);
+    
 
     prefDict.put("extKp", .005);
 

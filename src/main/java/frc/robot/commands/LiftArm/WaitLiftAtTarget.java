@@ -30,7 +30,10 @@ public class WaitLiftAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (m_lift.inRange() && m_startTime == 0) {
+    if (!m_lift.inRange())
+      m_startTime = 0;
+
+    if (m_lift.inRange()) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }
@@ -43,6 +46,7 @@ public class WaitLiftAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_lift.atTargetPosition() || Timer.getFPGATimestamp() > m_startTime + 2;
+    return m_lift.atTargetPosition()
+        || m_startTime != 0 && Timer.getFPGATimestamp() > m_startTime + 2;
   }
 }

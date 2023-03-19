@@ -4,17 +4,12 @@
 
 package frc.robot.utils;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Auto.DoNothing;
@@ -23,8 +18,6 @@ import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.swerve.Test.DriveOnChargeStation;
-import frc.robot.commands.swerve.Test.DriveandBalanceRobot;
-import frc.robot.commands.swerve.Test.autoBalance;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;

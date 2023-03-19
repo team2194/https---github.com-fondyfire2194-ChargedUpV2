@@ -20,7 +20,6 @@ import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
-import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
@@ -41,6 +40,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
                 addCommands(
 
                                 new ParallelRaceGroup(
+
                                                 new ParallelCommandGroup(
 
                                                                 new ConditionalCommand(
@@ -82,6 +82,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
                                                                 new WaitWristAtTarget(wrist, .25),
 
                                                                 new ConditionalCommand(
+                                                                        
                                                                                 new SetExtArmGoal(extend,
                                                                                                 presetExtArmDistances.PICKUP_CONE_GROUND
                                                                                                                 .getDistance()),

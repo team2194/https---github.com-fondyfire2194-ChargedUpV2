@@ -49,15 +49,12 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
-import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
-import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LightStrip;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.utils.AutoFactory;
 import frc.robot.utils.LEDControllerI2C;
 import frc.robot.utils.TrajectoryFactory;
@@ -243,11 +240,13 @@ public class RobotContainer {
 
                 m_driverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
 
-                // m_driverController.x().
+                m_driverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
-                // m_driverController.y().onTrue(;
+                m_driverController.y()
+                                .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
+                                .withTimeout(10));
 
-                m_driverController.start().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
+                // m_driverController.start().
 
                 m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
 
@@ -263,21 +262,22 @@ public class RobotContainer {
 
                 // m_coDriverController.leftBumper().
 
-                m_coDriverController.leftTrigger()
-                                .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs));
+                // m_coDriverController.leftTrigger()
 
                 // m_coDriverController.rightBumper().
 
                 m_coDriverController.a().onTrue(
-                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE));
+                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
+                                .withTimeout(10));
 
                 m_coDriverController.b().onTrue(
-                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE));
+                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
+                                .withTimeout(10));
 
-                m_coDriverController.x().onTrue(
-                                new GroundIntakeTippedConePositions(m_liftArm, m_wrist, m_extendArm, m_intake));
+                // m_coDriverController.x().onTrue(
+                //                 new GroundIntakeTippedConePositions(m_liftArm, m_wrist, m_extendArm, m_intake));
 
-                m_coDriverController.y().onTrue(deliverPositionsCommand(true).withTimeout(10));
+                //m_coDriverController.y().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
                 m_coDriverController.start().onTrue(deliverPositionsCommand(false).withTimeout(10));
 

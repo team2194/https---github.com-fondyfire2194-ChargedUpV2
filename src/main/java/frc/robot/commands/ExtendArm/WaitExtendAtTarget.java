@@ -29,8 +29,11 @@ public class WaitExtendAtTarget extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (m_extend.inRange()) {
+      m_startTime = 0;
+    }
 
-    if (m_extend.inRAnge() && m_startTime == 0) {
+    if (m_extend.inRange()) {
       m_startTime = Timer.getFPGATimestamp();
     }
   }
@@ -43,6 +46,6 @@ public class WaitExtendAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_extend.atTargetPosition() || Timer.getFPGATimestamp() > m_startTime + 2;
+    return m_extend.atTargetPosition() || m_startTime!=0 && Timer.getFPGATimestamp() > m_startTime + 2;
   }
 }

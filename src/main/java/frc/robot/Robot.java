@@ -65,21 +65,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     if (RobotBase.isReal())
       DataLogManager.start();
-
-    PPSwerveControllerCommand.setLoggingCallbacks(
-        (PathPlannerTrajectory activeTrajectory) -> {
-          // Log current trajectory
-        },
-        (Pose2d targetPose) -> {
-          // Log target pose
-        },
-        (ChassisSpeeds setpointSpeeds) -> {
-          // Log setpoint ChassisSpeeds
-        },
-        (Translation2d translationError, Rotation2d rotationError) -> {
-          // Log path following error
-        });
-
     // Instantiate our RobotContainer.
 
     m_robotContainer = new RobotContainer();
@@ -193,6 +178,11 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the a
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+
+    m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
+        presetExtArmDistances.RETRACT.getDistance(), false);
+
 
     m_robotContainer.m_drive.setIdleMode(true);
 

@@ -53,9 +53,6 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
 
                                                 new SequentialCommandGroup(
 
-                                                                // new SetWristGoal(wrist,
-                                                                // presetWristAngles.HOME.getAngleRads()),
-
                                                                 new WaitCommand(.2),
 
                                                                 new WaitWristAtTarget(wrist, .25),

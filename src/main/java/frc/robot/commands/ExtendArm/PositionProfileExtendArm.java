@@ -7,6 +7,7 @@ package frc.robot.commands.ExtendArm;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Pref;
 import frc.robot.Constants.ExtendArmConstants;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -91,7 +92,7 @@ public class PositionProfileExtendArm extends CommandBase {
 
     loopctr++;
 
-    m_ext.gravVal = ExtendArmConstants.kgVolts * Math.sin(m_lift.getCanCoderRadians());
+    m_ext.gravVal = Pref.getPref("extKg") * Math.sin(m_lift.getCanCoderRadians());
 
     if (directionIsOut)
       m_ext.gravVal *= -1;
