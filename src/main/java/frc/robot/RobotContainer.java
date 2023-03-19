@@ -240,11 +240,11 @@ public class RobotContainer {
 
                 m_driverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
 
-                m_driverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
+                m_driverController.x().onTrue(deliverPositionsCommand(false).withTimeout(10));
 
                 m_driverController.y()
                                 .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
-                                .withTimeout(10));
+                                                .withTimeout(10));
 
                 // m_driverController.start().
 
@@ -260,26 +260,28 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                // m_coDriverController.leftBumper().
+                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
+
+                m_coDriverController.rightBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
 
                 // m_coDriverController.leftTrigger()
 
-                // m_coDriverController.rightBumper().
-
                 m_coDriverController.a().onTrue(
                                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
-                                .withTimeout(10));
+                                                .withTimeout(10));
 
                 m_coDriverController.b().onTrue(
                                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
-                                .withTimeout(10));
+                                                .withTimeout(10));
 
-                // m_coDriverController.x().onTrue(
-                //                 new GroundIntakeTippedConePositions(m_liftArm, m_wrist, m_extendArm, m_intake));
+                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
-                //m_coDriverController.y().onTrue(deliverPositionsCommand(true).withTimeout(10));
+                // new GroundIntakeTippedConePositions(m_liftArm, m_wrist, m_extendArm,
+                // m_intake));
 
-                m_coDriverController.start().onTrue(deliverPositionsCommand(false).withTimeout(10));
+                // m_coDriverController.y()
+
+                // m_coDriverController.start().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
                 m_coDriverController.povUp().onTrue(Commands.runOnce(() -> m_liftArm.incGoal(.25)));
 
@@ -289,7 +291,7 @@ public class RobotContainer {
 
                 m_coDriverController.povRight().onTrue(Commands.runOnce(() -> m_extendArm.incGoal(-.25)));
 
-                // m_coDriverController.rightTrigger().onTrue(
+                m_coDriverController.rightTrigger().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
                 // new InstantCommand(() -> m_tf.createSelectedTrajectory(2, 2, true)))
 

@@ -442,7 +442,7 @@
   {
     "name": "/Preferences/cubedist",
     "type": "double",
-    "value": -300.0,
+    "value": 300.0,
     "properties": {
       "persistent": true
     }
