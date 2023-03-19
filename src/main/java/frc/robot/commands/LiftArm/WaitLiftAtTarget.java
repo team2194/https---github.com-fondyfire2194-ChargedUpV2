@@ -13,6 +13,7 @@ public class WaitLiftAtTarget extends CommandBase {
   private LiftArmSubsystem m_lift;
   private double m_startTime;
   private double m_atTargetTime;
+  private double m_inRangeTime;
 
   public WaitLiftAtTarget(LiftArmSubsystem lift, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -23,7 +24,8 @@ public class WaitLiftAtTarget extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_startTime = 0;
+    m_startTime = Timer.getFPGATimestamp();
+    m_inRangeTime = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,10 +33,10 @@ public class WaitLiftAtTarget extends CommandBase {
   public void execute() {
 
     if (!m_lift.inRange())
-      m_startTime = 0;
+      m_inRangeTime = 0;
 
     if (m_lift.inRange()) {
-      m_startTime = Timer.getFPGATimestamp();
+      m_inRangeTime = Timer.getFPGATimestamp();
     }
   }
 
@@ -47,6 +49,7 @@ public class WaitLiftAtTarget extends CommandBase {
   @Override
   public boolean isFinished() {
     return m_lift.atTargetPosition()
-        || m_startTime != 0 && Timer.getFPGATimestamp() > m_startTime + 2;
+        || m_inRangeTime != 0 && Timer.getFPGATimestamp() > m_inRangeTime + 2
+        || Timer.getFPGATimestamp() > m_startTime + 6;
   }
 }

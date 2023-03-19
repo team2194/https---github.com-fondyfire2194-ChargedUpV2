@@ -13,6 +13,7 @@ public class WaitWristAtTarget extends CommandBase {
   private WristSubsystem m_wrist;
   private double m_startTime;
   private double m_atTargetTime;
+  private double m_inRangeTime;
 
   public WaitWristAtTarget(WristSubsystem wrist, double atTargetTime) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -23,7 +24,8 @@ public class WaitWristAtTarget extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_startTime = 0;
+    m_startTime = Timer.getFPGATimestamp();
+    m_inRangeTime = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,10 +33,10 @@ public class WaitWristAtTarget extends CommandBase {
   public void execute() {
 
     if (!m_wrist.inRange())
-      m_startTime = 0;
+      m_inRangeTime = 0;
 
     if (m_wrist.inRange()) {
-      m_startTime = Timer.getFPGATimestamp();
+      m_inRangeTime = Timer.getFPGATimestamp();
     }
   }
 
@@ -46,7 +48,8 @@ public class WaitWristAtTarget extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_wrist.atTargetAngle() || m_startTime != 0 && Timer.getFPGATimestamp() > m_startTime + 2;
+    return m_wrist.atTargetAngle() || m_inRangeTime != 0 && Timer.getFPGATimestamp() > m_inRangeTime + 2
+        || Timer.getFPGATimestamp() > m_startTime + 6;
 
   }
 }

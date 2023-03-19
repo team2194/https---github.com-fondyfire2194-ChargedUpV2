@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanConstants;
 import frc.robot.Constants.DriveConstants;
@@ -140,8 +142,6 @@ public class DriveSubsystem extends SubsystemBase {
       PPConstants.kDThetaController);
 
   public boolean runTrajectory;
-
-
 
   /**
    * All vision related variables
@@ -315,6 +315,44 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
+  /**
+   * Sets the wheels into an X formation to prevent movement.
+   */
+  public void setX() {
+    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_backLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
+    m_backRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
+  }
+
+
+  /*
+   * the pitch values may be robot dependent. Someone suggested the slow speed ~1 ft/s. 
+   * 
+   * For us the fast speed was ~7 ft/s. 
+   * 
+   * Also, you should zero your heading in auto init.
+   * 
+   * 
+   * 
+   */
+  public CommandBase autoBalance() {
+    return Commands.race(
+        Commands.sequence(
+            Commands.run(
+                () -> this.drive(2 / DriveConstants.kMaxSpeedMetersPerSecond,
+                    0, 0),
+                this).until(() -> Math.abs(this.getGyroPitch()) >= 14.3),
+            Commands.run(
+                () -> this.drive(0.3 / DriveConstants.kMaxSpeedMetersPerSecond,
+                    0, 0),
+                this).until(() -> Math.abs(this.getGyroPitch()) <= 12.5),
+            Commands.run(this::setX, this)),
+        Commands.waitSeconds(15));
+    // Commands.run(
+    // ()->this.drive(0,0,0,true,true),this));
+  }
+
   public double[] getPoseAsDoubles(Pose2d pose) {
     return r2dToArray(pose);
   }
@@ -424,7 +462,6 @@ public class DriveSubsystem extends SubsystemBase {
   public float getGyroRoll() {
     return m_gyro.getRoll();
   }
-
 
   public Rotation2d getGyroR2d() {
     //

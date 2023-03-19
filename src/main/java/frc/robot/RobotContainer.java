@@ -211,7 +211,7 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-                m_drive.setDefaultCommand(getDriveCommand());
+                //m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));

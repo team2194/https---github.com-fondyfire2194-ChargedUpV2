@@ -17,7 +17,6 @@ import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
-import frc.robot.commands.swerve.Test.DriveOnChargeStation;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
@@ -178,7 +177,7 @@ public class AutoFactory {
 
             if (autoselect1 == 1) {
 
-                tempCommand = new DriveOnChargeStation(m_drive,1.3);
+                tempCommand = m_drive.autoBalance();
             }
 
             if (startLocation == 0 && autoselect1 == 2) {

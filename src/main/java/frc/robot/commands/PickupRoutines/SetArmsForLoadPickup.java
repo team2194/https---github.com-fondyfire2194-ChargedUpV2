@@ -18,6 +18,7 @@ import frc.robot.commands.LiftArm.SetLiftGoal;
 import frc.robot.commands.LiftArm.WaitLiftAtTarget;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
+import frc.robot.commands.Wrist.SetWristGoalWaitLift;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
@@ -63,6 +64,14 @@ public class SetArmsForLoadPickup extends SequentialCommandGroup {
 
                                                                 new ConditionalCommand(
 
+                                                                                // new SetWristGoalWaitLift(wrist, lift,
+                                                                                // presetWristAngles.PICKUP_CONE_LOAD_STATION
+                                                                                // .getAngleRads(),
+                                                                                // 40),
+                                                                                // new SetWristGoalWaitLift(wrist, lift,
+                                                                                // presetWristAngles.PICKUP_CUBE_LOAD_STATION
+                                                                                // .getAngleRads(),
+                                                                                // 40),
                                                                                 new SetWristGoal(wrist,
                                                                                                 presetWristAngles.PICKUP_CONE_LOAD_STATION
                                                                                                                 .getAngleRads()),

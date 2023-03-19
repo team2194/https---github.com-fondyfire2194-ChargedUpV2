@@ -93,7 +93,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
 
                                                                                 () -> type == gamePiece.CONE),
 
-                                                                new WaitCommand(2),
+                                                                new WaitCommand(.2),
 
                                                                 new WaitLiftAtTarget(lift, .25))));
 
