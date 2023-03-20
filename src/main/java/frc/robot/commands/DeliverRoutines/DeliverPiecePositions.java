@@ -25,6 +25,10 @@ import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
+import frc.robot.subsystems.IntakeSubsystem.presetIntakeSpeeds;
+import frc.robot.subsystems.LiftArmSubsystem.presetLiftAngles;
+import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -51,17 +55,28 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
 
             new SequentialCommandGroup(
 
-                
+                new WaitLiftAtTarget(lift, 2,3),
 
-                new WaitLiftAtTarget(lift, 2),
-
-                new WaitWristAtTarget(wrist, .24),
+                new WaitWristAtTarget(wrist, .24,.2),
 
                 new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints, extend.deliverDistance),
 
-                new WaitExtendAtTarget(extend, .24),
+                new WaitExtendAtTarget(extend, .24, 5),
 
-                new EjectPieceFromIntake(intake))));
+                new EjectPieceFromIntake(intake),
+
+                new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
+                    presetExtArmDistances.HOME.getDistance()),
+
+                new SetWristGoal(wrist, WristConstants.wristFastConstraints, presetWristAngles.HOME.getAngleRads()),
+
+                new WaitLiftAtTarget(lift, .24,1),
+
+                new WaitWristAtTarget(wrist, .24,.1),
+
+                new SetLiftGoal(lift, presetLiftAngles.SAFE_HOME.getInches()),
+
+                new WaitLiftAtTarget(lift, .24,1))));
 
   }
 }

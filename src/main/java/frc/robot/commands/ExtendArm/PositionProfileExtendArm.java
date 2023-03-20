@@ -60,6 +60,7 @@ public class PositionProfileExtendArm extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    
     lastTime = Timer.getFPGATimestamp();
 
     loopctr = 0;
@@ -89,10 +90,9 @@ public class PositionProfileExtendArm extends CommandBase {
     boolean allowIn = m_ext.getPositionInches() >= ExtendArmConstants.MIN_POSITION;
 
     boolean directionIsOut = m_goalInches > m_ext.getPositionInches();
-
     loopctr++;
 
-    m_ext.gravVal = Pref.getPref("extKg") * Math.cos(m_lift.getCanCoderRadians());
+    m_ext.gravVal = -Pref.getPref("extKg") * Math.cos(m_lift.getCanCoderRadians());
 
     // if (directionIsOut)
     //   m_ext.gravVal *= -1;
@@ -110,7 +110,7 @@ public class PositionProfileExtendArm extends CommandBase {
     m_ext.ff = m_ext.m_feedforward.calculate(m_ext.m_extController.getSetpoint().velocity,
         acceleration);
 
-    m_ext.volts = m_ext.ff + m_ext.pidVal + m_ext.gravVal;
+    m_ext.volts = m_ext.ff + m_ext.pidVal - m_ext.gravVal;
 
     if (allowIn && m_ext.volts < 0 || allowOut && m_ext.volts > 0) {
 

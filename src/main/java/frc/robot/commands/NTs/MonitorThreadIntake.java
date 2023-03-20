@@ -50,7 +50,7 @@ public class MonitorThreadIntake {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_intake.tstctr++;
 
-                    if (true) {
+                    if (!m_intake.isStopped()) {
                         rpm.set(m_intake.rpm);
                         cube.set(m_intake.getCubeSensorDistance());
                         cone.set(m_intake.getConeSensorDistance());

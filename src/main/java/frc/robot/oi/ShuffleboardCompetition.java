@@ -66,30 +66,30 @@ public class ShuffleboardCompetition {
                 // area1.addString(" PipelineType", () -> m_llv.limelighttypename)
                 // .withSize(1, 1).withPosition(3, 0);
 
-                area1.addNumber("FidID", () -> m_drive.fiducialID)
-                                .withPosition(0, 2);
+                // area1.addNumber("FidID", () -> m_drive.fiducialID)
+                //                 .withPosition(0, 2);
 
-                area1.addBoolean("InhibitVision", () -> m_drive.inhibitVision)
-                                .withPosition(0, 3);
+                // area1.addBoolean("InhibitVision", () -> m_drive.inhibitVision)
+                //                 .withPosition(0, 3);
 
-                area1.addBoolean("LimelightOK", () -> m_drive.limelightExists)
-                                .withPosition(0, 4);
+                // area1.addBoolean("LimelightOK", () -> m_drive.limelightExists)
+                //                 .withPosition(0, 4);
 
-                area1.addBoolean("Alliance", () -> m_drive.getAllianceBlue())
-                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(1, 1)
-                                .withPosition(9, 4)
-                                .withProperties(Map.of("colorwhenfalse", "red", "colorwhentrue", "blue"));
+                // area1.addBoolean("Alliance", () -> m_drive.getAllianceBlue())
+                //                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(1, 1)
+                //                 .withPosition(9, 4)
+                //                 .withProperties(Map.of("colorwhenfalse", "red", "colorwhentrue", "blue"));
 
                 // area1.addBoolean("HasTarget", () -> m_drive.hasTarget)
                 // .withPosition(1, 1);
 
-                area1.addNumber("TX Degrees", () -> round2dp(m_drive.tx))
-                                .withPosition(1, 2);
+                // area1.addNumber("TX Degrees", () -> round2dp(m_drive.tx))
+                //                 .withPosition(1, 2);
 
-                area1.addNumber("TY Degrees", () -> round2dp(m_drive.ty))
-                                .withPosition(1, 3);
-                area1.addBoolean("CAN OK", () -> m_gps.CANOK)
-                                .withPosition(1, 4);
+                // area1.addNumber("TY Degrees", () -> round2dp(m_drive.ty))
+                //                 .withPosition(1, 3);
+                // area1.addBoolean("CAN OK", () -> m_gps.CANOK)
+                //                 .withPosition(1, 4);
 
                 area1.addNumber("ConeDistance", () -> m_intake.coneSensedDistance)
                                 .withSize(1, 1)
@@ -118,33 +118,33 @@ public class ShuffleboardCompetition {
                                 .withPosition(6, 0).withSize(1, 1)
                                 .withProperties(Map.of("colorwhenfalse", "purple", "colorwhentrue", "yellow"));
 
-                area1.addBoolean("TopLevel", () -> lift.topLevel)
-                                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
-                                .withPosition(7, 0).withSize(1, 1);
+                // area1.addBoolean("TopLevel", () -> lift.topLevel)
+                //                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
+                //                 .withPosition(7, 0).withSize(1, 1);
 
-                area1.addNumber("RobotX", () -> round2dp(m_drive.getX()))
-                                .withPosition(6, 2).withSize(1, 1);
+                // area1.addNumber("RobotX", () -> round2dp(m_drive.getX()))
+                //                 .withPosition(6, 2).withSize(1, 1);
 
-                area1.addNumber("RobotY", () -> round2dp(m_drive.getY()))
-                                .withPosition(7, 2).withSize(1, 1);
+                // area1.addNumber("RobotY", () -> round2dp(m_drive.getY()))
+                //                 .withPosition(7, 2).withSize(1, 1);
 
                 area1.addNumber("Heading", () -> round2dp(m_drive.getEstimatedPosition().getRotation().getDegrees()))
                                 .withPosition(8, 2).withSize(1, 1);
 
-                area1.addNumber("ActiveY", () -> round2dp(m_gps.getActiveDropPose().getY()))
-                                .withPosition(9, 2);
-                area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
-                                .withPosition(6, 3);
-                area1.addNumber("LiftDlvrDegr", () -> round2dp(lift.deliverAngle))
-                                .withPosition(5, 3);
+        //         area1.addNumber("ActiveY", () -> round2dp(m_gps.getActiveDropPose().getY()))
+        //                         .withPosition(9, 2);
+        //         area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
+        //                         .withPosition(6, 3);
+        //         area1.addNumber("LiftDlvrDegr", () -> round2dp(lift.deliverAngle))
+        //                         .withPosition(5, 3);
 
-                area1.addNumber("ExtDlvrDist", () -> ext.deliverDistance)
-                                .withPosition(7, 3);
-                area1.addNumber("WristDlvrAngle", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
-                                .withPosition(8, 3);
-                area1.addNumber("Intake Speed", () -> round2dp(intake.deliverSpeed))
-                                .withPosition(9, 3).withSize(1, 1);
-        }
+        //         area1.addNumber("ExtDlvrDist", () -> ext.deliverDistance)
+        //                         .withPosition(7, 3);
+        //         area1.addNumber("WristDlvrAngle", () -> round2dp(Units.radiansToDegrees(wrist.deliverAngleRads)))
+        //                         .withPosition(8, 3);
+        //         area1.addNumber("Intake Speed", () -> round2dp(intake.deliverSpeed))
+        //                         .withPosition(9, 3).withSize(1, 1);
+         }
 
         public double round2dp(double number) {
                 number = Math.round(number * 100);

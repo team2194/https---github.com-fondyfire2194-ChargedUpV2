@@ -265,7 +265,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public void setActiveDropByNumber(int num) {
 
-                SmartDashboard.putNumber("SELDROP", num);
+               // SmartDashboard.putNumber("SELDROP", num);
 
                 dropNumberSet = num;
                 
@@ -431,9 +431,9 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public void periodic() {
 
-                if (originalAlliance != DriverStation.getAlliance()) {
-                        setActiveDropByNumber(dropNumberSet);
-                }
+                // if (originalAlliance != DriverStation.getAlliance()) {
+                //         setActiveDropByNumber(dropNumberSet);
+                // }
 
         }
 

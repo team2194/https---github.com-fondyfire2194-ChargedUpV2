@@ -65,7 +65,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
 
                                                                 new WaitCommand(.1),
 
-                                                                new WaitLiftAtTarget(lift, .25),
+                                                                new WaitLiftAtTarget(lift, .25,.25),
 
                                                                 new ConditionalCommand(
 
@@ -79,7 +79,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
 
                                                                                 () -> type == gamePiece.CONE),
 
-                                                                new WaitWristAtTarget(wrist, .25),
+                                                                new WaitWristAtTarget(wrist, .25,2),
 
                                                                 new ConditionalCommand(
                                                                         
@@ -95,7 +95,7 @@ public class GroundIntakePositions extends SequentialCommandGroup {
 
                                                                 new WaitCommand(.2),
 
-                                                                new WaitLiftAtTarget(lift, .25))));
+                                                                new WaitLiftAtTarget(lift, .25,.5))));
 
         }
 }

@@ -25,12 +25,9 @@ public class MonitorThreadExt {
     public DoublePublisher distance;
     public DoublePublisher feedforward;
     public DoublePublisher pidval;
-    public DoublePublisher lastspeed;;
-    public DoublePublisher accel;
     public DoublePublisher profpos;
     public DoublePublisher disterr;
     public DoublePublisher volts;
-    public DoublePublisher kvEst;
     public DoublePublisher profvel;
     public BooleanPublisher inizone;
     public DoublePublisher velerr;
@@ -46,12 +43,9 @@ public class MonitorThreadExt {
         distance = extprof.getDoubleTopic("ACTDIST").publish();
         feedforward = extprof.getDoubleTopic("FFWD").publish();
         pidval = extprof.getDoubleTopic("PIDVAL").publish();
-        lastspeed = extprof.getDoubleTopic("LASTSPEED").publish();
-        accel = extprof.getDoubleTopic("ACCEL").publish();
         profpos = extprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = extprof.getDoubleTopic("DISTERR").publish();
         volts = extprof.getDoubleTopic("VOLTS").publish();
-        kvEst = extprof.getDoubleTopic("KVEEST").publish();
         profvel = extprof.getDoubleTopic("PROFVEL").publish();
         inizone = extprof.getBooleanTopic("INIZONE").publish();
         velerr = extprof.getDoubleTopic("VELERR").publish();
@@ -75,21 +69,20 @@ public class MonitorThreadExt {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_ext.tstctr++;
 
-                    if (true) {
+                    if (!m_ext.isStopped()) {
                         goalinches.set(m_ext.goalInches);
                         velocity.set(m_ext.inchespersec);
                         distance.set(m_ext.positionInches);
                         feedforward.set(m_ext.ff);
                         pidval.set(m_ext.pidVal);
                         volts.set(m_ext.volts);
-                        kvEst.set((m_ext.appliedOutput - ExtendArmConstants.ksExtArmVolts)
-                                / m_ext.getInchesPerSec());
                         profpos.set(m_ext.m_extController.getSetpoint().position);
                         disterr.set(m_ext.m_extController.getPositionError());
                         profvel.set(m_ext.m_extController.getSetpoint().velocity);
                         inizone.set(m_ext.inIZone);
                         amps.set(m_ext.amps);
                         gravval.set(m_ext.gravVal);
+                        
                         
                     }
                     Thread.sleep(100);

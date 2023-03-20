@@ -215,7 +215,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setControllerGoal(double angleRadians) {
         m_wristController.setGoal(angleRadians);
-        SmartDashboard.putNumber("GAR", m_wristController.getGoal().position);
+       // SmartDashboard.putNumber("GAR", m_wristController.getGoal().position);
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
@@ -224,7 +224,7 @@ public class WristSubsystem extends SubsystemBase {
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
             goalAngleRadians = angleRads;
-            SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
+        //    SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
             if (initial)
                 m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
             else
@@ -266,8 +266,8 @@ public class WristSubsystem extends SubsystemBase {
         return Math.abs(goalAngleRadians - getAngleDegrees()) < inPositionBandwidth;
     }
 
-    public boolean inRange() {
-        return Math.abs(goalAngleRadians - getAngleRadians()) < inRangeBandwidth;
+    public boolean inRange(double range) {
+        return Math.abs(goalAngleRadians - getAngleRadians()) < range;
     }
 
     public double getAngleDegrees() {

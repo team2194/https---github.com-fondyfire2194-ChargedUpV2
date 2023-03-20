@@ -21,6 +21,6 @@ public class MessageCommand extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putString("ActiveDrop", m_message);
+  //  SmartDashboard.putString("ActiveDrop", m_message);
   }
 }

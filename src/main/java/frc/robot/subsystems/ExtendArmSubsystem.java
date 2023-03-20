@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Pref;
 import frc.robot.Constants.CanConstants;
@@ -121,7 +122,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
     public boolean firstUp;
 
-    //public boolean endComm;
+    // public boolean endComm;
 
     public double pidVal;
 
@@ -178,6 +179,9 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         }
 
+        SmartDashboard.putNumber("EXENCSET", ExtendArmConstants.INCHES_PER_ENCODER_REV);
+        SmartDashboard.putNumber("EXENMAXV", ExtendArmConstants.MAX_RATE_INCHES_PER_SEC);
+
         setSoftwareLimits();
 
         enableSoftLimits(useSoftwareLimit);
@@ -199,12 +203,12 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         // for Shuffleboard
         if (loopctr >= 5) {
-            //appliedOutput = round2dp(getAppliedOutput());
-            //amps = round2dp(getAmps());
+            // appliedOutput = round2dp(getAppliedOutput());
+            // amps = round2dp(getAmps());
             positionInches = round2dp(getPositionInches());
             inchespersec = round2dp(getInchesPerSec());
 
-            //extendMotorConnected = checkCANOK();
+            // extendMotorConnected = checkCANOK();
             atGoal = m_extController.atGoal();
             loopctr = 0;
 
@@ -289,8 +293,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
 
-    public boolean inRange() {
-        return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
+    public boolean inRange(double range) {
+        return Math.abs(goalInches - getPositionInches()) < range;
     }
 
     public boolean isStopped() {

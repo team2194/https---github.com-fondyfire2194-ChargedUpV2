@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     if (RobotBase.isReal())
-      DataLogManager.start();
+      DataLogManager.start("/media/sda1");
     // Instantiate our RobotContainer.
     // Record both DS control and joystick data
     DriverStation.startDataLog(DataLogManager.getLog());

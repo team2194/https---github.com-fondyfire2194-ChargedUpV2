@@ -94,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   // The gyro sensor
 
-  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP, (byte) 200);
+  private final AHRS m_gyro = new AHRS(SPI.Port.kMXP, (byte) 100);
 
   /*
    * Here we use SwerveDrivePoseEstimator so that we can fuse odometry readings.
@@ -302,14 +302,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     updateOdometry();
 
-    if (Pref.getPref("StrafeTune") == 1)
-      tuneStrafePIDGains();
-    if (Pref.getPref("YTune") == 1)
-      tuneYPIDGains();
-    if (Pref.getPref("RotateTune") == 1)
-      tuneRotatePIDGains();
-    if (Pref.getPref("XTune") == 1)
-      tuneXPIDGains();
+    // if (Pref.getPref("StrafeTune") == 1)
+    //   tuneStrafePIDGains();
+    // if (Pref.getPref("YTune") == 1)
+    //   tuneYPIDGains();
+    // if (Pref.getPref("RotateTune") == 1)
+    //   tuneRotatePIDGains();
+    // if (Pref.getPref("XTune") == 1)
+    //   tuneXPIDGains();
 
     // m_drloop.poll();
 

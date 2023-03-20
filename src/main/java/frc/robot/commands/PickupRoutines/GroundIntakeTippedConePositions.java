@@ -56,9 +56,9 @@ public class GroundIntakeTippedConePositions extends SequentialCommandGroup {
 
                                                                 new WaitCommand(2),
 
-                                                                new WaitLiftAtTarget(lift, .25),
+                                                                new WaitLiftAtTarget(lift, .25,1),
 
-                                                                new WaitWristAtTarget(wrist, .25),
+                                                                new WaitWristAtTarget(wrist, .25,.2),
 
                                                                 new SetExtArmGoal(extend,
                                                                                 presetExtArmDistances.PICKUP_TIPPED_CONE_GROUND
@@ -66,7 +66,7 @@ public class GroundIntakeTippedConePositions extends SequentialCommandGroup {
 
                                                                 new WaitCommand(2),
 
-                                                                new WaitLiftAtTarget(lift, .25))));
+                                                                new WaitLiftAtTarget(lift, .25,.5))));
 
         }
 }

@@ -110,7 +110,7 @@ public class IntakeSubsystem extends SubsystemBase {
     mPidController.setP(.0001, VELOCITY_SLOT);
 
     mIntakeMotor.setInverted(true);
-    mIntakeMotor.setOpenLoopRampRate(5.);
+    mIntakeMotor.setOpenLoopRampRate(1.);
     mIntakeMotor.setClosedLoopRampRate(.5);
     mIntakeMotor.enableVoltageCompensation(12);
 
@@ -279,7 +279,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public void moveManually(double speed) {
-    SmartDashboard.putNumber("INTSP", speed);
+   // SmartDashboard.putNumber("INTSP", speed);
     mIntakeMotor.setVoltage(speed * 12);
   }
 

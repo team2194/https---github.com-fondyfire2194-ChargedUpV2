@@ -240,8 +240,8 @@ public class LiftArmSubsystem extends SubsystemBase {
         return Math.abs(goalInches - getPositionInches()) < inPositionBandwidth;
     }
 
-    public boolean inRange() {
-        return Math.abs(goalInches - getPositionInches()) < inRangeBandwidth;
+    public boolean inRange(double range) {
+        return Math.abs(goalInches - getPositionInches()) < range;
     }
 
     // will be 0 at horizontal

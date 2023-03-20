@@ -13,12 +13,14 @@ public class WaitWristAtTarget extends CommandBase {
   private WristSubsystem m_wrist;
   private double m_startTime;
   private double m_atTargetTime;
+  private double m_range;
   private double m_inRangeTime;
 
-  public WaitWristAtTarget(WristSubsystem wrist, double atTargetTime) {
+  public WaitWristAtTarget(WristSubsystem wrist, double atTargetTime, double range) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_wrist = wrist;
     m_atTargetTime = atTargetTime;
+    m_range = range;
   }
 
   // Called when the command is initially scheduled.
@@ -32,10 +34,10 @@ public class WaitWristAtTarget extends CommandBase {
   @Override
   public void execute() {
 
-    if (!m_wrist.inRange())
+    if (!m_wrist.inRange(m_range))
       m_inRangeTime = 0;
 
-    if (m_wrist.inRange()) {
+    if (m_wrist.inRange(m_range)) {
       m_inRangeTime = Timer.getFPGATimestamp();
     }
   }

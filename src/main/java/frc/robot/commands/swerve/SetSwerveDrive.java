@@ -17,6 +17,7 @@ public class SetSwerveDrive extends CommandBase {
   private final SlewRateLimiter m_slewRot = new SlewRateLimiter(DriverConstants.kRotationSlew, -10000, 0);
 
   private final DoubleSupplier m_throttleInput, m_strafeInput, m_rotationInput;
+  private boolean m_slow;
   private double throttle;
   private double strafe;
   private double rotation;
@@ -30,14 +31,19 @@ public class SetSwerveDrive extends CommandBase {
       DriveSubsystem swerveDriveSubsystem,
       DoubleSupplier throttleInput,
       DoubleSupplier strafeInput,
-      DoubleSupplier rotationInput) {
+      DoubleSupplier rotationInput,
+      boolean slow) {
     m_swerveDrive = swerveDriveSubsystem;
     m_throttleInput = throttleInput;
     m_strafeInput = strafeInput;
     m_rotationInput = rotationInput;
+    m_slow = slow;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(swerveDriveSubsystem);
   }
+
+  double mult = .3;
 
   // Called when the command is initially scheduled.
   @Override
@@ -63,6 +69,13 @@ public class SetSwerveDrive extends CommandBase {
     throttle = Math.signum(throttle) * Math.pow(throttle, 2);
     strafe = Math.signum(strafe) * Math.pow(strafe, 2);
     rotation = Math.signum(rotation) * Math.pow(rotation, 2);
+
+    if (m_slow) {
+      throttle *= mult;
+      strafe *= mult;
+      rotation *= mult;
+
+    }
 
     throttle *= -DriveConstants.kMaxSpeedMetersPerSecond;
     strafe *= -DriveConstants.kMaxSpeedMetersPerSecond;

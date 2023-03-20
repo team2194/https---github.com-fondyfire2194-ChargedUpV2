@@ -95,16 +95,16 @@ public class SetArmsForLoadPickup extends SequentialCommandGroup {
                                                                 // new WaitCommand(1),
 
                                                                 // new WaitCommand(1),
-                                                                new WaitLiftAtTarget(lift, .2),
+                                                                new WaitLiftAtTarget(lift, .24,.5),
 
-                                                                new WaitWristAtTarget(wrist, .2),
+                                                                new WaitWristAtTarget(wrist, .2,.2),
 
                                                                 new SetExtArmGoal(extend,
                                                                                 ExtendArmConstants.extendArmFastConstraints,
                                                                                 presetExtArmDistances.PICKUP_CONE_LOAD_STATION
                                                                                                 .getDistance()),
 
-                                                                new WaitExtendAtTarget(extend, 0.24))));
+                                                                new WaitExtendAtTarget(extend, 0.24, 4))));
 
         }
 }

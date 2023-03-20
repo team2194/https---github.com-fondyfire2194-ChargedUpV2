@@ -207,19 +207,19 @@ public final CANCoder m_turnCANcoder;
   @Override
   public void periodic() {
 
-    if (Pref.getPref("SwerveTune") == 1 && tuneOn == 0) {
+    // if (Pref.getPref("SwerveTune") == 1 && tuneOn == 0) {
 
-      tuneOn = 1;
+    //   tuneOn = 1;
 
-      tunePosGains();
+      // tunePosGains();
 
-      tuneDriveVelGains();
-    }
+      // tuneDriveVelGains();
+  //  }
 
-    if (tuneOn == 1) {
+    // if (tuneOn == 1) {
 
-      tuneOn = (int) Pref.getPref("SwerveTune");
-    }
+    //   tuneOn = (int) Pref.getPref("SwerveTune");
+    // }
 
     // if (m_turnCANcoder.getFaults(null)) {
     //   // SmartDashboard.putStringArray("CanCoderFault"

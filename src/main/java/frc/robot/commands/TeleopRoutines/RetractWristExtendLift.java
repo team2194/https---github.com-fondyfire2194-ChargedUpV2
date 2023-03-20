@@ -55,16 +55,16 @@ public class RetractWristExtendLift extends SequentialCommandGroup {
 
                                                                 new WaitCommand(.2),
 
-                                                                new WaitWristAtTarget(wrist, .25),
+                                                                new WaitWristAtTarget(wrist, .25,1),
 
-                                                                new WaitExtendAtTarget(ext, .25),
+                                                                new WaitExtendAtTarget(ext, .25,3),
 
                                                                 new SetLiftGoal(lift,
                                                                                 presetLiftAngles.SAFE_HOME
                                                                                                 .getInches()),
                                                                 new WaitCommand(.2),
 
-                                                                new WaitLiftAtTarget(lift, .25)
+                                                                new WaitLiftAtTarget(lift, .25,5)
 
                                                 )));
 

@@ -29,7 +29,6 @@ public class MonitorThreadLift {
     public DoublePublisher profpos;
     public DoublePublisher disterr;
     public DoublePublisher volts;
-    public DoublePublisher kvEst;
     public DoublePublisher profvel;
     public DoublePublisher velerr;
     public DoublePublisher posnerr;
@@ -50,7 +49,6 @@ public class MonitorThreadLift {
         profpos = liftprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = liftprof.getDoubleTopic("DISTERR").publish();
         volts = liftprof.getDoubleTopic("VOLTS").publish();
-        kvEst = liftprof.getDoubleTopic("KVEEST").publish();
         profvel = liftprof.getDoubleTopic("PROFVEL").publish();
         inizone = liftprof.getBooleanTopic("INIZONE").publish();
         velerr = liftprof.getDoubleTopic("VELERR").publish();
@@ -80,12 +78,10 @@ public class MonitorThreadLift {
 
                         goalAngle.set(m_lift.goalInches);
                        // velocity.set(m_lift.getCanCoderRateRadsPerSec());
-                        //angle.set(m_lift.getCanCoderRadians());
+                        angle.set(m_lift.getCanCoderPosition());
                         feedforward.set(m_lift.ff);
                         pidval.set(m_lift.m_liftController.getSetpoint().position);
                         volts.set(m_lift.volts);
-                        kvEst.set((m_lift.volts - LiftArmConstants.ksVolts - LiftArmConstants.kgVolts)
-                                / m_lift.getCanCoderRateRadsPerSec());
                         profpos.set(m_lift.m_liftController.getSetpoint().position);
                         disterr.set(m_lift.m_liftController.getPositionError());
                         profvel.set(m_lift.m_liftController.getSetpoint().velocity);

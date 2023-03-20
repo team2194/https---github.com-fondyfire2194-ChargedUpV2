@@ -61,7 +61,7 @@ public class JogWrist extends CommandBase {
 
     double radspersec;
 
-    SmartDashboard.putNumber("WRVOLTS", throttle_sl * RobotController.getBatteryVoltage());
+   // SmartDashboard.putNumber("WRVOLTS", throttle_sl * RobotController.getBatteryVoltage());
 
     if (allowUp && throttle_sl > 0 || allowDown && throttle_sl < 0) {
 

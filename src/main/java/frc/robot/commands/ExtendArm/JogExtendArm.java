@@ -6,7 +6,6 @@ package frc.robot.commands.ExtendArm;
 
 import java.util.function.DoubleSupplier;
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -61,7 +60,7 @@ public class JogExtendArm extends CommandBase {
 
     m_ext.commandIPS = throttle_sl;
 
-
+SmartDashboard.putNumber("EXTTHV", throttle_sl);
     if (throttle_sl > 0 && allowOut || throttle_sl < 0 && allowIn) {
 
       m_ext.m_motor.setVoltage(throttle_sl * RobotController.getBatteryVoltage());

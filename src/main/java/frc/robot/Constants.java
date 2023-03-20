@@ -237,7 +237,7 @@ public final class Constants {
   //
   public static final class ExtendArmConstants {
 
-    public static double GEAR_RATIO = 70;
+    public static double GEAR_RATIO = 49;
     public static double PULLEY_TEETH = 24;// 30
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 

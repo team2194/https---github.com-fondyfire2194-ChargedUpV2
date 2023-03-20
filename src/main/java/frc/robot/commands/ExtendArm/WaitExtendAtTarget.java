@@ -12,14 +12,17 @@ public class WaitExtendAtTarget extends CommandBase {
   /** Creates a new WaitWristAtTarget. */
   private ExtendArmSubsystem m_extend;
   private double m_startTime;
+  private double m_range;
   private double m_inRangeTime;
 
   private double m_atTargetTime;
 
-  public WaitExtendAtTarget(ExtendArmSubsystem extend, double atTargetTime) {
+  public WaitExtendAtTarget(ExtendArmSubsystem extend, double atTargetTime, double range) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_extend = extend;
     m_atTargetTime = atTargetTime;
+    m_range=range;
+
 
   }
 
@@ -33,11 +36,11 @@ public class WaitExtendAtTarget extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_extend.inRange()) {
+    if (m_extend.inRange(m_range)) {
       m_inRangeTime = 0;
     }
 
-    if (m_extend.inRange()) {
+    if (m_extend.inRange(m_range)) {
       m_inRangeTime = Timer.getFPGATimestamp();
     }
   }

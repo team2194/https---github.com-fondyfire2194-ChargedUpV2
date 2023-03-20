@@ -30,7 +30,6 @@ public class MonitorThreadWrist {
     public DoublePublisher profpos;
     public DoublePublisher disterr;
     public DoublePublisher volts;
-    public DoublePublisher kvEst;
     public DoublePublisher profvel;
     public BooleanPublisher inizone;
     public DoublePublisher velerr;
@@ -48,7 +47,6 @@ public class MonitorThreadWrist {
         profpos = wristprof.getDoubleTopic("PROFILEPOSN").publish();
         disterr = wristprof.getDoubleTopic("DISTERR").publish();
         volts = wristprof.getDoubleTopic("VOLTS").publish();
-        kvEst = wristprof.getDoubleTopic("KVEEST").publish();
         profvel = wristprof.getDoubleTopic("PROFVEL").publish();
         inizone = wristprof.getBooleanTopic("INIZONE").publish();
         velerr = wristprof.getDoubleTopic("VELERR").publish();
@@ -72,7 +70,7 @@ public class MonitorThreadWrist {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_wrist.tstCtr++;
 
-                    if (true) {
+                    if (m_wrist.isStopped()) {
 
                         goalangle.set(m_wrist.goalAngleRadians);
                         velocity.set(m_wrist.radspersec);
@@ -80,8 +78,6 @@ public class MonitorThreadWrist {
                         feedforward.set(m_wrist.ff);
                         pidval.set(m_wrist.pidVal);
                         volts.set(m_wrist.volts);
-                        kvEst.set((m_wrist.volts - WristConstants.ksVolts - WristConstants.kgVolts)
-                                / m_wrist.radspersec);
                         profpos.set(m_wrist.m_wristController.getSetpoint().position);
                         disterr.set(m_wrist.m_wristController.getPositionError());
                         velerr.set(m_wrist.m_wristController.getVelocityError());

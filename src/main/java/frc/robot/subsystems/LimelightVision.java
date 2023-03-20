@@ -75,11 +75,11 @@ public class LimelightVision extends SubsystemBase {
 
   public boolean limelightExists;
 
-  public String limelighttypename ="fiducial";
+  public String limelighttypename = "fiducial";
 
   public LimelightVision() {
     currentPipeline = pipelines.DEFAULT;
-    //SmartDashboard.putString("LLV","LLC");
+    // SmartDashboard.putString("LLV","LLC");
   }
 
   public boolean getAllianceBlue() {
@@ -114,7 +114,7 @@ public class LimelightVision extends SubsystemBase {
 
       currentPipelineType = currentPipeline.type;
 
-       limelighttypename= getCurrentPipelineTypeName();
+      limelighttypename = getCurrentPipelineTypeName();
     }
   }
 

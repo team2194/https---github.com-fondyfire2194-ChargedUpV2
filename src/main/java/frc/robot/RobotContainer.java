@@ -28,14 +28,9 @@ import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
-import frc.robot.commands.NTs.MonitorThreadExt;
-import frc.robot.commands.NTs.MonitorThreadIntake;
-import frc.robot.commands.NTs.MonitorThreadLift;
-import frc.robot.commands.NTs.MonitorThreadWrist;
 import frc.robot.commands.PickupRoutines.DetectorLoad;
 import frc.robot.commands.PickupRoutines.GetPieceExpectedAtIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakePositions;
-import frc.robot.commands.PickupRoutines.GroundIntakeTippedConePositions;
 import frc.robot.commands.PickupRoutines.SetArmsForLoadPickup;
 import frc.robot.commands.TeleopRoutines.RetractWristExtendLift;
 import frc.robot.commands.Wrist.JogWrist;
@@ -77,7 +72,7 @@ public class RobotContainer {
 
         final ShuffleboardCompetition m_shc;
 
-        final ShuffleboardArms m_sharm;
+         final ShuffleboardArms m_sharm;
 
         public AutoFactory m_autoFactory;
 
@@ -100,13 +95,13 @@ public class RobotContainer {
         public CommandXboxController m_armsController = new CommandXboxController(
                         OIConstants.kArmControllerPort);
 
-        final PowerDistribution m_pdp = new PowerDistribution();
+        // final PowerDistribution m_pdp = new PowerDistribution();
 
         public LimelightVision m_llvis = new LimelightVision();
 
         public LLDriveLinkerSubsystem m_lldv;
 
-        public LightStrip m_ls = new LightStrip(9, 60);
+        // public LightStrip m_ls = new LightStrip(9, 60);
 
         // public MonitorThreadExt mext;
         // public MonitorThreadLift mlift;
@@ -130,7 +125,7 @@ public class RobotContainer {
 
                 // mlift = new MonitorThreadLift(m_liftArm);
 
-                // mlift.startThread();   
+                // mlift.startThread();
 
                 // mext = new MonitorThreadExt(m_extendArm);
 
@@ -167,7 +162,7 @@ public class RobotContainer {
                                 m_wrist, m_intake);
 
                 m_sharm = new ShuffleboardArms(m_liftArm, m_extendArm, m_wrist,
-                                m_intake, m_tf);
+                m_intake, m_tf);
 
                 // SmartDashboard.putData("Drive", m_drive);
                 // SmartDashboard.putData("LiftArm", m_liftArm);
@@ -212,7 +207,7 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-                m_drive.setDefaultCommand(getDriveCommand());
+               // m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));
@@ -231,11 +226,9 @@ public class RobotContainer {
                 m_driverController.leftBumper().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
                                 () -> m_driverController.getRawAxis(1)));
 
-                m_driverController.rightTrigger()
-                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true)
-                                                .withTimeout(8));
+                m_driverController.rightTrigger().whileTrue(getSlowDriveCommand());
 
-                 m_driverController.rightBumper().onTrue(deliverPositionsCommand(true).withTimeout(10));
+                m_driverController.rightBumper().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
                 m_driverController.a().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(1));
 
@@ -247,7 +240,8 @@ public class RobotContainer {
                                 .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
                                                 .withTimeout(10));
 
-            //    m_driverController.start()
+                m_driverController.start().onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true)
+                                .withTimeout(8));
 
                 m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
 
@@ -303,19 +297,15 @@ public class RobotContainer {
         private void configArmsButtons() {
 
                 m_armsController.leftBumper().whileTrue(getJogLiftArmCommand(m_armsController))
-
                                 .onFalse(Commands.runOnce(() -> m_liftArm.setControllerAtPosition(),
                                                 m_liftArm));
 
                 m_armsController.leftTrigger().whileTrue(getJogExtendArmCommand(m_armsController))
-
                                 .onFalse(Commands.runOnce(() -> m_extendArm.setControllerAtPosition(),
                                                 m_extendArm));
 
                 m_armsController.rightBumper().whileTrue(getJogWristCommand(m_armsController))
-
                                 .onFalse(Commands.waitUntil(() -> m_wrist.isStopped())
-
                                                 .andThen(Commands.runOnce(() -> m_wrist.setControllerAtPosition(),
                                                                 m_wrist)));
 
@@ -367,7 +357,15 @@ public class RobotContainer {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),
                                 () -> m_driverController.getRawAxis(0),
-                                () -> m_driverController.getRawAxis(4));
+                                () -> m_driverController.getRawAxis(4), false);
+
+        }
+
+        public Command getSlowDriveCommand() {
+                return new SetSwerveDrive(m_drive,
+                                () -> m_driverController.getRawAxis(1),
+                                () -> m_driverController.getRawAxis(0),
+                                () -> m_driverController.getRawAxis(4), true);
 
         }
 
@@ -403,7 +401,6 @@ public class RobotContainer {
 
                 return new GetDeliverAngleSettings(m_liftArm, m_extendArm, m_wrist, m_intake,
                                 toplevel);
-                                
 
         }
 
