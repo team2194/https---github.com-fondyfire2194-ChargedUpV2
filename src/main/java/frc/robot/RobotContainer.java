@@ -37,6 +37,7 @@ import frc.robot.commands.Wrist.JogWrist;
 import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.RaiseLowerWrist;
 import frc.robot.commands.swerve.SetSwerveDrive;
+import frc.robot.commands.swerve.SetSwerveDriveSlow;
 import frc.robot.oi.RumbleCommand;
 import frc.robot.oi.ShuffleboardArms;
 import frc.robot.oi.ShuffleboardCompetition;
@@ -72,7 +73,7 @@ public class RobotContainer {
 
         final ShuffleboardCompetition m_shc;
 
-         final ShuffleboardArms m_sharm;
+        final ShuffleboardArms m_sharm;
 
         public AutoFactory m_autoFactory;
 
@@ -162,7 +163,7 @@ public class RobotContainer {
                                 m_wrist, m_intake);
 
                 m_sharm = new ShuffleboardArms(m_liftArm, m_extendArm, m_wrist,
-                m_intake, m_tf);
+                                m_intake, m_tf);
 
                 // SmartDashboard.putData("Drive", m_drive);
                 // SmartDashboard.putData("LiftArm", m_liftArm);
@@ -207,7 +208,7 @@ public class RobotContainer {
 
         private void setDefaultCommands() {
 
-               // m_drive.setDefaultCommand(getDriveCommand());
+                m_drive.setDefaultCommand(getDriveCommand());
 
                 m_extendArm.setDefaultCommand(new PositionProfileExtendArm(m_extendArm,
                                 m_liftArm));
@@ -243,6 +244,8 @@ public class RobotContainer {
                 m_driverController.start().onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true)
                                 .withTimeout(8));
 
+                m_driverController.back().whileTrue(Commands.run(m_drive::setX));
+
                 m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
 
                 m_driverController.povDown().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
@@ -259,7 +262,7 @@ public class RobotContainer {
 
                 m_coDriverController.rightBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
 
-                // m_coDriverController.leftTrigger()
+              //  m_coDriverController.leftTrigger().whileTrue(m_drive.autoBalance());
 
                 m_coDriverController.a().onTrue(
                                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
@@ -270,9 +273,6 @@ public class RobotContainer {
                                                 .withTimeout(10));
 
                 m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
-
-                // new GroundIntakeTippedConePositions(m_liftArm, m_wrist, m_extendArm,
-                // m_intake));
 
                 // m_coDriverController.y()
 
@@ -288,10 +288,6 @@ public class RobotContainer {
 
                 m_coDriverController.rightTrigger().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
 
-                // new InstantCommand(() -> m_tf.createSelectedTrajectory(2, 2, true)))
-
-                // .onFalse(new InstantCommand(() -> m_tf.doSelectedTrajectory()));
-                //
         }
 
         private void configArmsButtons() {
@@ -357,15 +353,15 @@ public class RobotContainer {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),
                                 () -> m_driverController.getRawAxis(0),
-                                () -> m_driverController.getRawAxis(4), false);
+                                () -> m_driverController.getRawAxis(4));
 
         }
 
         public Command getSlowDriveCommand() {
-                return new SetSwerveDrive(m_drive,
+                return new SetSwerveDriveSlow(m_drive,
                                 () -> m_driverController.getRawAxis(1),
                                 () -> m_driverController.getRawAxis(0),
-                                () -> m_driverController.getRawAxis(4), true);
+                                () -> m_driverController.getRawAxis(4));
 
         }
 

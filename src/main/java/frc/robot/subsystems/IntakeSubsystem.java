@@ -140,18 +140,18 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
 
     loopctr++;
-  
+
     if (loopctr == 15) {
 
-     // intakeMotorConnected = checkCANOK();
+      // intakeMotorConnected = checkCANOK();
 
       coneSensedDistance = getConeSensorDistance();
 
-      conePresent = coneSensedDistance < Pref.getPref("conedist");
+      conePresent = coneSensedDistance > 20 && coneSensedDistance < Pref.getPref("conedist");
 
       cubeSensedDistance = getCubeSensorDistance();
 
-      cubePresent = cubeSensedDistance < Pref.getPref("cubedist");
+      cubePresent = cubeSensedDistance > 20 && cubeSensedDistance < Pref.getPref("cubedist");
     }
 
     if (loopctr == 18) {
@@ -164,7 +164,7 @@ public class IntakeSubsystem extends SubsystemBase {
       if ((!conePresent && !cubePresent) || (conePresent && cubePresent))
         piece = robotPiece.NO_PIECE;
 
-        rpm = getRPM();
+      rpm = getRPM();
 
     }
     if (loopctr == 34) {
@@ -178,7 +178,7 @@ public class IntakeSubsystem extends SubsystemBase {
         cubeExpected = true;
       }
 
-      amps=getAmps();
+      amps = getAmps();
 
       pieceSensorsOK = true;// coneSensorOK && cubeSensorOK;
 
@@ -279,7 +279,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // }
 
   public void moveManually(double speed) {
-   // SmartDashboard.putNumber("INTSP", speed);
+    // SmartDashboard.putNumber("INTSP", speed);
     mIntakeMotor.setVoltage(speed * 12);
   }
 

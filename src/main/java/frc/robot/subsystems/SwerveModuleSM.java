@@ -301,7 +301,7 @@ public final CANCoder m_turnCANcoder;
 
         .setVoltage(RobotController.getBatteryVoltage() * speed);
 
-    SmartDashboard.putNumber("DrFF Volts", feedforward.calculate(speed));
+   // SmartDashboard.putNumber("DrFF Volts", feedforward.calculate(speed));
 
   }
 

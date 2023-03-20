@@ -124,6 +124,14 @@ public class Pref {
     prefDict.put("cubedist", 300.);
 
 
+    prefDict.put("balancehigh",14.3);
+
+    prefDict.put("balancelow",12.5);
+    
+    prefDict.put("balancerate",1.5);
+
+
+
 
 
 

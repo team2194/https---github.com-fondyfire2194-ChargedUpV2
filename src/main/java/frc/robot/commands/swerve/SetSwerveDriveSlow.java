@@ -10,7 +10,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class SetSwerveDrive extends CommandBase {
+public class SetSwerveDriveSlow extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final DriveSubsystem m_swerveDrive;
   private final SlewRateLimiter m_slewX = new SlewRateLimiter(DriverConstants.kTranslationSlew, -10000, 0);
@@ -27,7 +27,7 @@ public class SetSwerveDrive extends CommandBase {
    *
    * @param swerveDriveSubsystem The subsystem used by this command.
    */
-  public SetSwerveDrive(
+  public SetSwerveDriveSlow(
       DriveSubsystem swerveDriveSubsystem, DoubleSupplier throttleInput, DoubleSupplier strafeInput,
       DoubleSupplier rotationInput) {
 
@@ -40,6 +40,7 @@ public class SetSwerveDrive extends CommandBase {
     addRequirements(swerveDriveSubsystem);
   }
 
+  double mult = .3;
 
   // Called when the command is initially scheduled.
   @Override
@@ -61,15 +62,18 @@ public class SetSwerveDrive extends CommandBase {
         * Math.signum(m_rotationInput.getAsDouble());
 
     // square values after deadband while keeping original sign
- 
+
     throttle = Math.signum(throttle) * Math.pow(throttle, 2);
     strafe = Math.signum(strafe) * Math.pow(strafe, 2);
     rotation = Math.signum(rotation) * Math.pow(rotation, 2);
 
-
     throttle *= -DriveConstants.kMaxSpeedMetersPerSecond;
     strafe *= -DriveConstants.kMaxSpeedMetersPerSecond;
     rotation *= DriveConstants.kMaxRotationRadiansPerSecond;
+
+    throttle *= mult;
+    strafe *= mult;
+    rotation *= mult;
 
     if (Math.abs(rotation) < DriverConstants.kControllerRotDeadband)
       rotation = 0;
