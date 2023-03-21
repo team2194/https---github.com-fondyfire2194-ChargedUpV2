@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
 
 public class LightStrip {
 
@@ -34,9 +35,11 @@ public class LightStrip {
   public int m_numOfLEDs;
 
   private AddressableLED m_led;
-  
+
   private AddressableLEDBuffer m_ledBuffer;
   // Store what the last hue of the first pixel is
+
+  private ledColors currentColor;
 
   static int[] rgb = { 0, 0, 0 };
 
@@ -67,11 +70,21 @@ public class LightStrip {
     monitorThread.start();
   }
 
-  public static void setColor(ledColors color) {
+  public void setColor(ledColors color) {
 
     rgb = color.getColor();
 
     colorChange = true;
+
+    currentColor = color;
+
+  }
+
+  public void togglePY() {
+    if (currentColor == ledColors.PURPLE)
+      setColor(ledColors.YELLOW);
+    else
+      setColor(ledColors.PURPLE);
 
   }
 

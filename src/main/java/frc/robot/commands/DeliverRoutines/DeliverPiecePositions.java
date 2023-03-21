@@ -70,7 +70,7 @@ public class DeliverPiecePositions extends SequentialCommandGroup {
 
                 new SetWristGoal(wrist, WristConstants.wristFastConstraints, presetWristAngles.HOME.getAngleRads()),
 
-                new WaitLiftAtTarget(lift, .24,1),
+         //       new WaitLiftAtTarget(lift, .24,1),
 
                 new WaitWristAtTarget(wrist, .24,.1),
 

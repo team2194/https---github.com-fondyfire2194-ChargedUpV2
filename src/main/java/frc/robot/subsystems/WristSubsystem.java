@@ -74,9 +74,9 @@ public class WristSubsystem extends SubsystemBase {
 
     public ArmFeedforward m_wristfeedforward;
 
-    private double inPositionBandwidth = .1;//5 degrees
+    private double inPositionBandwidth = .1;// 5 degrees
 
-    private double inRangeBandwidth = .2;//rads 10 degrees
+    private double inRangeBandwidth = .2;// rads 10 degrees
 
     public boolean wristMotorConnected;
 
@@ -135,10 +135,6 @@ public class WristSubsystem extends SubsystemBase {
         m_motor.setInverted(false);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
-
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
 
         mEncoder.setPositionConversionFactor(WristConstants.RADIANS_PER_ENCODER_REV);
 
@@ -215,7 +211,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setControllerGoal(double angleRadians) {
         m_wristController.setGoal(angleRadians);
-       // SmartDashboard.putNumber("GAR", m_wristController.getGoal().position);
+        // SmartDashboard.putNumber("GAR", m_wristController.getGoal().position);
     }
 
     public void setController(TrapezoidProfile.Constraints constraints, double angleRads, boolean initial) {
@@ -224,7 +220,7 @@ public class WristSubsystem extends SubsystemBase {
             setControllerConstraints(constraints);
             setControllerGoal(angleRads);
             goalAngleRadians = angleRads;
-        //    SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
+            // SmartDashboard.putNumber("GARRRRRRRRRR", angleRads);
             if (initial)
                 m_wristController.reset(new TrapezoidProfile.State(presetWristAngles.HOME.getAngleRads(), 0));
             else
@@ -370,5 +366,13 @@ public class WristSubsystem extends SubsystemBase {
         number = Math.round(number * 100);
         number /= 100;
         return number;
+    }
+
+    private void setCANTimes() {
+
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
+
     }
 }

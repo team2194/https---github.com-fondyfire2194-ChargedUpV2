@@ -49,8 +49,7 @@ public class SwerveModuleSM extends SubsystemBase {
   private PIDController m_turnPosController = new PIDController(ModuleTuneConstants.kPModuleTurningController,
       ModuleTuneConstants.kIModuleTurningController, ModuleTuneConstants.kDModuleTurningController);
 
-  
-public final CANCoder m_turnCANcoder;
+  public final CANCoder m_turnCANcoder;
   SwerveModuleState state;
 
   public int m_moduleNumber;
@@ -144,7 +143,7 @@ public final CANCoder m_turnCANcoder;
     m_turnMotor.enableVoltageCompensation(ModuleConstants.kVoltCompensation);
 
     // absolute encoder used to establish known wheel position on start position
-    m_turnCANcoder = new CANCoder(cancoderCanChannel,"CV1");
+    m_turnCANcoder = new CANCoder(cancoderCanChannel, "CV1");
     m_turnCANcoder.configFactoryDefault();
     m_turnCANcoder.configAllSettings(AngleUtils.generateCanCoderConfig());
     m_turnEncoderOffset = turningEncoderOffset;
@@ -153,15 +152,6 @@ public final CANCoder m_turnCANcoder;
 
     m_turnMotor.setInverted(turningMotorReversed);
 
-    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
-    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
-    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
-    // Set neutral mode to brake
-    m_driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-
-    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
-    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
-    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 50);
     // Set neutral mode to brake
     m_turnMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
@@ -180,7 +170,7 @@ public final CANCoder m_turnCANcoder;
 
     m_turnPosController.enableContinuousInput(-180, 180);
 
-    checkCAN();
+   // checkCAN();
 
     resetAngleToAbsolute();
 
@@ -207,25 +197,27 @@ public final CANCoder m_turnCANcoder;
   @Override
   public void periodic() {
 
+
+
     // if (Pref.getPref("SwerveTune") == 1 && tuneOn == 0) {
 
-    //   tuneOn = 1;
+    // tuneOn = 1;
 
-      // tunePosGains();
+    // tunePosGains();
 
-      // tuneDriveVelGains();
-  //  }
+    // tuneDriveVelGains();
+    // }
 
     // if (tuneOn == 1) {
 
-    //   tuneOn = (int) Pref.getPref("SwerveTune");
+    // tuneOn = (int) Pref.getPref("SwerveTune");
     // }
 
     // if (m_turnCANcoder.getFaults(null)) {
-    //   // SmartDashboard.putStringArray("CanCoderFault"
-    //   // + m_modulePosition.toString(), m_turnCANcoder.getFaults());
-    //   // SmartDashboard.putStringArray("CanCoderStickyFault"
-    //   // + String.valueOf(m_locationIndex), m_turnCANcoder.getStickyFaults());
+    // // SmartDashboard.putStringArray("CanCoderFault"
+    // // + m_modulePosition.toString(), m_turnCANcoder.getFaults());
+    // // SmartDashboard.putStringArray("CanCoderStickyFault"
+    // // + String.valueOf(m_locationIndex), m_turnCANcoder.getStickyFaults());
 
     // }
   }
@@ -291,8 +283,10 @@ public final CANCoder m_turnCANcoder;
   }
 
   public double getDriveSpeedSetpoint() {
-    if(RobotBase.isReal())
-    return state.speedMetersPerSecond;else return 0;
+    if (RobotBase.isReal())
+      return state.speedMetersPerSecond;
+    else
+      return 0;
   }
 
   public void driveMotorMoveOpenLoop(double speed) {
@@ -301,7 +295,7 @@ public final CANCoder m_turnCANcoder;
 
         .setVoltage(RobotController.getBatteryVoltage() * speed);
 
-   // SmartDashboard.putNumber("DrFF Volts", feedforward.calculate(speed));
+    // SmartDashboard.putNumber("DrFF Volts", feedforward.calculate(speed));
 
   }
 
@@ -461,14 +455,14 @@ public final CANCoder m_turnCANcoder;
   }
 
   public boolean hasFault() {
-    return m_driveMotor.getFaults() != 0 || m_turnMotor.getFaults() != 0 ;//|| m_turnCANcoder.getFaulted();
+    return m_driveMotor.getFaults() != 0 || m_turnMotor.getFaults() != 0;// || m_turnCANcoder.getFaulted();
   }
 
   public boolean checkCAN() {
 
     driveMotorConnected = m_driveMotor.getFirmwareVersion() != 0;
     turnMotorConnected = m_turnMotor.getFirmwareVersion() != 0;
-   // turnCoderConnected = m_turnCANcoder.getFirmwareVersion() > 0;
+    // turnCoderConnected = m_turnCANcoder.getFirmwareVersion() > 0;
 
     return RobotBase.isSimulation() || (driveMotorConnected && turnMotorConnected && turnCoderConnected);
 
@@ -490,6 +484,20 @@ public final CANCoder m_turnCANcoder;
     m_driveVelController.setP(Pref.getPref("SwerveVelkP"));
     m_driveVelController.setI(Pref.getPref("SwerveVelkI"));
     m_driveVelController.setD(Pref.getPref("SwerveVelkD"));
+
+  }
+
+  private void setCANTimes() {
+
+    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100);
+    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
+    m_driveMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20);
+    // Set neutral mode to brake
+    m_driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
+    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 10);
+    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20);
+    m_turnMotor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 50);
 
   }
 

@@ -114,10 +114,6 @@ public class IntakeSubsystem extends SubsystemBase {
     mIntakeMotor.setClosedLoopRampRate(.5);
     mIntakeMotor.enableVoltageCompensation(12);
 
-    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
-
     mIntakeMotor.setSmartCurrentLimit(20);
 
     mIntakeMotor.setIdleMode(IdleMode.kCoast);
@@ -340,6 +336,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stopIntake() {
     Commands.run(() -> this.stop(), this);
+  }
+
+  private void setCANTimes(){
+    
+    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    mIntakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+
   }
 
 }

@@ -44,7 +44,7 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         PICKUP_TIPPED_CONE_GROUND(118.2),
 
-        PLACE_CUBE_MID_SHELF(1),
+        PLACE_CUBE_MID_SHELF(0),
 
         PLACE_CUBE_TOP_SHELF(22.7),
 
@@ -150,10 +150,6 @@ public class ExtendArmSubsystem extends SubsystemBase {
         m_motor.setInverted(true);
         m_motor.setOpenLoopRampRate(.1);
         m_motor.setClosedLoopRampRate(.1);
-
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
 
         m_posnController = m_motor.getPIDController();
 
@@ -382,6 +378,14 @@ public class ExtendArmSubsystem extends SubsystemBase {
         number = Math.round(number * 100);
         number /= 100;
         return number;
+    }
+
+    private void setCANTimes(){
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);// vel
+
+   
     }
 
 }

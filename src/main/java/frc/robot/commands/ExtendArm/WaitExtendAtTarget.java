@@ -21,8 +21,7 @@ public class WaitExtendAtTarget extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     m_extend = extend;
     m_atTargetTime = atTargetTime;
-    m_range=range;
-
+    m_range = range;
 
   }
 
@@ -55,6 +54,6 @@ public class WaitExtendAtTarget extends CommandBase {
   public boolean isFinished() {
     return m_extend.atTargetPosition() || m_inRangeTime != 0 && Timer.getFPGATimestamp() > m_inRangeTime + 2
         || Timer.getFPGATimestamp() > m_startTime + 3;
-    
+
   }
 }

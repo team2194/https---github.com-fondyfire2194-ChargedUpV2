@@ -47,6 +47,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.LightStrip.ledColors;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
@@ -66,7 +67,7 @@ public class RobotContainer {
 
         final ExtendArmSubsystem m_extendArm;// = new ExtendArmSubsystem();
 
-        final IntakeSubsystem m_intake = new IntakeSubsystem();
+        final IntakeSubsystem m_intake;
 
         final WristSubsystem m_wrist = new WristSubsystem();
 
@@ -103,7 +104,7 @@ public class RobotContainer {
 
         public LLDriveLinkerSubsystem m_lldv;
 
-        // public LightStrip m_ls = new LightStrip(9, 60);
+        public LightStrip m_ls = new LightStrip(9, 35);
 
         public MonitorThreadExt mext;
         // public MonitorThreadLift mlift;
@@ -115,23 +116,25 @@ public class RobotContainer {
          */
         public RobotContainer() {
 
+                m_drive = new DriveSubsystem();
+
                 Pref.deleteUnused();
 
                 Pref.addMissing();
 
-                m_drive = new DriveSubsystem();
+                m_llv = new LimelightVision();
+
+                m_lldv = new LLDriveLinkerSubsystem(m_llv, m_drive);
 
                 m_liftArm = new LiftArmSubsystem();
-
-                m_extendArm = new ExtendArmSubsystem();
 
                 // mlift = new MonitorThreadLift(m_liftArm);
 
                 // mlift.startThread();
 
-                mext = new MonitorThreadExt(m_extendArm);
+                // mext = new MonitorThreadExt(m_extendArm);
 
-                mext.startThread();
+                // mext.startThread();
 
                 // mwrist = new MonitorThreadWrist(m_wrist);
 
@@ -141,15 +144,15 @@ public class RobotContainer {
 
                 // mIntake.startThread();
 
-                m_llv = new LimelightVision();
-
-                m_lldv = new LLDriveLinkerSubsystem(m_llv, m_drive);
-
                 SmartDashboard.putData("Scheduler", CommandScheduler.getInstance());
 
                 LiveWindow.disableAllTelemetry();
 
+                m_intake = new IntakeSubsystem();
+
                 m_ghs = new GameHandlerSubsystem();
+
+                m_extendArm = new ExtendArmSubsystem();
 
                 m_tf = new TrajectoryFactory(m_drive, m_fieldSim, m_ghs);
 
@@ -273,7 +276,9 @@ public class RobotContainer {
                                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
                                                 .withTimeout(10));
 
-                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()));
+                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()))
+
+                                .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
 
                 // m_coDriverController.y()
 

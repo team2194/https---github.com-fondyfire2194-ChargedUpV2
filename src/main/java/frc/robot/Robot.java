@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -66,6 +67,9 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog());
 
     m_robotContainer = new RobotContainer();
+
+
+    Shuffleboard.selectTab("Competition");
   }
 
   @Override
@@ -94,8 +98,10 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_disableStartTime = 0;
     firstScan = true;
+
+    autoHasRun = false;
     // CommandScheduler.getInstance().cancelAll();
-    // Shuffleboard.selectTab("Competition");
+    // 
   }
 
   @Override

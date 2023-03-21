@@ -32,7 +32,7 @@ public class EjectPieceFromIntake extends CommandBase {
 
   LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
 
-  LinearFilter ampsFilter = LinearFilter.movingAverage(5);
+  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
 
   boolean ampsHigh;
 
@@ -54,6 +54,10 @@ public class EjectPieceFromIntake extends CommandBase {
     if (m_intake.piece == robotPiece.CUBE)
 
       m_speed *= -1;
+
+    if (m_intake.piece == robotPiece.CUBE) {
+      m_speed *= .8;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -63,6 +67,8 @@ public class EjectPieceFromIntake extends CommandBase {
     m_intake.moveManually(m_speed);
 
     aveConeDist = coneSensorFilter.calculate(m_intake.getConeSensorDistance());
+
+    aveCubeDist = cubeSensorFilter.calculate(m_intake.getCubeSensorDistance());
 
     noCubeSeen = aveCubeDist > cubeSenseThreshold;
 
