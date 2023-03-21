@@ -39,7 +39,7 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-   loopctr++;
+    loopctr++;
 
     llHeartbeat = LimelightHelpers.getLimelightNTDouble("limelight", "hb");
 
@@ -65,10 +65,9 @@ public class LLDriveLinkerSubsystem extends SubsystemBase {
 
       llresults = LimelightHelpers.getLatestResults("limelight");
 
-      m_drive.botPose = getBotPose();
-
       if (m_llv.getCurrentPipelineType() == pipelinetype.fiducialmarkers) {
-
+        
+        m_drive.botPose = getBotPose();
         m_drive.numberTags = llresults.targetingResults.targets_Fiducials.length;
         m_drive.hasTag = m_drive.numberTags > 0;
         m_drive.fiducialID = (int) LimelightHelpers.getFiducialID("limelight");

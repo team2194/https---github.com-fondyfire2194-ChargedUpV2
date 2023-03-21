@@ -9,11 +9,10 @@ import java.util.List;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
@@ -25,7 +24,6 @@ import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 
 /** Add your docs here. */
 public class AutoFactory {
@@ -64,6 +62,8 @@ public class AutoFactory {
     private PathPlannerTrajectory traj2;
 
     private Command command1 = new DoNothing();
+
+    private Command command1A = new DoNothing();
 
     private boolean traj1Reqd;
 
@@ -170,8 +170,12 @@ public class AutoFactory {
             tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd);
         }
 
-        if (autoselect == 2)
-            tempCommand = getDeliverMid();
+        if (autoselect == 2) {
+
+            tempCommand = getDeliverMid();// places whichever piece is detected at intake
+
+            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true);
+        }
 
         return tempCommand;
 
@@ -201,9 +205,15 @@ public class AutoFactory {
                 traj2Reqd = true;
             }
 
-            if (startLocation == 1 && autoselect1 == 2) {
+            if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Blue) {
 
                 traj2name = "BackUpLeftCenter";
+
+                traj2Reqd = true;
+            }
+            if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Red) {
+
+                traj2name = "BackUpRightCenter";
 
                 traj2Reqd = true;
             }
@@ -254,28 +264,22 @@ public class AutoFactory {
 
     }
 
-    public Command getCommand3() {
-
-        return new RetractWristExtendLift(m_lift, m_extend, m_wrist, false);
-
-    }
-
     public void createCommands() {
 
         command1 = new DoNothing();
+        command1A = new DoNothing();
         command2 = new DoNothing();
-        command3 = new DoNothing();
 
-        command1 = getCommand1();
+        command1 = getCommand1();// 1A will retract arms if a deliver was chosen
         command2 = getCommand2();
-        command3 = getCommand3();
+
     }
 
     public Command getAutonomousCommand() {
 
         startTime = Timer.getFPGATimestamp();
 
-        autonomousCommand = new SequentialCommandGroup(command1, command2);
+        autonomousCommand = new SequentialCommandGroup(command1, command1A, command2);
 
         return autonomousCommand;
 

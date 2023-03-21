@@ -123,6 +123,18 @@ public class TrajectoryFactory {
         return followTrajectoryCommand(selTraj, true);
     }
 
+    /**
+     * 
+     * Yes. It’s a bit confusing but heading refers to the direction of travel and
+     * the holonomic rotation is the direction you want the robot to face. When not
+     * using holonomic mode, heading refers to both since they can’t be different.
+     * 
+     * 
+     * 
+     * @param traj
+     * @param isFirstPath
+     * @return
+     */
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {
@@ -131,7 +143,7 @@ public class TrajectoryFactory {
                     if (isFirstPath) {
                         PathPlannerTrajectory transformed = PathPlannerTrajectory.transformTrajectoryForAlliance(traj,
                                 DriverStation.getAlliance());
-                       // m_drive.resetGyro();
+                        // m_drive.resetGyro();
                         m_drive.resetOdometry(transformed.getInitialHolonomicPose());
                     }
                 }),
