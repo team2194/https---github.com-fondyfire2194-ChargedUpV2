@@ -237,7 +237,7 @@ public final class Constants {
   //
   public static final class ExtendArmConstants {
 
-    public static double GEAR_RATIO = 49;
+    public static double GEAR_RATIO = 70;
     public static double PULLEY_TEETH = 24;// 30
     public static double TOOTH_BELT_PITCH = Units.metersToInches(.005);// .2
 
@@ -247,11 +247,11 @@ public final class Constants {
 
     public static final double INCHES_PER_ENCODER_REV = TOOTH_BELT_PITCH * PULLEY_TEETH / GEAR_RATIO;// .1
 
-    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 18
+    public static final double MAX_RATE_INCHES_PER_SEC = (INCHES_PER_ENCODER_REV * 11000) / 60;// 18 *5/7 12
 
     public static double ksExtArmVolts = .05;
 
-    public static double kvExtArmVoltSecondsPerInch = .65;// .68 max .34 gave just over 50% try .5
+    public static double kvExtArmVoltSecondsPerInch = .75;// 10/12 = .8 max 
 
     public static double kaExtArmVoltSecondsSquaredPerInch = 0;
 
@@ -275,7 +275,7 @@ public final class Constants {
 
     public static final double JOG_SLEW_RATE = 10;
 
-    public static final double kgVolts = 0.25;
+    public static final double kgVolts = 0.2;
 
   }
 

@@ -82,7 +82,7 @@ public class SetSwerveDriveSlow extends CommandBase {
     double strafe_sl = m_slewY.calculate(strafe);
     double rotation_sl = m_slewRot.calculate(rotation);
     // SlewRateLimiter rotation set with very fast rate
-    m_swerveDrive.drive(throttle_sl, strafe_sl, rotation);
+    m_swerveDrive.drive(throttle_sl, strafe_sl, -rotation);
 
   }
 

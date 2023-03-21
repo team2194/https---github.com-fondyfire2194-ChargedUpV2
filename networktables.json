@@ -454,5 +454,29 @@
     "properties": {
       "persistent": true
     }
+  },
+  {
+    "name": "/Preferences/balancerate",
+    "type": "double",
+    "value": 1.5,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/balancehigh",
+    "type": "double",
+    "value": 14.3,
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/Preferences/balancelow",
+    "type": "double",
+    "value": 12.5,
+    "properties": {
+      "persistent": true
+    }
   }
 ]

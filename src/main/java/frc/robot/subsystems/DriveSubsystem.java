@@ -340,13 +340,13 @@ public class DriveSubsystem extends SubsystemBase {
     return Commands.race(
         Commands.sequence(
             Commands.run(
-                () -> this.drive(Pref.getPref("balancerate") / DriveConstants.kMaxSpeedMetersPerSecond,
+                () -> this.drive(Pref.getPref("balancerate") * DriveConstants.kMaxSpeedMetersPerSecond,
                     0, 0),
-                this).until(() -> Math.abs(this.getGyroPitch()) >= Pref.getPref("balancehigh")),
+                this).until(() -> this.getGyroPitch() >= Pref.getPref("balancehigh")),
             Commands.run(
-                () -> this.drive(0.3 / DriveConstants.kMaxSpeedMetersPerSecond,
+                () -> this.drive(0.2 * DriveConstants.kMaxSpeedMetersPerSecond,
                     0, 0),
-                this).until(() -> Math.abs(this.getGyroPitch()) <= Pref.getPref("balancelow")),
+                this).until(() -> this.getGyroPitch() <= Pref.getPref("balancelow")),
             Commands.run(this::setX, this)),
         Commands.waitSeconds(15));
     // Commands.run(
@@ -423,6 +423,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
+    m_gyro.reset();
     m_poseEstimator.resetPosition(getHeadingRotation2d(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
@@ -430,7 +431,6 @@ public class DriveSubsystem extends SubsystemBase {
             m_backLeft.getPosition(),
             m_backRight.getPosition() },
         pose);
-    m_gyro.reset();
 
   }
 

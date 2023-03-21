@@ -86,9 +86,6 @@ public class TrajectoryFactory {
         ppTrajChooser.addOption("PushCubeLeftShelfPath", "PushCubeLeftShelf");
         ppTrajChooser.addOption("PushCubeRighShelfPath", "PushCubeRightShelf");
 
-
-       
-
         createSelectedTrajectory(2, 2, true);
 
     }
@@ -129,10 +126,12 @@ public class TrajectoryFactory {
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> {
+
                     // Reset odometry for the first path you run during auto
                     if (isFirstPath) {
                         PathPlannerTrajectory transformed = PathPlannerTrajectory.transformTrajectoryForAlliance(traj,
                                 DriverStation.getAlliance());
+                       // m_drive.resetGyro();
                         m_drive.resetOdometry(transformed.getInitialHolonomicPose());
                     }
                 }),

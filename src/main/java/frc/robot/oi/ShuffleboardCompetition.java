@@ -95,9 +95,25 @@ public class ShuffleboardCompetition {
                                 .withSize(1, 1)
                                 .withPosition(2, 2);
 
-                area1.addNumber("CubeDistance", () -> m_intake.cubeSensedDistance)
+                                area1.addNumber("CubeDistance", () -> m_intake.cubeSensedDistance)
                                 .withSize(1, 1)
                                 .withPosition(2, 3);
+
+                                area1.addNumber("RobotPosnX", () -> round2dp(m_drive.getEstimatedPosition().getTranslation().getX()))
+                                .withSize(1, 1)
+                                .withPosition(0, 2);
+                                area1.addNumber("RobotPosnY", () -> round2dp(m_drive.getEstimatedPosition().getTranslation().getY()))
+                                .withSize(1, 1)
+                                .withPosition(0, 3);
+                                area1.addNumber("Heading", () -> round2dp(m_drive.getEstimatedPosition().getRotation().getDegrees()))
+                                .withSize(1, 1)
+                                .withPosition(0, 4);
+                                area1.addNumber("Pitch", () -> round2dp(m_drive.getGyroPitch()))
+                                .withSize(1, 1)
+                                .withPosition(1, 4);
+
+
+
                 area1.addBoolean("Next Gamepiece", () -> m_gps.gamePieceType.equals(gamePiece.CONE))
                                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1)
                                 .withPosition(8, 0)
@@ -128,10 +144,7 @@ public class ShuffleboardCompetition {
                 // area1.addNumber("RobotY", () -> round2dp(m_drive.getY()))
                 //                 .withPosition(7, 2).withSize(1, 1);
 
-                area1.addNumber("Heading", () -> round2dp(m_drive.getEstimatedPosition().getRotation().getDegrees()))
-                                .withPosition(8, 2).withSize(1, 1);
-
-        //         area1.addNumber("ActiveY", () -> round2dp(m_gps.getActiveDropPose().getY()))
+              //   area1.addNumber("ActiveY", () -> round2dp(m_gps.getActiveDropPose().getY()))
         //                         .withPosition(9, 2);
         //         area1.addNumber("LiftDlvrInches", () -> round2dp(lift.deliverInches))
         //                         .withPosition(6, 3);

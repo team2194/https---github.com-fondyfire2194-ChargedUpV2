@@ -8,7 +8,9 @@ import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -63,7 +65,11 @@ public class AutoFactory {
 
     private Command command1 = new DoNothing();
 
+    private boolean traj1Reqd;
+
     private Command command2 = new DoNothing();
+
+    private boolean traj2Reqd;
 
     private Command command3 = new DoNothing();
 
@@ -97,6 +103,16 @@ public class AutoFactory {
         m_startDelayChooser.addOption("Four Seconds", 4.);
         m_startDelayChooser.addOption("Five Seconds", 4.);
 
+        m_startLocationChooser.setDefaultOption("CoopShelf", 0);
+
+        m_startLocationChooser.addOption("CoopLeftPipe", 1);
+
+        m_startLocationChooser.addOption("CoopRightPipe", 2);
+
+        m_startLocationChooser.addOption("LeftShelf", 3);
+
+        m_startLocationChooser.addOption("RightShelf", 4);
+
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser.addOption("PushCube", 1);
@@ -111,23 +127,13 @@ public class AutoFactory {
 
         m_autoChooser1.addOption("DriveOutZone", 3);
 
-        m_startLocationChooser.setDefaultOption("CoopShelf", 0);
-
-        m_startLocationChooser.addOption("CoopLeftPipe", 1);
-
-        m_startLocationChooser.addOption("CoopRightPipe", 2);
-
-        m_startLocationChooser.addOption("LeftShelf", 3);
-
-        m_startLocationChooser.addOption("RightShelf", 4);
-
     }
 
     public Command getCommand1() {
 
         Command tempCommand = new DoNothing();
 
-        boolean trajReqd = false;
+        traj1Reqd = false;
 
         int startLocation = m_startLocationChooser.getSelected();
 
@@ -135,24 +141,33 @@ public class AutoFactory {
 
         if (startLocation == 0 && autoselect == 1) {
             traj1name = "PushCubeCenter";
-
-            trajReqd = true;
+            traj1Reqd = true;
         }
 
-        if (startLocation == 3 && autoselect == 1) {
+        if (startLocation == 3 && autoselect == 1 && DriverStation.getAlliance() == Alliance.Blue) {
             traj1name = "PushCubeLeftShelf";
-            trajReqd = true;
+            traj1Reqd = true;
         }
-        if (startLocation == 4 && autoselect == 1) {
+        if (startLocation == 3 && autoselect == 1 && DriverStation.getAlliance() == Alliance.Red) {
             traj1name = "PushCubeRightShelf";
-            trajReqd = true;
+            traj1Reqd = true;
         }
 
-        if (trajReqd) {
+        if (startLocation == 4 && autoselect == 1 && DriverStation.getAlliance() == Alliance.Blue) {
+            traj1name = "PushCubeRightShelf";
+            traj1Reqd = true;
+        }
+
+        if (startLocation == 4 && autoselect == 1 && DriverStation.getAlliance() == Alliance.Red) {
+            traj1name = "PushCubeLeftShelf";
+            traj1Reqd = true;
+        }
+
+        if (traj1Reqd) {
 
             traj1 = m_tf.getPathPlannerTrajectory(traj1name, 2, 1, false);
 
-            tempCommand = m_tf.followTrajectoryCommand(traj1, true);
+            tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd);
         }
 
         if (autoselect == 2)
@@ -166,7 +181,7 @@ public class AutoFactory {
 
         Command tempCommand = new DoNothing();
 
-        boolean trajReqd = false;
+        traj2Reqd = false;
 
         int startLocation = m_startLocationChooser.getSelected();
 
@@ -183,42 +198,55 @@ public class AutoFactory {
 
                 traj2name = "BackUpCenter";
 
-                trajReqd = true;
+                traj2Reqd = true;
             }
 
             if (startLocation == 1 && autoselect1 == 2) {
 
                 traj2name = "BackUpLeftCenter";
 
-                trajReqd = true;
+                traj2Reqd = true;
             }
 
             if (startLocation == 2 && autoselect1 == 2) {
 
                 traj2name = "BackUpRightCenter";
 
-                trajReqd = true;
+                traj2Reqd = true;
             }
         }
-        if (startLocation == 3) {
+        if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
 
             traj2name = "BackUpLeftShelf";
 
-            trajReqd = true;
+            traj2Reqd = true;
         }
-
-        if (startLocation == 4) {
+        if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
 
             traj2name = "BackUpRightShelf";
 
-            trajReqd = true;
+            traj2Reqd = true;
         }
 
-        if (trajReqd) {
+        if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
+
+            traj2name = "BackUpRightShelf";
+
+            traj2Reqd = true;
+        }
+
+        if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
+
+            traj2name = "BackUpLeftShelf";
+
+            traj2Reqd = true;
+        }
+
+        if (traj2Reqd) {
 
             traj2 = m_tf.getPathPlannerTrajectory(traj2name, 2, 1, false);
 
-            tempCommand = m_tf.followTrajectoryCommand(traj2, true);
+            tempCommand = m_tf.followTrajectoryCommand(traj2, !traj1Reqd);
 
         }
 
@@ -233,8 +261,14 @@ public class AutoFactory {
     }
 
     public void createCommands() {
+
+        command1 = new DoNothing();
+        command2 = new DoNothing();
+        command3 = new DoNothing();
+
         command1 = getCommand1();
         command2 = getCommand2();
+        command3 = getCommand3();
     }
 
     public Command getAutonomousCommand() {

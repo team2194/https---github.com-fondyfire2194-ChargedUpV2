@@ -69,7 +69,7 @@ public class MonitorThreadExt {
                 while (!Thread.currentThread().isInterrupted()) {
                     m_ext.tstctr++;
 
-                    if (!m_ext.isStopped()) {
+                    if (true) {
                         goalinches.set(m_ext.goalInches);
                         velocity.set(m_ext.inchespersec);
                         distance.set(m_ext.positionInches);

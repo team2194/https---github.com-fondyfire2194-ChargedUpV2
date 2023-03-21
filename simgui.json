@@ -102,11 +102,6 @@
           "visible": true
         }
       },
-      "/Shuffleboard/Arms/TrajLayout/TrajectoryChooser": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Shuffleboard/Competition/AutoChooser": {
         "window": {
           "visible": true
@@ -140,12 +135,7 @@
           "length": 0.4000000059604645,
           "width": 0.30000001192092896
         },
-        "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\Field2d_2023_red.png",
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Scheduler": {
+        "image": "C:\\Users\\boyle\\Documents\\FRCC2023\\ChargedUp-2194\\src\\main\\images\\Field2d_2023.png",
         "window": {
           "visible": true
         }
@@ -179,9 +169,6 @@
           "open": true
         }
       },
-      "Preferences": {
-        "open": true
-      },
       "Shuffleboard": {
         "Arms": {
           "WristLayout": {
@@ -189,8 +176,7 @@
           },
           "extLayout": {
             "open": true
-          },
-          "open": true
+          }
         },
         "CanCoders": {
           "RR  CanCoder": {
@@ -208,13 +194,13 @@
         },
         "Vision": {
           "open": true
-        }
+        },
+        "open": true
       },
       "SmartDashboard": {
         "Scheduler": {
           "open": true
-        },
-        "open": true
+        }
       },
       "swerve": {
         "drive": {
@@ -233,9 +219,6 @@
         "open": true
       }
     },
-    "Clients": {
-      "open": true
-    },
     "Server": {
       "Publishers": {
         "open": true
@@ -249,8 +232,7 @@
         "open": true
       },
       "open": true
-    },
-    "visible": true
+    }
   },
   "Plot": {
     "Plot <0>": {

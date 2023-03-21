@@ -28,6 +28,7 @@ import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.Intake.JogIntake;
 import frc.robot.commands.LiftArm.JogLiftArm;
 import frc.robot.commands.LiftArm.PositionProfileLiftInches;
+import frc.robot.commands.NTs.MonitorThreadExt;
 import frc.robot.commands.PickupRoutines.DetectorLoad;
 import frc.robot.commands.PickupRoutines.GetPieceExpectedAtIntake;
 import frc.robot.commands.PickupRoutines.GroundIntakePositions;
@@ -104,7 +105,7 @@ public class RobotContainer {
 
         // public LightStrip m_ls = new LightStrip(9, 60);
 
-        // public MonitorThreadExt mext;
+        public MonitorThreadExt mext;
         // public MonitorThreadLift mlift;
         // public MonitorThreadWrist mwrist;
         // public MonitorThreadIntake mIntake;
@@ -128,9 +129,9 @@ public class RobotContainer {
 
                 // mlift.startThread();
 
-                // mext = new MonitorThreadExt(m_extendArm);
+                mext = new MonitorThreadExt(m_extendArm);
 
-                // mext.startThread();
+                mext.startThread();
 
                 // mwrist = new MonitorThreadWrist(m_wrist);
 
@@ -262,7 +263,7 @@ public class RobotContainer {
 
                 m_coDriverController.rightBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
 
-              //  m_coDriverController.leftTrigger().whileTrue(m_drive.autoBalance());
+                // m_coDriverController.leftTrigger().whileTrue(m_drive.autoBalance());
 
                 m_coDriverController.a().onTrue(
                                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
@@ -341,8 +342,11 @@ public class RobotContainer {
 
                 m_armsController.rightTrigger()
                                 .onTrue(Commands.runOnce(() -> m_extendArm.setController(
-                                                ExtendArmConstants.extendArmFastConstraints, 0,
+                                                ExtendArmConstants.extendArmFastConstraints, 20,
                                                 false)));
+
+                // m_armsController.rightTrigger().onTrue(m_drive.autoBalance())
+                // .onFalse(getStopDriveCommand());
 
                 // m_armsController.back() DO NOT ASSIGN ALREADY USED IN JOG COMMANDS TO
                 // OVERRIDE SOFTWARE LIMITS

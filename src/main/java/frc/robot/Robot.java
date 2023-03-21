@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.
     // Record both DS control and joystick data
     DriverStation.startDataLog(DataLogManager.getLog());
-    
+
     m_robotContainer = new RobotContainer();
   }
 
@@ -141,10 +141,18 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
+    autoHasRun = false;
+
     m_robotContainer.m_drive.setIdleMode(true);
 
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
+
+    m_robotContainer.m_liftArm.setController(LiftArmConstants.liftArmFastConstraints,
+        m_robotContainer.m_liftArm.getPositionInches(), false);
+
+    m_robotContainer.m_wrist.setController(WristConstants.wristFastConstraints,
+        m_robotContainer.m_wrist.getAngleRadians(), false);
 
     m_startDelay = m_robotContainer.m_autoFactory.m_startDelayChooser.getSelected();
 
@@ -176,7 +184,9 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the a
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    autoHasRun = false;
 
+    m_robotContainer.m_drive.resetGyro();
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
         presetExtArmDistances.RETRACT.getDistance(), false);
 
