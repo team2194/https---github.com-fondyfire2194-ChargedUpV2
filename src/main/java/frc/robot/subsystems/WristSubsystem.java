@@ -150,6 +150,8 @@ public class WristSubsystem extends SubsystemBase {
 
         m_motor.setIdleMode(IdleMode.kBrake);
 
+        setCANTimes();
+
         setSoftwareLimits();
 
         enableSoftLimits(useSoftwareLimit);

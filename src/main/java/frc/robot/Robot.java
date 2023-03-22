@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
 
-    Shuffleboard.selectTab("Competition");
+    //Shuffleboard.selectTab("Competition");
   }
 
   @Override

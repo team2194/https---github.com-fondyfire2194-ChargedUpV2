@@ -170,7 +170,9 @@ public class SwerveModuleSM extends SubsystemBase {
 
     m_turnPosController.enableContinuousInput(-180, 180);
 
-   // checkCAN();
+    // checkCAN();
+
+    setCANTimes();
 
     resetAngleToAbsolute();
 
@@ -196,8 +198,6 @@ public class SwerveModuleSM extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-
 
     // if (Pref.getPref("SwerveTune") == 1 && tuneOn == 0) {
 

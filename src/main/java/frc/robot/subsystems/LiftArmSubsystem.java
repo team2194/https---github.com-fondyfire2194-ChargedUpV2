@@ -180,6 +180,7 @@ public class LiftArmSubsystem extends SubsystemBase {
             m_positionSim = LiftArmConstants.MIN_INCHES;
 
         }
+        setCANTimes();
 
         setSoftwareLimits();
 

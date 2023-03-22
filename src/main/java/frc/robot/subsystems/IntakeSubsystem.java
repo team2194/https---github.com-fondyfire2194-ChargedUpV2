@@ -122,6 +122,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     mEncoder.setVelocityConversionFactor(1);
 
+    setCANTimes();
+
     if (RobotBase.isReal()) {
       // Configure time of flight sensor for short ranging mode and sample
       // distance every 40 ms

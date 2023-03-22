@@ -113,11 +113,18 @@ public class AutoFactory {
 
         m_startLocationChooser.addOption("RightShelf", 4);
 
+
+        
+
         m_autoChooser.setDefaultOption("Do Nothing", 0);
 
         m_autoChooser.addOption("PushCube", 1);
 
         m_autoChooser.addOption("DeliverMid", 2);
+   
+        m_autoChooser.addOption("DeliverTop", 3);
+
+
 
         m_autoChooser1.setDefaultOption("Do Nothing", 0);
 
@@ -176,6 +183,14 @@ public class AutoFactory {
 
             command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true);
         }
+
+        if (autoselect == 3) {
+
+            tempCommand = getDeliverTop();// places whichever piece is detected at intake
+
+            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true);
+        }
+
 
         return tempCommand;
 
@@ -290,6 +305,18 @@ public class AutoFactory {
         return new SequentialCommandGroup(
 
                 new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, false),
+
+                new WaitCommand(1)
+
+        );
+
+    }
+  
+    private Command getDeliverTop() {
+
+        return new SequentialCommandGroup(
+
+                new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, true),
 
                 new WaitCommand(1)
 

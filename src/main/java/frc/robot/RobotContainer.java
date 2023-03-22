@@ -124,6 +124,8 @@ public class RobotContainer {
 
                 m_llv = new LimelightVision();
 
+                m_ls.setColor(ledColors.YELLOW);
+
                 m_lldv = new LLDriveLinkerSubsystem(m_llv, m_drive);
 
                 m_liftArm = new LiftArmSubsystem();
@@ -250,9 +252,9 @@ public class RobotContainer {
 
                 m_driverController.back().whileTrue(Commands.run(m_drive::setX));
 
-                m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
+                m_driverController.povUp().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
 
-                m_driverController.povDown().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
+                m_driverController.povDown().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
 
                 m_driverController.povLeft().onTrue(Commands.runOnce(() -> m_extendArm.incGoal(.25)));
 

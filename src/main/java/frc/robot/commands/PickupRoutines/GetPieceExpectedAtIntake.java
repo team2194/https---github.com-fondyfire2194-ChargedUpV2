@@ -27,9 +27,9 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
   public double ampsThreshold = 20;
 
-  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(5);
+  LinearFilter cubeSensorFilter = LinearFilter.movingAverage(25);
 
-  LinearFilter coneSensorFilter = LinearFilter.movingAverage(5);
+  LinearFilter coneSensorFilter = LinearFilter.movingAverage(25);
 
   boolean cubeSeen;
 

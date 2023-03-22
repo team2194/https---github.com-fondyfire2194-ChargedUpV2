@@ -167,6 +167,8 @@ public class ExtendArmSubsystem extends SubsystemBase {
 
         mEncoder.setPosition(presetExtArmDistances.HOME.getDistance());
 
+        setCANTimes();
+
         setController(ExtendArmConstants.extendArmFastConstraints, presetExtArmDistances.HOME.getDistance(), true);
 
         if (RobotBase.isSimulation()) {
