@@ -6,7 +6,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +21,6 @@ import frc.robot.Constants.WristConstants;
 import frc.robot.commands.DeliverRoutines.DeliverPiecePositions;
 import frc.robot.commands.DeliverRoutines.EjectPieceFromIntake;
 import frc.robot.commands.DeliverRoutines.GetDeliverAngleSettings;
-import frc.robot.commands.DeliverRoutines.SetSwerveDriveTape;
 import frc.robot.commands.ExtendArm.JogExtendArm;
 import frc.robot.commands.ExtendArm.PositionProfileExtendArm;
 import frc.robot.commands.Intake.JogIntake;
@@ -46,14 +44,15 @@ import frc.robot.simulation.FieldSim;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem;
-import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
-import frc.robot.subsystems.LightStrip.ledColors;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LLDriveLinkerSubsystem;
 import frc.robot.subsystems.LiftArmSubsystem;
 import frc.robot.subsystems.LightStrip;
+import frc.robot.subsystems.LightStrip.ledColors;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
+import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 import frc.robot.utils.AutoFactory;
 import frc.robot.utils.LEDControllerI2C;
 import frc.robot.utils.TrajectoryFactory;
@@ -124,7 +123,7 @@ public class RobotContainer {
 
                 m_llv = new LimelightVision();
 
-                m_ls.setColor(ledColors.YELLOW);
+                m_ls.setColor(ledColors.PURPLE);
 
                 m_lldv = new LLDriveLinkerSubsystem(m_llv, m_drive);
 
@@ -227,19 +226,23 @@ public class RobotContainer {
 
         void configDriverButtons() {
 
+                // m_driverController.leftTrigger()
+                // .whileTrue(getDetectorLoad());
                 m_driverController.leftTrigger()
-                                .whileTrue(getDetectorLoad());
+                                .whileTrue(getSlowDriveCommand());
 
-                m_driverController.leftBumper().whileTrue(new SetSwerveDriveTape(m_drive, m_llv, m_ghs,
-                                () -> m_driverController.getRawAxis(1)));
+                // m_driverController.leftBumper().whileTrue(new SetSwerveDriveTape(m_drive,
+                // m_llv, m_ghs,
+                // () -> m_driverController.getRawAxis(1)));
 
-                m_driverController.rightTrigger().whileTrue(getSlowDriveCommand());
+                m_driverController.rightTrigger().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
 
-                m_driverController.rightBumper().onTrue(deliverPositionsCommand(true).withTimeout(10));
+                m_driverController.rightBumper().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(1));
 
-                m_driverController.a().onTrue(new EjectPieceFromIntake(m_intake).withTimeout(1));
+                // m_driverController.a().onTrue(new
+                // EjectPieceFromIntake(m_intake).withTimeout(1));
 
-                m_driverController.b().onTrue(new GetPieceExpectedAtIntake(m_intake).withTimeout(5));
+                m_driverController.b().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
                 m_driverController.x().onTrue(deliverPositionsCommand(false).withTimeout(10));
 
@@ -264,25 +267,39 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
+                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
 
-                m_coDriverController.rightBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02)));
+                m_coDriverController.leftTrigger().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.02)));
+
+                m_coDriverController.rightBumper()
+                                .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
+                                                .withTimeout(8));
+
+                m_coDriverController.rightTrigger()
+                                .onTrue(new RetractWristExtendLift(m_liftArm, m_extendArm, m_wrist, true)
+                                                .withTimeout(8));
 
                 // m_coDriverController.leftTrigger().whileTrue(m_drive.autoBalance());
 
                 m_coDriverController.a().onTrue(
-                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CONE)
+                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
                                                 .withTimeout(10));
 
-                m_coDriverController.b().onTrue(
-                                new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
-                                                .withTimeout(10));
+                // m_coDriverController.b().onTrue(
+                //                 new GroundIntakePositions(m_liftArm, m_wrist, m_extendArm, m_intake, gamePiece.CUBE)
+                //                                 .withTimeout(10));
 
-                m_coDriverController.x().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()))
+                m_coDriverController.x().onTrue(deliverPositionsCommand(false).withTimeout(10));
+                m_coDriverController.y().onTrue(deliverPositionsCommand(true).withTimeout(10));
 
-                                .onTrue(Commands.runOnce(() -> m_ls.togglePY()));
-
-                // m_coDriverController.y()
+                m_coDriverController.start().onTrue(Commands.runOnce(() -> m_ghs.toggleGamePieceType()))
+                                 .onTrue(Commands.runOnce(() -> m_ls.togglePY()));//.onTrue(Commands.runOnce(() -> {
+                                //         if (m_intake.piece == robotPiece.CUBE) {
+                                //                 m_intake.piece = robotPiece.CONE;
+                                //         } else {
+                                //                 m_intake.piece = robotPiece.CUBE;
+                                //         }
+                                               // m_coDriverController.y()
 
                 // m_coDriverController.start().onTrue(deliverPositionsCommand(true).withTimeout(10));
 

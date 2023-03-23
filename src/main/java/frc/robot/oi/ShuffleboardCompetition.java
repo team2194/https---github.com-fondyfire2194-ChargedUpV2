@@ -111,6 +111,9 @@ public class ShuffleboardCompetition {
                                 area1.addNumber("Pitch", () -> round2dp(m_drive.getGyroPitch()))
                                 .withSize(1, 1)
                                 .withPosition(1, 4);
+                                area1.addNumber("DriveSpeed", () -> round2dp(m_drive.m_frontLeft.getDriveVelocity()))
+                                .withSize(1, 1)
+                                .withPosition(2, 4);
 
 
 

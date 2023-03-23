@@ -18,6 +18,7 @@ import frc.robot.commands.Wrist.PositionProfileWrist;
 import frc.robot.commands.Wrist.SetWristGoal;
 import frc.robot.commands.Wrist.WaitWristAtTarget;
 import frc.robot.subsystems.ExtendArmSubsystem;
+import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.ExtendArmSubsystem.presetExtArmDistances;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -31,12 +32,14 @@ import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class GroundIntakePositions extends SequentialCommandGroup {
         /** Creates a new GroundIntake. */
+        private gamePiece type;
         public GroundIntakePositions(LiftArmSubsystem lift, WristSubsystem wrist, ExtendArmSubsystem extend,
                         IntakeSubsystem intake,
-                        gamePiece type) {
+                        GameHandlerSubsystem ghs) {
                 // Add your commands in the addCommands() call, e.g.
                 // addCommands(new FooCommand(), new BarCommand() extend, Intake);
                 // assumes start from travel position
+                type = ghs.getGamePiecetype();
                 addCommands(
 
                                 new ParallelRaceGroup(

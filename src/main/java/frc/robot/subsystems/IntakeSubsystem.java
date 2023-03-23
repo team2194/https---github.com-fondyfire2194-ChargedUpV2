@@ -131,6 +131,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
       m_intakeSensorCone.setRangingMode(RangingMode.Short, 40);
 
+      //m_intakeSensorCone.setRangeOfInterest(2,2,13,13);
+
     }
   }
 

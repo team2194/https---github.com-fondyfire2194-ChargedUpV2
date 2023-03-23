@@ -193,7 +193,7 @@ public class GameHandlerSubsystem extends SubsystemBase {
 
         public dropOffLevel chosenLevel = dropOffLevel.MID_LEVEL;
 
-        public gamePiece gamePieceType = gamePiece.CONE;
+        public gamePiece gamePieceType = gamePiece.CUBE;
 
         public double strafeDistance = 1.5;// meters
 
