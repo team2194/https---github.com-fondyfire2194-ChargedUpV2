@@ -7,6 +7,7 @@ package frc.robot.commands.PickupRoutines;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.GameHandlerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.gamePiece;
 import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
@@ -14,6 +15,7 @@ import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
 public class GetPieceExpectedAtIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
+  private GameHandlerSubsystem m_ghs;
 
   private gamePiece m_type;
 
@@ -40,9 +42,10 @@ public class GetPieceExpectedAtIntake extends CommandBase {
   private double m_startTimeCone;
   private double m_startTimeCube;
 
-  public GetPieceExpectedAtIntake(IntakeSubsystem intake) {
+  public GetPieceExpectedAtIntake(IntakeSubsystem intake, GameHandlerSubsystem ghs) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intake;
+    m_ghs = ghs;
 
   }
 
@@ -53,7 +56,7 @@ public class GetPieceExpectedAtIntake extends CommandBase {
     m_startTimeCone = 0;
     m_startTimeCube = 0;
     useSpeed = .6;
-    if (m_intake.expectedPieceType == gamePiece.CONE)
+    if (m_ghs.getGamePiecetype() == gamePiece.CONE)
 
       useSpeed *= -1;
   }

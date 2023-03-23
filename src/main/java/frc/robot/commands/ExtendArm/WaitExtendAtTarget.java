@@ -53,7 +53,7 @@ public class WaitExtendAtTarget extends CommandBase {
   @Override
   public boolean isFinished() {
     return m_extend.atTargetPosition() || m_inRangeTime != 0 && Timer.getFPGATimestamp() > m_inRangeTime + 2
-        || Timer.getFPGATimestamp() > m_startTime + 3;
+        || Timer.getFPGATimestamp() > m_startTime + 1;
 
   }
 }
