@@ -55,7 +55,7 @@ public class EjectPieceFromIntake extends CommandBase {
 
       m_speed *= -1;
 
-    if (m_intake.piece == robotPiece.CUBE) {
+    if (m_intake.piece == robotPiece.CONE) {
       m_speed *= .8;
     }
   }
