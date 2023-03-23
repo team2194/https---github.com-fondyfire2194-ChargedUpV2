@@ -267,7 +267,7 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.24)));
+                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.12))); //.12
 
                 //m_coDriverController.leftBumper().whileTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02));
 
