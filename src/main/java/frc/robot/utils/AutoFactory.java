@@ -176,7 +176,7 @@ public class AutoFactory {
 
             traj1 = m_tf.getPathPlannerTrajectory(traj1name, 2, 1, false);
 
-            tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd);
+            tempCommand = m_tf.followTrajectoryCommand(traj1, traj1Reqd).withTimeout(8);
         }
 
         if (autoselect == 2) {
