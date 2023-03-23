@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto.DoNothing;
@@ -181,14 +183,14 @@ public class AutoFactory {
 
             tempCommand = getDeliverMid();// places whichever piece is detected at intake
 
-            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true);
+            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true).withTimeout(3);
         }
 
         if (autoselect == 3) {
 
             tempCommand = getDeliverTop();// places whichever piece is detected at intake
 
-            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true);
+            command1A = new RetractWristExtendLift(m_lift, m_extend, m_wrist, true).withTimeout(3);;
         }
 
 
@@ -218,6 +220,8 @@ public class AutoFactory {
                 traj2name = "BackUpCenter";
 
                 traj2Reqd = true;
+
+                SmartDashboard.putString("AutoName", traj2name);
             }
 
             if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Blue) {
@@ -225,12 +229,16 @@ public class AutoFactory {
                 traj2name = "BackUpLeftCenter";
 
                 traj2Reqd = true;
+
+                SmartDashboard.putString("AutoName1", traj2name);
             }
             if (startLocation == 1 && autoselect1 == 2 && DriverStation.getAlliance() == Alliance.Red) {
 
                 traj2name = "BackUpRightCenter";
 
                 traj2Reqd = true;
+
+                SmartDashboard.putString("AutoName2", traj2name);
             }
 
             if (startLocation == 2 && autoselect1 == 2) {
@@ -238,6 +246,8 @@ public class AutoFactory {
                 traj2name = "BackUpRightCenter";
 
                 traj2Reqd = true;
+
+                SmartDashboard.putString("AutoName3", traj2name);
             }
         }
         if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
@@ -245,12 +255,16 @@ public class AutoFactory {
             traj2name = "BackUpLeftShelf";
 
             traj2Reqd = true;
+
+            SmartDashboard.putString("AutoName4", traj2name);
         }
         if (startLocation == 3 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
 
             traj2name = "BackUpRightShelf";
 
             traj2Reqd = true;
+
+            SmartDashboard.putString("AutoName5", traj2name);
         }
 
         if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Blue) {
@@ -258,6 +272,8 @@ public class AutoFactory {
             traj2name = "BackUpRightShelf";
 
             traj2Reqd = true;
+
+            SmartDashboard.putString("AutoName6", traj2name);
         }
 
         if (startLocation == 4 && autoselect1 == 3 && DriverStation.getAlliance() == Alliance.Red) {
@@ -265,6 +281,8 @@ public class AutoFactory {
             traj2name = "BackUpLeftShelf";
 
             traj2Reqd = true;
+
+            SmartDashboard.putString("AutoName7", traj2name);
         }
 
         if (traj2Reqd) {
@@ -294,7 +312,7 @@ public class AutoFactory {
 
         startTime = Timer.getFPGATimestamp();
 
-        autonomousCommand = new SequentialCommandGroup(command1, command1A, command2);
+        autonomousCommand = new SequentialCommandGroup(command1, new WaitCommand(5), command2);
 
         return autonomousCommand;
 
@@ -306,7 +324,7 @@ public class AutoFactory {
 
                 new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, false),
 
-                new WaitCommand(1)
+                new WaitCommand(0.5)
 
         );
 
@@ -318,7 +336,7 @@ public class AutoFactory {
 
                 new GetDeliverAngleSettings(m_lift, m_extend, m_wrist, m_intake, true),
 
-                new WaitCommand(1)
+                new WaitCommand(0.5)
 
         );
 

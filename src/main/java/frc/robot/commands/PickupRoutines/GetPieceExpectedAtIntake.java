@@ -55,10 +55,13 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
     m_startTimeCone = 0;
     m_startTimeCube = 0;
-    useSpeed = .6;
-    if (m_ghs.getGamePiecetype() == gamePiece.CONE)
+    useSpeed = .8;
+    if (m_ghs.getGamePiecetype() == gamePiece.CONE) {
 
       useSpeed *= -1;
+    } else {
+      useSpeed *= 0.6;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.

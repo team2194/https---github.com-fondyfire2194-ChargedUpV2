@@ -14,7 +14,7 @@ public class EjectPieceFromIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
   private IntakeSubsystem m_intake;
 
-  private double m_speed = .9;
+  private double m_speed = 1.0;
 
   private robotPiece m_type;
 

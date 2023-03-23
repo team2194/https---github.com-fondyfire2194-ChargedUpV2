@@ -4,6 +4,7 @@
 
 package frc.robot.commands.DeliverRoutines;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Pref;
 import frc.robot.subsystems.ExtendArmSubsystem;
@@ -117,7 +118,12 @@ public class GetDeliverAngleSettings extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    new DeliverPiecePositions(m_lift, m_ext, m_wrist, m_intake).schedule();
+    if (DriverStation.isAutonomousEnabled()) {
+      new DeliverPiecePositions(m_lift, m_ext, m_wrist, m_intake).schedule();
+    } else {
+      new DeliverPiecePositionsTeleop(m_lift, m_ext, m_wrist, m_intake).schedule();
+
+    }
   }
 
   // Returns true when the command should end.

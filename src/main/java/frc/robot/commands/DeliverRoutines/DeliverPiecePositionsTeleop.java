@@ -33,50 +33,36 @@ import frc.robot.subsystems.WristSubsystem.presetWristAngles;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DeliverPiecePositions extends SequentialCommandGroup {
-  /** Creates a new DeliverSelectedPieceToSelectedTarget. */
-  public DeliverPiecePositions(LiftArmSubsystem lift, ExtendArmSubsystem extend, WristSubsystem wrist,
-      IntakeSubsystem intake) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
-    addCommands(
+public class DeliverPiecePositionsTeleop extends SequentialCommandGroup {
+    /** Creates a new DeliverSelectedPieceToSelectedTarget. */
+    public DeliverPiecePositionsTeleop(LiftArmSubsystem lift, ExtendArmSubsystem extend, WristSubsystem wrist,
+            IntakeSubsystem intake) {
+        // Add your commands in the addCommands() call, e.g.
+        // addCommands(new FooCommand(), new BarCommand());
+        addCommands(
 
-        new ParallelRaceGroup(
+                new ParallelRaceGroup(
 
-            new ParallelCommandGroup(
+                        new ParallelCommandGroup(
 
-                new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
+                                new SetLiftGoal(lift, LiftArmConstants.liftArmFastConstraints, lift.deliverInches),
 
-                new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads),
+                                new SetWristGoal(wrist, WristConstants.wristFastConstraints, wrist.deliverAngleRads),
 
-                new PositionProfileWrist(wrist, lift),
-                new PositionProfileExtendArm(extend, lift),
-                new PositionProfileLiftInches(lift)),
+                                new PositionProfileWrist(wrist, lift),
+                                new PositionProfileExtendArm(extend, lift),
+                                new PositionProfileLiftInches(lift)),
 
-            new SequentialCommandGroup(
+                        new SequentialCommandGroup(
 
-                new WaitLiftAtTarget(lift, 2,3),
+                                new WaitLiftAtTarget(lift, 2, 3),
 
-                new WaitWristAtTarget(wrist, .24,.2),
+                                new WaitWristAtTarget(wrist, .24, .2),
 
-                new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints, extend.deliverDistance),
+                                new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
+                                        extend.deliverDistance),
 
-                new WaitExtendAtTarget(extend, .24, 5),
+                                new WaitExtendAtTarget(extend, .3, 5))));
 
-                new EjectPieceFromIntake(intake),
-
-                new SetExtArmGoal(extend, ExtendArmConstants.extendArmFastConstraints,
-                    presetExtArmDistances.HOME.getDistance()),
-
-                new SetWristGoal(wrist, WristConstants.wristFastConstraints, presetWristAngles.HOME.getAngleRads()),
-
-         //       new WaitLiftAtTarget(lift, .24,1),
-
-                new WaitWristAtTarget(wrist, .24,.4),
-
-                new SetLiftGoal(lift, presetLiftAngles.SAFE_HOME.getInches()),
-
-                new WaitLiftAtTarget(lift, .24,1))));
-
-  }
+    }
 }

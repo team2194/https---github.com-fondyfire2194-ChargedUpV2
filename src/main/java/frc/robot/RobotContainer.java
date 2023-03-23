@@ -267,9 +267,11 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.06)));
+                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.24)));
 
-                m_coDriverController.leftTrigger().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.06)));
+                //m_coDriverController.leftBumper().whileTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02));
+
+                m_coDriverController.leftTrigger().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.24)));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
@@ -381,7 +383,7 @@ public class RobotContainer {
                 return new SetSwerveDrive(m_drive,
                                 () -> m_driverController.getRawAxis(1),
                                 () -> m_driverController.getRawAxis(0),
-                                () -> -m_driverController.getRawAxis(4));
+                                () -> m_driverController.getRawAxis(4));
 
         }
 
@@ -389,7 +391,7 @@ public class RobotContainer {
                 return new SetSwerveDriveSlow(m_drive,
                                 () -> m_driverController.getRawAxis(1),
                                 () -> m_driverController.getRawAxis(0),
-                                () -> -m_driverController.getRawAxis(4));
+                                () -> m_driverController.getRawAxis(4));
 
         }
 

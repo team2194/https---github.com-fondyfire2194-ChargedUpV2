@@ -149,6 +149,8 @@ public class Robot extends TimedRobot {
 
     autoHasRun = false;
 
+    Shuffleboard.startRecording();
+
     m_robotContainer.m_drive.setIdleMode(true);
 
     m_robotContainer.m_extendArm.setController(ExtendArmConstants.extendArmFastConstraints,
