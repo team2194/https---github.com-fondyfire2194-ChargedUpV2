@@ -267,11 +267,11 @@ public class RobotContainer {
 
         private void configCodriverButtons() {
 
-                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.12))); //.12
+                m_coDriverController.leftBumper().onTrue(Commands.runOnce(() -> m_wrist.incGoal(-.16))); //.12
 
                 //m_coDriverController.leftBumper().whileTrue(Commands.runOnce(() -> m_wrist.incGoal(-.02));
 
-                m_coDriverController.leftTrigger().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.24)));
+                m_coDriverController.leftTrigger().onTrue(Commands.runOnce(() -> m_wrist.incGoal(.32)));
 
                 m_coDriverController.rightBumper()
                                 .onTrue(new SetArmsForLoadPickup(m_liftArm, m_wrist, m_extendArm, m_intake, m_ghs)
