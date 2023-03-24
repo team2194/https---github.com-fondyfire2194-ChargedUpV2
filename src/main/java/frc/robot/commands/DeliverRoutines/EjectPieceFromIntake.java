@@ -7,8 +7,8 @@ package frc.robot.commands.DeliverRoutines;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.GameHandlerSubsystem.robotPiece;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class EjectPieceFromIntake extends CommandBase {
   /** Creates a new GetPieceAtIntake. */
@@ -50,6 +50,7 @@ public class EjectPieceFromIntake extends CommandBase {
   public void initialize() {
 
     m_startTime = Timer.getFPGATimestamp();
+    m_speed = 1.0;
 
     if (m_intake.piece == robotPiece.CUBE)
 
