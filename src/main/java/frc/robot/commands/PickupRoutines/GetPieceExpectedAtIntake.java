@@ -60,7 +60,7 @@ public class GetPieceExpectedAtIntake extends CommandBase {
 
       useSpeed *= -1;
     } else {
-      useSpeed *= 0.6;
+      useSpeed *= 0.4;
     }
   }
 
